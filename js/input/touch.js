@@ -150,6 +150,10 @@ addEventListener(
     if (e.target && e.target.closest && e.target.closest('#install, #lb')) return; // biarkan tombol install & dialog kirim skor bekerja
     e.preventDefault();
     TOUCH = true;
+    if (ZLOCK !== ZOOM_TOUCH && S == 'menu') {
+      ZLOCK = ZOOM_TOUCH; // perangkat sentuh yang tidak melapor 'pointer: coarse': kunci zoom HP sekali, di menu
+      rs();
+    }
     if (PORTRAIT) return;
     for (const t of e.changedTouches) {
       const x = t.clientX,
@@ -171,7 +175,9 @@ addEventListener(
         continue;
       }
       if (S == 'pause') {
-        S = 'play';
+        const k = pauseBtnAt(x, y);
+        if (k) pauseAct(k); // LANJUT / RESTART
+        else S = 'play'; // sentuh area lain = lanjut (perilaku lama)
         continue;
       }
       const U = tui(),

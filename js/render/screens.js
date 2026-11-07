@@ -142,21 +142,68 @@ function drawMenu() {
   tx('?', ix, iy + ir * 0.38, ir * 1.35, bc, 'center', 0);
   tx('TUTORIAL', b.x + b.w / 2 + b.h * 0.2, b.y + b.h / 2 + 5, 15, bc, 'center', 0);
 }
-function drawPause() {
-  if (S == 'pause') {
-    g.fillStyle = 'rgba(0,0,0,.6)';
-    g.fillRect(0, 0, UW, UH);
-    tx('PAUSE', UW / 2, UH / 2, 60, '#22d3ee', 'center', 20);
-    tx(
-      TOUCH ? 'sentuh layar untuk lanjut' : 'tekan P untuk lanjut',
-      UW / 2,
-      UH / 2 + 34,
-      16,
-      '#7aa2c0',
-    );
-    if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', UW / 2, UH / 2 + 58, 13, '#7aa2c0');
-    lbDrawTop3(UH / 2 + (TOUCH ? 86 : 64), 14);
+// ---------- PAUSE: tombol LANJUT & RESTART (restart perlu tekan 2x agar tidak terpencet tanpa sengaja) ----------
+const PAU = { conf: 0 }; // waktu (T) tekan pertama RESTART
+function pauseLayout() {
+  const sw = UW - SAFE.l - SAFE.r,
+    cx = SAFE.l + sw / 2,
+    bw = cl(sw * 0.2, 130, 190),
+    bh = cl(UH * 0.1, 38, 46),
+    gp = 14,
+    ty = UH * 0.34,
+    by = ty + 28;
+  return {
+    cx,
+    ty,
+    hy: by + bh + 28,
+    btns: [
+      { k: 'resume', x: cx - bw - gp / 2, y: by, w: bw, h: bh },
+      { k: 'restart', x: cx + gp / 2, y: by, w: bw, h: bh },
+    ],
+  };
+}
+function pauseBtnAt(x, y) {
+  if (S != 'pause') return null;
+  const b = pauseLayout().btns.find((b) => x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6);
+  return b ? b.k : null;
+}
+function pauseAct(k) {
+  if (k == 'resume') {
+    PAU.conf = 0;
+    S = 'play';
+  } else if (k == 'restart') {
+    if (PAU.conf && T - PAU.conf < 3) {
+      PAU.conf = 0;
+      init(); // mulai ulang dari awal
+    } else PAU.conf = T; // tekan pertama = minta konfirmasi
   }
+}
+function drawPause() {
+  if (S != 'pause') return;
+  const L = pauseLayout(),
+    confirm = PAU.conf && T - PAU.conf < 3;
+  if (!confirm) PAU.conf = 0;
+  g.fillStyle = 'rgba(0,0,0,.6)';
+  g.fillRect(0, 0, UW, UH);
+  tx('PAUSE', L.cx, L.ty, Math.min(60, UH / 6), '#22d3ee', 'center', 20);
+  for (const b of L.btns) {
+    const re = b.k == 'restart',
+      c = re ? (confirm ? '#ffd166' : '#ff2e63') : '#22d3ee',
+      hot = !TOUCH && pauseBtnAt(MU.x, MU.y) == b.k,
+      label = re ? (confirm ? 'YAKIN? TEKAN LAGI' : 'RESTART') : 'LANJUT';
+    g.shadowColor = c;
+    g.shadowBlur = hot || (re && confirm) ? 16 : 6;
+    g.fillStyle = hot ? c + '33' : 'rgba(10,18,32,.85)';
+    g.strokeStyle = c;
+    g.lineWidth = 2;
+    rrect(b.x, b.y, b.w, b.h, b.h / 2);
+    g.fill();
+    g.stroke();
+    g.shadowBlur = 0;
+    tx(label, b.x + b.w / 2, b.y + b.h / 2 + 5, re && confirm ? 12 : 15, c, 'center', 0);
+  }
+  if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', L.cx, L.hy, 13, '#7aa2c0');
+  lbDrawTop3(L.hy + (TOUCH ? 30 : 4), 14);
 }
 function drawLevelup() {
   if (S == 'levelup') {

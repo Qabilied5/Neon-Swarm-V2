@@ -67,4 +67,5 @@ addEventListener('visibilitychange', () => {
 
 // Matikan menu long-press & pinch-zoom bawaan browser
 addEventListener('contextmenu', (e) => e.preventDefault());
-addEventListener('gesturestart', (e) => e.preventDefault());
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend', 'dblclick']) addEventListener(ev, (e) => e.preventDefault());
+addEventListener('wheel', (e) => e.ctrlKey && e.preventDefault(), { passive: false }); // Ctrl+scroll / pinch trackpad

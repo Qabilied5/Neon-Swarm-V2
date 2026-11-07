@@ -6,6 +6,7 @@ const cv = document.getElementById('c'),
 const ZOOM_TOUCH = 0.6,
   ZOOM_REF = 0.75; // zoom acuan: ukuran garis / grid / panah bidik dijaga sama seperti pada zoom ini
 let ZM = 1,
+  ZLOCK = null, // zoom dunia dikunci sekali (null = belum ditentukan); tidak dihitung ulang tiap resize
   ZK = 1, // pengali ukuran dunia agar tampilan fisik tetap sama saat zoom-out (ZOOM_REF / ZM)
   W,
   H, // ukuran DUNIA logis (layar / ZM): dipakai gameplay (spawn, batas arena, dll.)
@@ -24,7 +25,10 @@ function readSafe() {
 }
 function rs() {
   const d = Math.min(devicePixelRatio || 1, 2);
-  ZM = matchMedia('(pointer: coarse)').matches ? ZOOM_TOUCH : 1;
+  // Dikunci pada pemanggilan pertama: sebelumnya dihitung ulang tiap resize, sehingga bila media 'pointer: coarse'
+  // berubah di tengah game (bar browser, fullscreen, mouse/keyboard tersambung) zoom tiba-tiba loncat 0.6 <-> 1.
+  if (ZLOCK === null) ZLOCK = matchMedia('(pointer: coarse)').matches ? ZOOM_TOUCH : 1;
+  ZM = ZLOCK;
   ZK = ZM < 1 ? ZOOM_REF / ZM : 1;
   UW = innerWidth;
   UH = innerHeight;
@@ -38,7 +42,24 @@ function rs() {
   readSafe();
   PORTRAIT = matchMedia('(orientation: portrait) and (pointer: coarse)').matches;
 }
-addEventListener('resize', rs);
-if (window.visualViewport) visualViewport.addEventListener('resize', rs); // address bar HP muncul / hilang
+// resize: hitung ulang, lalu sekali lagi setelah layar stabil (bar browser / fullscreen / iOS telat melaporkan ukuran)
+let rsT = 0;
+addEventListener('resize', () => {
+  rs();
+  clearTimeout(rsT);
+  rsT = setTimeout(rs, 300);
+});
+if (window.visualViewport) visualViewport.addEventListener('resize', () => (resetPinch(), rs())); // address bar HP muncul / hilang
 addEventListener('orientationchange', () => setTimeout(rs, 250)); // iOS: ukuran baru telat terbaca
 rs();
+
+// Jika browser sempat ter-zoom (pinch / double-tap), kembalikan ke skala 1 dengan menyetel ulang meta viewport.
+function resetPinch() {
+  const vv = window.visualViewport;
+  if (!vv || Math.abs(vv.scale - 1) < 0.02) return;
+  const m = document.querySelector('meta[name=viewport]');
+  if (!m) return;
+  const c = m.content;
+  m.content = 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover';
+  setTimeout(() => (m.content = c), 100);
+}

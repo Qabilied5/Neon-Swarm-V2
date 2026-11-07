@@ -45,6 +45,11 @@ addEventListener('mousedown', (e) => {
     uiAct(u);
     return;
   }
+  if (S == 'pause') {
+    const k = pauseBtnAt(MU.x, MU.y);
+    if (k) pauseAct(k);
+    return;
+  }
   if (menuBtnHit(MU.x, MU.y)) return; // tombol TUTORIAL: belum ada aksi, jangan mulai game
   if (S == 'dead' && lbBtnHit(MU.x, MU.y)) {
     e.preventDefault(); // jangan biarkan klik mencuri fokus dari input nama
