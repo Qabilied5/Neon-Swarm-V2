@@ -33,7 +33,7 @@ function spawnSecret() {
     last: '',
   };
   E.push(boss);
-  banner('SECRET BOSS: PRISM SENTINEL', 'berdiri di celah antar laser · perhatikan garis kuning');
+  banner('SECRET BOSS: PRISM SENTINEL', 'berdiri di celah antar laser · perhatikan garis kuning · 2 sambaran = mati');
   taunt = pick(SECT);
   shake = 14;
   snd(70, 0.8, 'sawtooth', 0.09);

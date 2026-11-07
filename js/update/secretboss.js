@@ -1,4 +1,6 @@
 // AI Secret Boss: diam, menembakkan pola laser layar penuh dengan pre-laser (garis kuning peringatan)
+const SEC_WARN_MIN = 0.55, // batas terpendek waktu peringatan (detik)
+  SEC_GAP_MIN = 64; // batas tersempit celah aman antar laser (px); pemain berdiameter ~2x radius, dash tetap bisa menembus
 
 // Satu laser = garis tak terbatas melewati (x,y) dengan sudut a. t = waktu peringatan sebelum menembak.
 function addLaser(x, y, a, w, t, d) {
@@ -33,13 +35,13 @@ const SEC_PATTERNS = {
   horz: (p) => laserComb(0, p.w, p.gap, p.warn, p.d, 0),
   diag: (p) => laserComb(Math.PI / 4, p.w, p.gap, p.warn, p.d, 0),
   diag2: (p) => laserComb(-Math.PI / 4, p.w, p.gap, p.warn, p.d, 0),
-  sweepV: (p) => laserComb(Math.PI / 2, p.w, p.gap, p.warn, p.d, 0.14),
-  sweepH: (p) => laserComb(0, p.w, p.gap, p.warn, p.d, 0.14),
-  star: (p) => laserStar(p.e, 4, R(0, Math.PI / 4), 48, p.warn, p.d),
+  sweepV: (p) => laserComb(Math.PI / 2, p.w, p.gap, p.warn, p.d, p.stag),
+  sweepH: (p) => laserComb(0, p.w, p.gap, p.warn, p.d, p.stag),
+  star: (p) => laserStar(p.e, p.rays, R(0, Math.PI / 4), 48, p.warn, p.d),
   grid: (p) =>
     Math.max(
-      laserComb(Math.PI / 2, p.w, p.gap + 70, p.warn + 0.25, p.d, 0),
-      laserComb(0, p.w, p.gap + 70, p.warn + 0.25, p.d, 0),
+      laserComb(Math.PI / 2, p.w, p.gap + 50, p.warn + 0.2, p.d, 0),
+      laserComb(0, p.w, p.gap + 50, p.warn + 0.2, p.d, 0),
     ),
 };
 // Pola yang tersedia per fase (HP boss makin rendah = pola makin banyak & cepat)
@@ -71,15 +73,18 @@ function secretBoss(e, dt) {
   const p = {
       e,
       w: 56,
-      warn: Math.max(0.9, 1.7 - pz * 0.2 - wave * 0.01),
-      gap: Math.max(96, 150 - wave * 1.5 - (pz - 1) * 10),
-      d: 30 + wave * 2,
+      // Makin tinggi wave & fase: peringatan makin singkat (cepat), celah antar laser makin sempit (rapat), jeda antar pola makin pendek
+      warn: Math.max(SEC_WARN_MIN, 1.15 - pz * 0.1 - wave * 0.02),
+      gap: Math.max(SEC_GAP_MIN, 110 - wave * 1.6 - (pz - 1) * 8),
+      stag: Math.max(0.06, 0.14 - wave * 0.004), // jeda tembak antar laser pada pola sweep
+      rays: Math.min(6, 4 + (pz - 1) + (wave >= 15 ? 1 : 0)), // jumlah garis pola star (x2 sinar)
+      d: Math.ceil(P.mh / 2), // 2 sambaran = mati (1 sambaran saja jika HP sudah separuh atau kurang)
     },
     pool = SEC_PHASES[pz - 1].filter((k) => k != e.last),
     k = pick(pool);
   e.last = k;
   const lastFire = SEC_PATTERNS[k](p);
   e.ch = p.warn;
-  e.cd = lastFire + (pz == 1 ? 0.9 : pz == 2 ? 0.6 : 0.3);
+  e.cd = lastFire + Math.max(0.1, (pz == 1 ? 0.5 : pz == 2 ? 0.32 : 0.16) - wave * 0.006);
   snd(880, 0.15, 'square', 0.03); // bunyi peringatan
 }
