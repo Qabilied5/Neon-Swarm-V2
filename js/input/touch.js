@@ -160,6 +160,7 @@ addEventListener(
       }
       if (uiHit(x, y)) continue;
       if (S == 'menu' || S == 'dead') {
+        if (menuBtnHit(x, y)) continue; // tombol TUTORIAL: belum ada aksi, jangan mulai game
         if (S == 'dead' && lbBtnHit(x, y)) continue; // tombol KIRIM SKOR: aksi saat jari dilepas
         if (deadT <= 0) init();
         continue;

@@ -1,81 +1,146 @@
 // Layar menu, pause, level-up, game over
+
+// ---------- MENU UTAMA ----------
+// Tata letak menu dihitung sekali per frame dan dipakai juga untuk hit-test tombol TUTORIAL.
+function menuLayout() {
+  const sw = UW - SAFE.l - SAFE.r,
+    cx = SAFE.l + sw / 2,
+    big = Math.min(78, sw / 9, UH / 5.2),
+    ch = cl(UH * 0.2, 66, 112),
+    elev = cl(UH * 0.035, 8, 20), // kartu peringkat 1 lebih tinggi
+    gap = cl(UH * 0.05, 12, 34),
+    bh = cl(UH * 0.075, 34, 44),
+    bw = cl(sw * 0.22, 150, 210),
+    total = big + gap + 32 + ch + elev + gap + 22 + gap + bh,
+    y0 = Math.max(SAFE.t + 8, (UH - total) / 2),
+    titleY = y0 + big * 0.82,
+    lblY = y0 + big + gap + 10,
+    cardsY = lblY + 26 + elev, // sisi atas kartu non-juara; kartu juara naik sebesar elev
+    promptY = cardsY + ch + gap + 14,
+    btnY = promptY + gap + 6;
+  return { sw, cx, big, ch, elev, gap, titleY, lblY, cardsY, promptY, btn: { x: cx - bw / 2, y: btnY, w: bw, h: bh } };
+}
+const menuBtnHit = (x, y) => {
+  if (S != 'menu') return false;
+  const b = menuLayout().btn;
+  return x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6;
+};
+function rrect(x, y, w, h, r) {
+  g.beginPath();
+  g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h);
+}
+// potong teks dengan "…" agar muat di lebar w
+function fitText(s, sz, w) {
+  if (lbW(s, sz) <= w) return s;
+  while (s.length > 1 && lbW(s + '…', sz) > w) s = s.slice(0, -1);
+  return s + '…';
+}
 function drawMenu() {
   if (S != 'menu') return;
-  const big = Math.min(84, UW / 8, UH / 4.5),
-    ty = UH * (TOUCH ? 0.27 : 0.36);
-  tx('NEON SWARM', UW / 2, ty, big, '#22d3ee', 'center', 30);
-  tx('bertahan hidup dari kawanan neon', UW / 2, ty + (TOUCH ? big * 0.45 : 34), 16, '#7aa2c0');
-  let sy;
-  if (TOUCH) {
-    // petunjuk kontrol sentuh (landscape): font mengecil di layar sempit
-    const sz = cl(UW / 60, 10, 14),
-      y0 = ty + big * 0.45 + 34,
-      lines = [
-        [
-          'KIRI = gerak & arah dash  ·  KANAN = tahan & geser untuk menembak  ·  DOUBLE-TAP KANAN = DASH',
-          '#39ff88',
-        ],
-        [
-          'Tombol kanan bawah: ✚ HEAL +30% · Q NOVA · E LASER · R BLACK HOLE · DASH',
-          '#ffd166',
-        ],
-        [
-          'WAVE 6+ musuh berevolusi  ·  WAVE 8+ 3 tabrakan = MATI  ·  WAVE 15+ super boss',
-          '#ff8da1',
-        ],
-        ['Tombol HUD (kanan atas): atur posisi tombol & luas area gerak / serang', '#7aa2c0'],
-      ];
-    lines.forEach((l, i) => tx(l[0], UW / 2, y0 + i * (sz + 7), sz, l[1]));
-    sy = y0 + lines.length * (sz + 7) + 22;
-  } else {
-    tx(
-      'WASD gerak  ·  MOUSE bidik (tembak otomatis)  ·  SPACE / klik kanan dash',
-      UW / 2,
-      UH * 0.56,
-      15,
-      '#39ff88',
-    );
-    tx(
-      'C HEAL +30% HP (cooldown 60 dtk)  ·  Q NOVA  ·  E LASER  ·  R BLACK HOLE  (Q/E/R dibuka lewat upgrade)',
-      UW / 2,
-      UH * 0.56 + 50,
-      13,
-      '#ffd166',
-    );
-    tx(
-      'WAVE 6+ musuh berevolusi  ·  WAVE 8+ 3 tabrakan = MATI  ·  WAVE 15+ super boss',
-      UW / 2,
-      UH * 0.56 + 74,
-      13,
-      '#ff8da1',
-    );
-    tx(
-      'P pause  ·  M suara  ·  boss tiap 5 wave dengan ejekan dari AI (Ollama, opsional)',
-      UW / 2,
-      UH * 0.56 + 26,
-      13,
-      '#7aa2c0',
-    );
-    sy = UH * 0.7;
-  }
-  tx(
-    Math.floor(T * 2) % 2
-      ? TOUCH
-        ? 'SENTUH LAYAR UNTUK MULAI'
-        : 'KLIK ATAU TEKAN ENTER UNTUK MULAI'
-      : '',
-    UW / 2,
-    sy,
-    20,
-    '#ffd166',
-    'center',
-    12,
-  );
-  if (best) tx('REKOR ' + best, UW / 2, sy + 26, 14, '#7aa2c0');
-  lbDrawTop3(sy + (TOUCH ? 48 : 54), cl(UW / 60, 11, 13)); // top 3 leaderboard (online)
-  // iPhone/iPad (Safari) tidak punya tombol install otomatis
-  if (IOS && !STANDALONE)
-    tx('Instal: tombol Bagikan → "Tambah ke Layar Utama"', UW / 2, UH - SAFE.b - 12, 12, '#7aa2c0');
+  const L = menuLayout(),
+    cx = L.cx,
+    glow = TOUCH ? 8 : 20;
+
+  // pendar lembut di belakang judul
+  const rg = g.createRadialGradient(cx, L.titleY - L.big * 0.3, 0, cx, L.titleY - L.big * 0.3, Math.max(UW * 0.45, 200));
+  rg.addColorStop(0, 'rgba(34,211,238,.16)');
+  rg.addColorStop(0.5, 'rgba(176,38,255,.06)');
+  rg.addColorStop(1, 'rgba(4,6,13,0)');
+  g.fillStyle = rg;
+  g.fillRect(0, 0, UW, UH);
+
+  // ---- nama game: gradien cyan -> magenta ----
+  g.font = `900 ${L.big}px Consolas,Menlo,monospace`;
+  g.textAlign = 'center';
+  const tw = g.measureText('NEON SWARM').width,
+    tg = g.createLinearGradient(cx - tw / 2, 0, cx + tw / 2, 0);
+  tg.addColorStop(0, '#22d3ee');
+  tg.addColorStop(0.55, '#8be9ff');
+  tg.addColorStop(1, '#ff2e97');
+  g.shadowColor = '#22d3ee';
+  g.shadowBlur = glow + 6 * Math.sin(T * 2);
+  g.fillStyle = tg;
+  g.fillText('NEON SWARM', cx, L.titleY);
+  g.shadowBlur = 0;
+  // garis aksen di bawah judul
+  const lw = tw * 0.62,
+    lg = g.createLinearGradient(cx - lw / 2, 0, cx + lw / 2, 0);
+  lg.addColorStop(0, 'rgba(34,211,238,0)');
+  lg.addColorStop(0.5, 'rgba(34,211,238,.9)');
+  lg.addColorStop(1, 'rgba(255,46,151,0)');
+  g.fillStyle = lg;
+  g.fillRect(cx - lw / 2, L.titleY + L.big * 0.12, lw, 2);
+
+  // ---- leaderboard: 3 kartu (podium 2 · 1 · 3) ----
+  tx('LEADERBOARD', cx, L.lblY, 12, '#7aa2c0', 'center', 0);
+  const gp = cl(L.sw * 0.016, 10, 18),
+    cw = Math.min(210, (L.sw - 24 - gp * 2) / 3.45),
+    order = [1, 0, 2];
+  order.forEach((rank, i) => {
+    const first = rank == 0,
+      w = first ? cw * 1.1 : cw,
+      h = first ? L.ch + L.elev : L.ch,
+      x = cx + (i - 1) * (cw + gp) - w / 2,
+      y = first ? L.cardsY - L.elev : L.cardsY,
+      c = LB_MEDAL[rank],
+      e = LB.top[rank];
+    // kaca gelap + gradien warna medali
+    const fg = g.createLinearGradient(0, y, 0, y + h);
+    fg.addColorStop(0, c + (first ? '38' : '26'));
+    fg.addColorStop(1, 'rgba(8,14,28,.88)');
+    g.shadowColor = c;
+    g.shadowBlur = first ? glow : glow * 0.4;
+    g.fillStyle = fg;
+    g.strokeStyle = c + (first ? 'ee' : '88');
+    g.lineWidth = first ? 2 : 1.5;
+    rrect(x, y, w, h, 12);
+    g.fill();
+    g.stroke();
+    g.shadowBlur = 0;
+    // lencana peringkat di tepi atas kartu
+    const br = first ? 15 : 13;
+    g.fillStyle = c;
+    g.shadowColor = c;
+    g.shadowBlur = 10;
+    g.beginPath();
+    g.arc(x + w / 2, y, br, 0, TAU);
+    g.fill();
+    g.shadowBlur = 0;
+    tx(String(rank + 1), x + w / 2, y + br * 0.36, br * 1.15, '#04060d', 'center', 0);
+    // nama + skor
+    const nsz = cl(w / 12, 11, 16),
+      ssz = cl(w / 7, 16, 28) * (first ? 1.12 : 1);
+    tx(e ? fitText(e.name, nsz, w - 20) : '— — —', x + w / 2, y + h * 0.5, nsz, e ? '#e8f4ff' : '#3d546b', 'center', 0);
+    tx(e ? e.score.toLocaleString('id-ID') : '—', x + w / 2, y + h * 0.5 + ssz + 4, ssz, e ? c : '#3d546b', 'center', e ? 8 : 0);
+  });
+
+  // ---- TAP / CLICK TO PLAY ----
+  g.globalAlpha = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(T * 3));
+  tx(TOUCH ? 'TAP TO PLAY' : 'CLICK TO PLAY', cx, L.promptY, cl(UH / 22, 17, 24), '#ffd166', 'center', 12);
+  g.globalAlpha = 1;
+
+  // ---- tombol TUTORIAL (belum ada aksi) ----
+  const b = L.btn,
+    hot = !TOUCH && menuBtnHit(MU.x, MU.y),
+    bc = '#22d3ee';
+  g.shadowColor = bc;
+  g.shadowBlur = hot ? 16 : 6;
+  g.fillStyle = hot ? 'rgba(34,211,238,.22)' : 'rgba(10,18,32,.8)';
+  g.strokeStyle = bc;
+  g.lineWidth = 2;
+  rrect(b.x, b.y, b.w, b.h, b.h / 2);
+  g.fill();
+  g.stroke();
+  g.shadowBlur = 0;
+  const ir = b.h * 0.28,
+    ix = b.x + b.h * 0.55,
+    iy = b.y + b.h / 2;
+  g.lineWidth = 1.5;
+  g.beginPath();
+  g.arc(ix, iy, ir, 0, TAU);
+  g.stroke();
+  tx('?', ix, iy + ir * 0.38, ir * 1.35, bc, 'center', 0);
+  tx('TUTORIAL', b.x + b.w / 2 + b.h * 0.2, b.y + b.h / 2 + 5, 15, bc, 'center', 0);
 }
 function drawPause() {
   if (S == 'pause') {
