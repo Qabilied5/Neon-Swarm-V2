@@ -3,7 +3,7 @@
 //  - TOP 3 tampil di menu & layar pause saat online
 //  - saat bermain, skor dibandingkan dengan cache (tanpa jaringan); melewati skor pemain lain -> notif kecil kiri atas
 // Isi LB_API dengan URL deploy Vercel. Kosongkan / biarkan placeholder = fitur nonaktif, game tetap jalan normal & offline.
-const LB_API = 'https://GANTI-DENGAN-PROJECT-ANDA.vercel.app/api/leaderboard';
+const LB_API = 'https://neon-swarm-v2-backend.vercel.app/api/leaderboard';
 const LB_ON = /^https:\/\//.test(LB_API) && !/GANTI-DENGAN/.test(LB_API);
 const LB_GAP = 20000, // jeda minimum antar pengambilan top (ms), kecuali dipaksa
   LB_N = 10, // jumlah skor yang disimpan di cache (dipakai untuk notif)
