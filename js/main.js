@@ -8,6 +8,7 @@ function loop(ts) {
   if (deadT > 0) deadT -= dt;
   if (PORTRAIT && S == 'play') S = 'pause'; // HP tegak: pause sampai diputar ke landscape
   syncInstallBtn();
+  lbTick();
   if (S == 'play') upd(stop > 0 ? ((stop -= dt), dt * 0.15) : dt);
   else if (S == 'dead') {
     for (let i = PT.length - 1; i >= 0; i--) {

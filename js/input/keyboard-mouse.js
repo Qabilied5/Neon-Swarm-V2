@@ -1,9 +1,15 @@
 // Input keyboard & mouse
 addEventListener('keydown', (e) => {
+  if (LB.open) return; // sedang mengetik nama di dialog kirim skor
   K[e.code] = 1;
   if (e.code == 'Space') e.preventDefault();
   const c = e.code;
   if (c == 'KeyF') goFS();
+  if (S == 'dead' && c == 'KeyS' && lbBtn()) {
+    lbOpen();
+    e.preventDefault();
+    return;
+  }
   if (S == 'menu' || S == 'dead') {
     if ((c == 'Enter' || c == 'Space') && deadT <= 0) init();
     return;
@@ -37,6 +43,11 @@ addEventListener('mousedown', (e) => {
   const u = uiHit(MU.x, MU.y);
   if (u) {
     uiAct(u);
+    return;
+  }
+  if (S == 'dead' && lbBtnHit(MU.x, MU.y)) {
+    e.preventDefault(); // jangan biarkan klik mencuri fokus dari input nama
+    lbOpen();
     return;
   }
   if ((S == 'menu' || S == 'dead') && deadT <= 0) init();

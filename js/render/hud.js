@@ -57,6 +57,7 @@ function drawHud() {
       if (taunt) tx('"' + taunt + '"', UW / 2, big ? 88 : 72, Math.min(14, UW / 50), '#ff8da1', 'center', 6);
     }
     TOUCH ? touchHud() : skillHud();
+    lbDrawToasts();
     if (combo > 1) tx('COMBO x' + combo, UW / 2, UH - 74, 18, '#ffd166', 'center', 10);
     if (msgT > 0) {
       g.globalAlpha = cl(msgT, 0, 1);

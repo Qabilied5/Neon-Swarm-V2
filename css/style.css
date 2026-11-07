@@ -87,3 +87,98 @@ canvas {
     display: flex;
   }
 }
+
+/* Dialog kirim skor (leaderboard) */
+#lb {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  align-items: flex-start; /* di atas, supaya tidak tertutup keyboard HP (landscape) */
+  justify-content: center;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 12px
+    calc(12px + env(safe-area-inset-left, 0px));
+  background: rgba(4, 6, 13, 0.82);
+  cursor: default;
+}
+#lb[hidden] {
+  display: none;
+}
+#lb form {
+  box-sizing: border-box;
+  width: min(100%, 380px);
+  padding: 12px 16px 14px;
+  text-align: center;
+  font: 700 13px Consolas, Menlo, monospace;
+  color: #7aa2c0;
+  background: #0a1220;
+  border: 2px solid #22d3ee;
+  border-radius: 12px;
+  box-shadow: 0 0 18px #22d3ee66;
+}
+#lb h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #22d3ee;
+}
+#lb p {
+  margin: 4px 0;
+}
+#lb-info {
+  color: #39ff88;
+}
+#lb input {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 8px 0 2px;
+  padding: 10px 12px;
+  font: 700 16px Consolas, Menlo, monospace; /* >=16px: iOS tidak zoom saat fokus */
+  text-align: center;
+  color: #fff;
+  background: #04060d;
+  border: 2px solid #22d3ee;
+  border-radius: 8px;
+  outline: none;
+  -webkit-user-select: text; /* body memblokir seleksi; input harus tetap bisa diketik (iOS) */
+  user-select: text;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#lb input:focus {
+  border-color: #39ff88;
+  box-shadow: 0 0 10px #39ff8866;
+}
+#lb-msg {
+  min-height: 16px;
+  color: #ffd166;
+}
+#lb-msg.err {
+  color: #ff2e63;
+}
+#lb .row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+#lb button {
+  flex: 1;
+  padding: 10px 0;
+  font: 700 14px Consolas, Menlo, monospace;
+  background: #0a1220;
+  border: 2px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#lb-send {
+  color: #39ff88;
+  border-color: #39ff88;
+}
+#lb-cancel {
+  color: #7aa2c0;
+  border-color: #7aa2c0;
+}
+#lb button:disabled {
+  opacity: 0.5;
+}

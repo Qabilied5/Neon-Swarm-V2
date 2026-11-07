@@ -30,6 +30,14 @@ Tombol **HUD** di menu utama / layar pause membuka editor tata letak kontrol:
 - **GARIS AREA: ON** menampilkan garis tepi kedua area saat bermain. **RESET** (tekan 2x) mengembalikan tata letak bawaan.
 - Pengaturan tersimpan otomatis di perangkat (`localStorage` kunci `ns_hud`).
 
+## Leaderboard online (opsional)
+
+Skor dihitung lokal. Saat **game over**, tombol **KIRIM SKOR** (desktop: tombol `S`) membuka dialog untuk mengisi nama; baru setelah ditekan KIRIM, nama + skor dikirim lewat HTTPS ke API di Vercel dan disimpan di MongoDB Atlas (folder `backend/`, panduan di `backend/README.md`).
+
+- **TOP 3** tampil di menu dan layar pause saat online. Top 10 di-cache di `localStorage` (`ns_lb`), diperbarui saat game dibuka, saat pause, dan setelah kirim skor.
+- Saat bermain, skor dibandingkan dengan cache (tanpa jaringan). Melewati skor pemain lain memunculkan notifikasi kecil kiri atas: *"Mengalahkan skor NAMA (12345)"*.
+- Aktifkan dengan mengisi `LB_API` di `js/net/leaderboard.js`. Dibiarkan placeholder = fitur mati, game tetap jalan offline.
+
 ## Rilis versi baru
 
 Naikkan angka `?v=` pada **semua** tag `<script>`/`<link>` di `index.html` (cari-ganti). Angka itu juga dipakai `sw.js` sebagai versi cache (dibaca dari `core/pwa.js?v=N`), jadi pemain mendapat update otomatis dan cache lama dibuang.
@@ -75,6 +83,7 @@ js/
   ui/buttons.js                   Tombol UI kecil (fullscreen, pause) + hit test
   ui/fullscreen.js                Fungsi fullscreen
   ui/touch-layout.js              Layout kontrol sentuh (landscape) + konfigurasi HUD (HC: area gerak/serang, posisi & ukuran tombol, disimpan ke localStorage)
+  net/leaderboard.js              Leaderboard online: cache top skor, notif, dialog kirim skor (lihat backend/)
   ui/hud-edit.js                  Editor HUD sentuh (tombol HUD di menu/pause): seret/ubah ukuran tombol & area gerak/serang
   ui/touch-hud.js                 Gambar kontrol sentuh: stik kiri, tombol serang (dengan knob bidik), tombol dash & skill
   ui/skill-hud.js                 Gambar ikon skill Q/E/R + heal C di desktop

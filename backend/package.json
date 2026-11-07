@@ -1,0 +1,9 @@
+{
+  "name": "neon-swarm-leaderboard-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API leaderboard NEON SWARM (Vercel Serverless Function + MongoDB Atlas)",
+  "engines": { "node": "22.x" },
+  "scripts": { "test": "node --test" },
+  "dependencies": { "mongodb": "^7.0.0" }
+}

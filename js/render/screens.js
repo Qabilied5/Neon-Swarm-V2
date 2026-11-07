@@ -25,8 +25,8 @@ function drawMenu() {
         ],
         ['Tombol HUD (kanan atas): atur posisi tombol & luas area gerak / serang', '#7aa2c0'],
       ];
-    lines.forEach((l, i) => tx(l[0], UW / 2, y0 + i * (sz + 9), sz, l[1]));
-    sy = y0 + lines.length * (sz + 9) + 26;
+    lines.forEach((l, i) => tx(l[0], UW / 2, y0 + i * (sz + 7), sz, l[1]));
+    sy = y0 + lines.length * (sz + 7) + 22;
   } else {
     tx(
       'WASD gerak  ·  MOUSE bidik (tembak otomatis)  ·  SPACE / klik kanan dash',
@@ -71,7 +71,8 @@ function drawMenu() {
     'center',
     12,
   );
-  if (best) tx('REKOR ' + best, UW / 2, sy + 28, 14, '#7aa2c0');
+  if (best) tx('REKOR ' + best, UW / 2, sy + 26, 14, '#7aa2c0');
+  lbDrawTop3(sy + (TOUCH ? 48 : 54), cl(UW / 60, 11, 13)); // top 3 leaderboard (online)
   // iPhone/iPad (Safari) tidak punya tombol install otomatis
   if (IOS && !STANDALONE)
     tx('Instal: tombol Bagikan → "Tambah ke Layar Utama"', UW / 2, UH - SAFE.b - 12, 12, '#7aa2c0');
@@ -89,6 +90,7 @@ function drawPause() {
       '#7aa2c0',
     );
     if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', UW / 2, UH / 2 + 58, 13, '#7aa2c0');
+    lbDrawTop3(UH / 2 + (TOUCH ? 86 : 64), 14);
   }
 }
 function drawLevelup() {
@@ -135,19 +137,12 @@ function drawDead() {
   if (S == 'dead') {
     g.fillStyle = 'rgba(0,0,0,.65)';
     g.fillRect(0, 0, UW, UH);
-    tx('SISTEM RUNTUH', UW / 2, UH * 0.36, big * 0.8, '#ff2e63', 'center', 30);
-    tx(
-      `SKOR ${score}   ·   WAVE ${wave}   ·   KILLS ${kills}`,
-      UW / 2,
-      UH * 0.36 + 44,
-      20,
-      '#39ff88',
-      'center',
-      8,
-    );
-    if (score >= best && score > 0)
-      tx('REKOR BARU!', UW / 2, UH * 0.36 + 74, 18, '#ffd166', 'center', 10);
-    tx(epi, UW / 2, UH * 0.36 + 110, 15, '#ffd166');
+    const y0 = UH * 0.28;
+    tx('SISTEM RUNTUH', UW / 2, y0, big * 0.8, '#ff2e63', 'center', 30);
+    tx(`SKOR ${score}   ·   WAVE ${wave}   ·   KILLS ${kills}`, UW / 2, y0 + 44, 20, '#39ff88', 'center', 8);
+    if (score >= best && score > 0) tx('REKOR BARU!', UW / 2, y0 + 72, 18, '#ffd166', 'center', 10);
+    tx(epi, UW / 2, y0 + 104, 15, '#ffd166');
+    lbDrawDead(y0 + 124); // tombol KIRIM SKOR (leaderboard online)
     if (deadT <= 0)
       tx(
         Math.floor(T * 2) % 2
@@ -156,7 +151,7 @@ function drawDead() {
             : 'KLIK ATAU ENTER UNTUK MAIN LAGI'
           : '',
         UW / 2,
-        UH * 0.7,
+        Math.max(UH * 0.7, y0 + 200),
         20,
         '#22d3ee',
         'center',

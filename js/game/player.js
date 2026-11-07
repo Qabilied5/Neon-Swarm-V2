@@ -39,6 +39,7 @@ function hurt(d, c) {
 function die() {
   S = 'dead';
   deadT = 0.9;
+  lbDie(); // simpan hasil run untuk tombol KIRIM SKOR
   pf(P.x, P.y, 60, '#22d3ee', 400, 1);
   if (score > best) {
     best = score;

@@ -57,6 +57,7 @@ function init() {
   taunt = '';
   epi = '';
   S = 'play';
+  lbBegin(); // snapshot leaderboard untuk notif "mengalahkan skor"
   banner('WAVE 1');
 }
 const banner = (m, b = '') => {

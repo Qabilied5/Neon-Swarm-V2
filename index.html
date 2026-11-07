@@ -19,64 +19,88 @@
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 
-    <link rel="stylesheet" href="css/style.css?v=16" />
+    <link rel="stylesheet" href="css/style.css?v=17" />
   </head>
   <body>
     <canvas id="c"></canvas>
     <div id="safe"></div>
     <button id="install" type="button">⬇ INSTAL APP</button>
+    <!-- Dialog kirim skor (leaderboard) - dikelola js/net/leaderboard.js -->
+    <div id="lb" hidden>
+      <form id="lb-form" autocomplete="off">
+        <h2>KIRIM SKOR</h2>
+        <p id="lb-info"></p>
+        <input
+          id="lb-name"
+          type="text"
+          maxlength="16"
+          placeholder="Nama (maks 16 karakter)"
+          enterkeyhint="send"
+          autocapitalize="words"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Nama pemain"
+        />
+        <p id="lb-msg" role="status"></p>
+        <div class="row">
+          <button id="lb-send" type="submit">KIRIM</button>
+          <button id="lb-cancel" type="button">BATAL</button>
+        </div>
+      </form>
+    </div>
     <div id="rotate" role="alert">
       <div class="phone"></div>
       <p>Putar perangkat ke mode <b>landscape</b></p>
     </div>
 
     <!-- Urutan penting: semua file berbagi scope global. main.js harus terakhir. -->
-    <script src="js/core/canvas.js?v=16"></script>
-    <script src="js/core/pwa.js?v=16"></script>
-    <script src="js/core/utils.js?v=16"></script>
-    <script src="js/core/state.js?v=16"></script>
-    <script src="js/core/audio.js?v=16"></script>
-    <script src="js/core/ai.js?v=16"></script>
-    <script src="js/data/texts.js?v=16"></script>
-    <script src="js/data/upgrades.js?v=16"></script>
-    <script src="js/data/enemies.js?v=16"></script>
-    <script src="js/data/config.js?v=16"></script>
-    <script src="js/game/init.js?v=16"></script>
-    <script src="js/game/effects.js?v=16"></script>
-    <script src="js/game/player.js?v=16"></script>
-    <script src="js/enemies/spawn.js?v=16"></script>
-    <script src="js/enemies/boss.js?v=16"></script>
-    <script src="js/enemies/superboss.js?v=16"></script>
-    <script src="js/enemies/secretboss.js?v=16"></script>
-    <script src="js/combat/damage.js?v=16"></script>
-    <script src="js/combat/skills.js?v=16"></script>
-    <script src="js/update/player.js?v=16"></script>
-    <script src="js/update/waves.js?v=16"></script>
-    <script src="js/update/bullets.js?v=16"></script>
-    <script src="js/update/enemies.js?v=16"></script>
-    <script src="js/update/projectiles.js?v=16"></script>
-    <script src="js/update/pickups.js?v=16"></script>
-    <script src="js/update/fx.js?v=16"></script>
-    <script src="js/update/secretboss.js?v=16"></script>
-    <script src="js/update/index.js?v=16"></script>
-    <script src="js/input/keyboard-mouse.js?v=16"></script>
-    <script src="js/input/touch.js?v=16"></script>
-    <script src="js/ui/cards.js?v=16"></script>
-    <script src="js/ui/buttons.js?v=16"></script>
-    <script src="js/ui/fullscreen.js?v=16"></script>
-    <script src="js/ui/touch-layout.js?v=16"></script>
-    <script src="js/ui/touch-hud.js?v=16"></script>
-    <script src="js/ui/hud-edit.js?v=16"></script>
-    <script src="js/ui/skill-hud.js?v=16"></script>
-    <script src="js/render/primitives.js?v=16"></script>
-    <script src="js/render/background.js?v=16"></script>
-    <script src="js/render/entities.js?v=16"></script>
-    <script src="js/render/aim.js?v=16"></script>
-    <script src="js/render/effects.js?v=16"></script>
-    <script src="js/render/world.js?v=16"></script>
-    <script src="js/render/hud.js?v=16"></script>
-    <script src="js/render/screens.js?v=16"></script>
-    <script src="js/render/draw.js?v=16"></script>
-    <script src="js/main.js?v=16"></script>
+    <script src="js/core/canvas.js?v=17"></script>
+    <script src="js/core/pwa.js?v=17"></script>
+    <script src="js/core/utils.js?v=17"></script>
+    <script src="js/core/state.js?v=17"></script>
+    <script src="js/core/audio.js?v=17"></script>
+    <script src="js/core/ai.js?v=17"></script>
+    <script src="js/data/texts.js?v=17"></script>
+    <script src="js/data/upgrades.js?v=17"></script>
+    <script src="js/data/enemies.js?v=17"></script>
+    <script src="js/data/config.js?v=17"></script>
+    <script src="js/game/init.js?v=17"></script>
+    <script src="js/game/effects.js?v=17"></script>
+    <script src="js/game/player.js?v=17"></script>
+    <script src="js/enemies/spawn.js?v=17"></script>
+    <script src="js/enemies/boss.js?v=17"></script>
+    <script src="js/enemies/superboss.js?v=17"></script>
+    <script src="js/enemies/secretboss.js?v=17"></script>
+    <script src="js/combat/damage.js?v=17"></script>
+    <script src="js/combat/skills.js?v=17"></script>
+    <script src="js/update/player.js?v=17"></script>
+    <script src="js/update/waves.js?v=17"></script>
+    <script src="js/update/bullets.js?v=17"></script>
+    <script src="js/update/enemies.js?v=17"></script>
+    <script src="js/update/projectiles.js?v=17"></script>
+    <script src="js/update/pickups.js?v=17"></script>
+    <script src="js/update/fx.js?v=17"></script>
+    <script src="js/update/secretboss.js?v=17"></script>
+    <script src="js/update/index.js?v=17"></script>
+    <script src="js/input/keyboard-mouse.js?v=17"></script>
+    <script src="js/input/touch.js?v=17"></script>
+    <script src="js/ui/cards.js?v=17"></script>
+    <script src="js/ui/buttons.js?v=17"></script>
+    <script src="js/ui/fullscreen.js?v=17"></script>
+    <script src="js/ui/touch-layout.js?v=17"></script>
+    <script src="js/ui/touch-hud.js?v=17"></script>
+    <script src="js/ui/hud-edit.js?v=17"></script>
+    <script src="js/ui/skill-hud.js?v=17"></script>
+    <script src="js/net/leaderboard.js?v=17"></script>
+    <script src="js/render/primitives.js?v=17"></script>
+    <script src="js/render/background.js?v=17"></script>
+    <script src="js/render/entities.js?v=17"></script>
+    <script src="js/render/aim.js?v=17"></script>
+    <script src="js/render/effects.js?v=17"></script>
+    <script src="js/render/world.js?v=17"></script>
+    <script src="js/render/hud.js?v=17"></script>
+    <script src="js/render/screens.js?v=17"></script>
+    <script src="js/render/draw.js?v=17"></script>
+    <script src="js/main.js?v=17"></script>
   </body>
 </html>

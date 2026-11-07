@@ -147,7 +147,7 @@ function castSkill(k) {
 addEventListener(
   'touchstart',
   (e) => {
-    if (e.target && e.target.closest && e.target.closest('#install')) return; // biarkan tombol install bekerja
+    if (e.target && e.target.closest && e.target.closest('#install, #lb')) return; // biarkan tombol install & dialog kirim skor bekerja
     e.preventDefault();
     TOUCH = true;
     if (PORTRAIT) return;
@@ -160,6 +160,7 @@ addEventListener(
       }
       if (uiHit(x, y)) continue;
       if (S == 'menu' || S == 'dead') {
+        if (S == 'dead' && lbBtnHit(x, y)) continue; // tombol KIRIM SKOR: aksi saat jari dilepas
         if (deadT <= 0) init();
         continue;
       }
@@ -278,6 +279,7 @@ const tend = (e) => {
     if (e.type == 'touchend') {
       const u = uiHit(t.clientX, t.clientY);
       if (u) uiAct(u);
+      else if (S == 'dead' && lbBtnHit(t.clientX, t.clientY)) lbOpen();
       else if (!fsTried && !STANDALONE && S == 'play') {
         fsTried = 1;
         enterFS();
