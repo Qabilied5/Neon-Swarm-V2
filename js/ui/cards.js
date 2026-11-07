@@ -17,6 +17,7 @@ function cardAt(x, y) {
 function pickCard(i) {
   if (!cards[i]) return;
   cards[i][2]();
+  P.up[cards[i][0]] = (P.up[cards[i][0]] || 0) + 1; // catat stack upgrade
   S = 'play';
   snd(880, 0.15, 'triangle', 0.06);
   pf(P.x, P.y, 20, '#39ff88', 250, 0.6);

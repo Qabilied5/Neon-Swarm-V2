@@ -111,7 +111,7 @@ js/
 
 | Mau tambah... | Edit file... |
 | --- | --- |
-| Upgrade baru | `data/upgrades.js` (elemen ke-4 = kunci ikon; gambar ikonnya di `render/icons.js`) |
+| Upgrade baru | `data/upgrades.js` (elemen ke-4 = kunci ikon, gambar ikonnya di `render/icons.js`; elemen ke-5 = 1 bila instan/tanpa stack) |
 | Tipe musuh baru | `data/enemies.js` (stat) + `update/enemies.js` (AI) + `enemies/spawn.js` / `update/waves.js` (kapan muncul) |
 | Skill baru | `combat/skills.js` + tombol di `input/keyboard-mouse.js`, `ui/skill-hud.js`, dan `TBTN` di `ui/touch-layout.js` |
 | Posisi / ukuran tombol sentuh | `ui/touch-layout.js` (sudut `a` & radius `r` per tombol) |

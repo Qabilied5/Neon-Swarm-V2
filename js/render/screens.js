@@ -231,8 +231,14 @@ function drawLevelup() {
       g.fillRect(x, c.y0, c.cw, c.ch);
       g.strokeRect(x, c.y0, c.cw, c.ch);
       tx(String(i + 1), x + 14, c.y0 + 24, 16, '#7aa2c0', 'left');
+      // upgrade yang sudah pernah diambil & bisa di-stack: ikon panah hijau (naik-turun pelan) + "LV lama > LV baru"
+      const n = (P.up && P.up[u[0]]) || 0;
+      if (n > 0 && !u[4]) {
+        drawIcon('levelup', x + c.cw - 24, c.y0 + 22 - 2 * Math.abs(Math.sin(T * 5)), 28, '#39ff88', TOUCH ? 6 : 10);
+        tx(`LV ${n} > ${n + 1}`, x + c.cw - 42, c.y0 + 28, 14, '#39ff88', 'right', 6);
+      }
       // ikon SVG upgrade (u[3], render/icons.js); sedikit membesar saat disorot
-      drawIcon(u[3], x + c.cw / 2, c.y0 + 52, Math.min(72, c.cw * 0.34) * (hot ? 1.1 : 1), hot ? '#39ff88' : '#22d3ee', TOUCH ? 6 : 12);
+      drawIcon(u[3], x + c.cw / 2, c.y0 + 64, Math.min(60, c.cw * 0.28) * (hot ? 1.1 : 1), hot ? '#39ff88' : '#22d3ee', TOUCH ? 6 : 12);
       tx(u[0], x + c.cw / 2, c.y0 + 118, Math.min(17, c.cw / 11), '#fff', 'center', 8);
       const w = u[1].split(' ');
       let ln = '',

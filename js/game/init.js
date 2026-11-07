@@ -27,6 +27,7 @@ function init() {
     need: 6,
     a: 0,
     sk: { q: 0, e: 0, r: 0 },
+    up: {}, // jumlah stack tiap upgrade yang sudah diambil: { 'MAGNET': 2, ... } (badge naik level di kartu)
     cd: { q: 0, e: 0, r: 0, c: 0 },
     ch: 0,
     boom: 0,

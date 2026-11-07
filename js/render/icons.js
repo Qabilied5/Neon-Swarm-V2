@@ -140,6 +140,8 @@ const ICON = {
     `<circle cx="32" cy="32" r="6" fill="#04060d" stroke="${IC.p}"/>` +
     foe(52, 15, 3.5) +
     foe(12, 49, 3.5),
+  // lencana "upgrade bisa di-stack" (dua chevron naik, hijau)
+  levelup: () => cir(32, 32, 27, IC.g, 2.5, 0.9) + `<circle cx="32" cy="32" r="27" fill="${IC.g}" fill-opacity=".15" stroke="none"/>` + pln('20,34 32,22 44,34', IC.g, 4) + pln('20,47 32,35 44,47', IC.g, 4, 0.55),
   // tombol
   dash: () => ply(44, 32, 10) + ply(30, 32, 10, 0, 0.35) + ply(17, 32, 10, 0, 0.18),
   heal: () => shp('25,10 39,10 39,25 54,25 54,39 39,39 39,54 25,54 25,39 10,39 10,25 25,25', IC.g, 0.3),
