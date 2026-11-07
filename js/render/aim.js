@@ -25,51 +25,7 @@ function drawAim() {
   g.lineCap = 'butt';
   if (on) drawReticle(u);
   if (SK.on) drawSkillAim();
-  if (DA.on) drawDashAim();
   g.globalAlpha = 1;
-}
-
-// pratinjau dash analog (double-tap sisi kiri): garis arah + bayangan titik tujuan. Redup saat dash masih cooldown.
-function drawDashAim() {
-  const a = dashAimAngle(),
-    ux = Math.cos(a),
-    uy = Math.sin(a),
-    len = 720 * 0.16, // jarak dash sebenarnya (kecepatan x durasi, lihat update/player.js & game/player.js)
-    ex = P.x + ux * len,
-    ey = P.y + uy * len,
-    rdy = P.dc <= 0 && !(P.dash > 0),
-    c = '#ffd166';
-  g.strokeStyle = c;
-  g.fillStyle = c;
-  g.shadowBlur = 0;
-  g.lineCap = 'round';
-  // garis panduan panjang (membantu membidik arah dengan presisi)
-  g.globalAlpha = rdy ? 0.25 : 0.1;
-  g.lineWidth = 2;
-  g.setLineDash([8, 8]);
-  g.beginPath();
-  g.moveTo(ex, ey);
-  g.lineTo(P.x + ux * len * 2.6, P.y + uy * len * 2.6);
-  g.stroke();
-  g.setLineDash([]);
-  // jarak dash sebenarnya
-  g.globalAlpha = rdy ? 0.85 : 0.3;
-  g.lineWidth = 4;
-  g.beginPath();
-  g.moveTo(P.x, P.y);
-  g.lineTo(ex, ey);
-  g.stroke();
-  // bayangan pemain di titik tujuan
-  g.globalAlpha = rdy ? 0.3 : 0.12;
-  g.beginPath();
-  g.arc(ex, ey, P.r, 0, TAU);
-  g.fill();
-  g.globalAlpha = rdy ? 0.9 : 0.3;
-  g.lineWidth = 2;
-  g.beginPath();
-  g.arc(ex, ey, P.r, 0, TAU);
-  g.stroke();
-  g.lineCap = 'butt';
 }
 
 // pratinjau bidik skill yang sedang ditahan

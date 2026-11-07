@@ -12,7 +12,7 @@ function drawMenu() {
       y0 = ty + big * 0.45 + 34,
       lines = [
         [
-          'SISI KIRI LAYAR = gerak  ·  SISI KANAN = tahan & geser untuk menembak / membidik',
+          'KIRI = gerak & arah dash  ·  KANAN = tahan & geser untuk menembak  ·  DOUBLE-TAP KANAN = DASH',
           '#39ff88',
         ],
         [

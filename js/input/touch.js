@@ -1,65 +1,18 @@
 // Input sentuh: sisi kiri layar = stik gerak (melayang, tanpa UI), sisi kanan layar = serang bebas (tahan + geser untuk bidik, TANPA auto aim)
 // + dash & skill. Skill Q/E/R: tahan -> geser untuk membidik -> lepas untuk menembakkan.
-// DASH ANALOG: double-tap di sisi kiri layar, tap kedua ditahan -> muncul stik analog dengan jangkauan TETAP; geser ke arah mana saja (360°), lepas = dash.
-// FLICK DASH: saat stik gerak ditahan, geser jari dengan CEPAT & mendadak (hentakan) -> dash ke arah hentakan, tanpa melepas jari.
+// DASH: double-tap CEPAT di sisi kanan layar (area serang) = trigger dash. Double-tap HANYA memicu dash, tidak mengarahkannya:
+// arah dash = arah stik gerak kiri (jika sedang ditahan), jika tidak -> arah gerak terakhir. Jadi kiri = arah, kanan = trigger,
+// dan jempol kanan bisa menembak + dash di titik yang sama tanpa berpindah.
 // AIM ASSIST: musuh di dalam lingkaran bidik -> peluru diarahkan tepat ke musuh (dengan prediksi gerak).
 const TPR = {}; // waktu efek "ditekan" per tombol
 
-// DASH ANALOG (double-tap sisi kiri): tap 1 singkat -> tap 2 ditahan + geser = arahkan dash -> lepas = dash.
-// Sisi kiri tetap tanpa UI; pratinjau arah hanya digambar di dunia game (render/aim.js) selama ditahan.
-const DASH_GAP = 300, // ms maks antar dua tap
-  DASH_DIST = 90, // px maks jarak antar dua tap
-  DASH_DEAD = 0.18, // deadzone stik dash (pecahan radius): di bawah ini = arah bawaan (arah gerak terakhir)
-  DASH_MOVE = 6, // px: jari harus bergeser sejauh ini dari titik sentuh sebelum dianggap membidik
+// DOUBLE-TAP DASH (sisi kanan): tap singkat lalu tap kedua dengan cepat -> dash langsung di sentuhan kedua.
+// Sentuhan kedua tetap berlanjut sebagai tahan-bidik biasa, jadi pemain bisa langsung menembak setelah dash.
+const DASH_GAP = 300, // ms maks antara lepas tap pertama dan mulai tap kedua
   DASH_TAP_MS = 220, // tap pertama harus lebih singkat dari ini
-  DASH_TAP_MOVE = 20; // ...dan tidak bergeser lebih dari ini (px)
-const DA = { on: 0, id: null, ox: 0, oy: 0, cx: 0, cy: 0, kx: 0, ky: 0, x: 1, y: 0, man: 0, mv: 0 }; // ox,oy = titik sentuh; cx,cy = pusat cincin (ditahan di dalam layar); kx,ky = offset knob; x,y = arah (vektor satuan); man = 1 jika knob keluar deadzone
-const LT = { t: 0, x: 0, y: 0 }; // tap singkat terakhir di sisi kiri (waktu, posisi)
-const LM = { x: 0, y: 0 }; // arah gerak terakhir pemain (vektor satuan) = arah dash bawaan jika stik tidak digeser
-
-// FLICK DASH: hentakan cepat jari pada stik gerak
-const FLICK_WIN = 100, // ms: jendela waktu untuk mengukur kecepatan geser
-  FLICK_DIST = 30, // px: jarak minimum geser dalam jendela itu
-  FLICK_SPD = 600, // px/detik: kecepatan minimum agar dihitung hentakan (geser biasa jauh lebih lambat)
-  FLICK_LOCK = 350; // ms: jeda antar flick dash
-const JH = []; // riwayat posisi jari stik gerak {t,x,y}
-let flickT = 0;
-function flickCheck(x, y) {
-  const now = performance.now();
-  JH.push({ t: now, x, y });
-  while (JH.length && now - JH[0].t > FLICK_WIN) JH.shift();
-  if (JH.length < 2 || now - flickT < FLICK_LOCK || S != 'play' || !P || P.dc > 0 || P.dash > 0) return;
-  const a = JH[0],
-    dx = x - a.x,
-    dy = y - a.y,
-    d = Math.hypot(dx, dy),
-    dt = Math.max(now - a.t, 16);
-  if (d >= FLICK_DIST && (d / dt) * 1000 >= FLICK_SPD) {
-    flickT = now;
-    JH.length = 0;
-    dash(Math.atan2(dy, dx)); // arah = arah hentakan jari
-  }
-}
-
-const dashR = () => 64 * tui().u; // radius stik dash (px layar) = jangkauan tetap
-
-function dashAimFrom(x, y) {
-  const R = dashR();
-  if (Math.hypot(x - DA.ox, y - DA.oy) >= DASH_MOVE) DA.mv = 1; // cincin yang digeser agar muat di layar tidak dihitung sebagai geseran jari
-  const dx = x - DA.cx,
-    dy = y - DA.cy,
-    m = Math.hypot(dx, dy) || 1,
-    k = Math.min(m, R) / m;
-  DA.kx = dx * k;
-  DA.ky = dy * k;
-  DA.man = DA.mv && m >= R * DASH_DEAD ? 1 : 0;
-  if (DA.man) {
-    DA.x = dx / m; // analog penuh: sudut mengikuti jari tanpa dibulatkan
-    DA.y = dy / m;
-  } else DA.kx = DA.ky = 0;
-}
-// sudut dash: arah knob; jika tidak digeser -> arah gerak terakhir, lalu arah hadap
-const dashAimAngle = () => (DA.man ? Math.atan2(DA.y, DA.x) : LM.x || LM.y ? Math.atan2(LM.y, LM.x) : P.a);
+  DASH_TAP_MOVE = 24; // ...dan jari tidak bergeser lebih dari ini (px), supaya geser bidik tidak dihitung tap
+const RT = { t: 0 }; // waktu lepas tap singkat terakhir di sisi kanan
+const LM = { x: 0, y: 0 }; // arah gerak terakhir pemain (vektor satuan) = arah dash jika stik kiri tidak ditahan
 
 // jarak bidik maksimum (satuan dunia) untuk skill yang menargetkan titik
 const SK_RANGE = { q: 230, r: 380 };
@@ -234,37 +187,25 @@ addEventListener(
       }
       if (!AIM.on && x >= UW * 0.5) {
         // seluruh sisi kanan layar = area serang bebas (tahan + geser)
+        const now = performance.now();
+        if (now - RT.t < DASH_GAP && P && S == 'play') {
+          RT.t = 0; // double-tap: trigger dash saja (arah dari stik kiri)
+          dash();
+        }
         AIM.on = 1;
         AIM.id = t.identifier;
+        AIM.t0 = now; // untuk mendeteksi tap singkat
+        AIM.sx = x;
+        AIM.sy = y;
         aimStart(x, y);
         continue;
       }
-      if (x < UW * 0.5 && !JS.on && !DA.on) {
-        const now = performance.now();
-        if (now - LT.t < DASH_GAP && Math.hypot(x - LT.x, y - LT.y) < DASH_DIST) {
-          // double-tap: mulai bidik dash analog (stik gerak tidak aktif selama ini)
-          LT.t = 0;
-          DA.on = 1;
-          DA.id = t.identifier;
-          DA.ox = x;
-          DA.oy = y;
-          const R = dashR(),
-            sf = 8;
-          DA.cx = cl(x, SAFE.l + R + sf, Math.max(SAFE.l + R + sf, UW * 0.5)); // cincin tetap utuh di dalam layar
-          DA.cy = cl(y, R + sf, UH - SAFE.b - R - sf);
-          DA.man = DA.mv = 0;
-          DA.kx = DA.ky = 0;
-          DA.x = DA.y = 0;
-        } else {
-          JS.on = 1;
-          JS.id = t.identifier;
-          JS.ox = x;
-          JS.oy = y;
-          JS.x = JS.y = 0;
-          JS.t0 = now; // untuk mendeteksi tap singkat
-          JH.length = 0;
-          JH.push({ t: now, x, y });
-        }
+      if (x < UW * 0.5 && !JS.on) {
+        JS.on = 1;
+        JS.id = t.identifier;
+        JS.ox = x;
+        JS.oy = y;
+        JS.x = JS.y = 0;
       }
     }
   },
@@ -279,9 +220,7 @@ addEventListener(
         ty_ = t.clientY;
       if (AIM.on && t.identifier == AIM.id) aimFrom(tx_, ty_);
       if (SK.on && t.identifier == SK.id) skAimFrom(tx_, ty_);
-      if (DA.on && t.identifier == DA.id) dashAimFrom(tx_, ty_);
       if (JS.on && t.identifier == JS.id) {
-        flickCheck(tx_, ty_);
         const dx = tx_ - JS.ox,
           dy = ty_ - JS.oy,
           m = Math.hypot(dx, dy),
@@ -300,25 +239,17 @@ addEventListener(
 const tend = (e) => {
   for (const t of e.changedTouches) {
     if (JS.on && t.identifier == JS.id) {
-      // tap singkat (tanpa geser) di sisi kiri = kandidat tap pertama double-tap dash
-      if (
-        e.type == 'touchend' &&
-        performance.now() - JS.t0 < DASH_TAP_MS &&
-        Math.hypot(t.clientX - JS.ox, t.clientY - JS.oy) < DASH_TAP_MOVE
-      ) {
-        LT.t = performance.now();
-        LT.x = JS.ox;
-        LT.y = JS.oy;
-      }
       JS.on = 0;
       JS.x = JS.y = 0;
     }
-    if (DA.on && t.identifier == DA.id) {
-      if (e.type == 'touchend' && S == 'play' && P) dash(dashAimAngle()); // touchcancel = batal
-      DA.on = DA.man = DA.mv = 0;
-      DA.kx = DA.ky = 0;
-    }
     if (AIM.on && t.identifier == AIM.id) {
+      // tap singkat (tanpa geser) = kandidat tap pertama double-tap dash
+      if (
+        e.type == 'touchend' &&
+        performance.now() - AIM.t0 < DASH_TAP_MS &&
+        Math.hypot(t.clientX - AIM.sx, t.clientY - AIM.sy) < DASH_TAP_MOVE
+      )
+        RT.t = performance.now();
       AIM.on = AIM.man = 0;
       AIM.kx = AIM.ky = 0;
       AIM.tg = null;

@@ -15,7 +15,7 @@ Game arcade survival berbasis canvas, bisa dimainkan di desktop dan **HP (landsc
 |---|---|---|
 | Gerak | WASD / panah | stik kiri (melayang di setengah kiri layar) |
 | Bidik | mouse (tembak otomatis) | tahan tombol serang kanan -> muncul lingkaran bidik, geser jari untuk menggerakkan lingkaran ke mana saja; pemain menembak ke arah lingkaran selama ditahan |
-| Dash | Space / klik kanan | tombol DASH (kanan, sebelah ✚) |
+| Dash | Space / klik kanan | **double-tap cepat** di area serang kanan (hanya memicu dash); arah dash = stik kiri yang sedang ditahan, jika tidak -> arah gerak terakhir. Tombol DASH juga tetap ada |
 | Skill | Q / E / R | tombol Q / E / R |
 | Heal | C (cooldown 60 dtk) | tombol ✚ |
 | Pause | P | tombol pause |
@@ -60,7 +60,7 @@ js/
   update/secretboss.js            AI Secret Boss: diam, menembakkan pola laser layar penuh dengan pre-laser (garis kuning peringatan)
   update/index.js                 upd(dt) = urutan pembaruan per frame (memanggil file update/* lainnya)
   input/keyboard-mouse.js         Input keyboard & mouse
-  input/touch.js                  Input sentuh: jari kiri = stik gerak, jari kanan = tombol serang (geser untuk bidik) + dash/skill
+  input/touch.js                  Input sentuh: jari kiri = stik gerak, jari kanan = tombol serang (geser untuk bidik, double-tap = dash) + skill
   ui/cards.js                     Layout & klik kartu upgrade
   ui/buttons.js                   Tombol UI kecil (fullscreen, pause) + hit test
   ui/fullscreen.js                Fungsi fullscreen

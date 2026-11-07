@@ -5,7 +5,7 @@ const K = {},
 let TOUCH = matchMedia('(pointer:coarse)').matches,
   fsTried = 0;
 const JS = { on: 0, id: null, ox: 0, oy: 0, x: 0, y: 0 }; // stik kiri (gerak)
-const AIM = { on: 0, id: null, man: 0, x: 1, y: 0, kx: 0, ky: 0, ox: 0, oy: 0, lx: 0, ly: 0, dist: 0 }; // tombol serang kanan: tahan + geser = gerakkan lingkaran bidik. ox,oy = offset lingkaran dari pemain, lx,ly = posisi jari terakhir, dist = jarak terakhir
+const AIM = { on: 0, id: null, man: 0, x: 1, y: 0, kx: 0, ky: 0, ox: 0, oy: 0, lx: 0, ly: 0, dist: 0, t0: 0, sx: 0, sy: 0 }; // tombol serang kanan: tahan + geser = gerakkan lingkaran bidik. ox,oy = offset lingkaran dari pemain, lx,ly = posisi jari terakhir, dist = jarak terakhir
 // Bidik skill (Q/E/R): tahan tombol skill lalu geser untuk mengarahkan, lepas untuk menembakkan.
 // k = tombol aktif, man = 1 jika digeser keluar deadzone, x,y = arah, d = jarak 0..1, kx,ky = posisi knob
 const SK = { on: 0, id: null, k: null, man: 0, x: 1, y: 0, d: 0, kx: 0, ky: 0 };
