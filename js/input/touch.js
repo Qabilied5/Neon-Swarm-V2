@@ -1,6 +1,7 @@
-// Input sentuh: sisi kiri layar = stik gerak (melayang, tanpa UI), sisi kanan layar = serang bebas (tahan + geser untuk bidik, TANPA auto aim)
+// Input sentuh: area gerak (bawaan sisi kiri layar) = stik gerak (melayang, tanpa UI), area serang (bawaan sisi kanan) = serang bebas (tahan + geser untuk bidik, TANPA auto aim)
 // + dash & skill. Skill Q/E/R: tahan -> geser untuk membidik -> lepas untuk menembakkan.
-// DASH: double-tap CEPAT di sisi kanan layar (area serang) = trigger dash. Double-tap HANYA memicu dash, tidak mengarahkannya:
+// Posisi tombol & luas kedua area bisa diatur pemain (HUD di menu / pause, lihat ui/hud-edit.js, konfigurasi HC di ui/touch-layout.js).
+// DASH: double-tap CEPAT di area serang (kanan) = trigger dash. Double-tap HANYA memicu dash, tidak mengarahkannya:
 // arah dash = arah stik gerak kiri (jika sedang ditahan), jika tidak -> arah gerak terakhir. Jadi kiri = arah, kanan = trigger,
 // dan jempol kanan bisa menembak + dash di titik yang sama tanpa berpindah.
 // AIM ASSIST: musuh di dalam lingkaran bidik -> peluru diarahkan tepat ke musuh (dengan prediksi gerak).
@@ -153,6 +154,10 @@ addEventListener(
     for (const t of e.changedTouches) {
       const x = t.clientX,
         y = t.clientY; // koordinat layar asli (ruang UI)
+      if (S == 'hudedit') {
+        heStart(t.identifier, x, y); // editor HUD: seret tombol / area
+        continue;
+      }
       if (uiHit(x, y)) continue;
       if (S == 'menu' || S == 'dead') {
         if (deadT <= 0) init();
@@ -185,8 +190,8 @@ addEventListener(
         }
         continue;
       }
-      if (!AIM.on && x >= UW * 0.5) {
-        // seluruh sisi kanan layar = area serang bebas (tahan + geser)
+      if (!AIM.on && inZone(HC.aim, x, y)) {
+        // area serang (bawaan: seluruh sisi kanan layar; bisa diatur lewat HUD) = tahan + geser
         const now = performance.now();
         if (now - RT.t < DASH_GAP && P && S == 'play') {
           RT.t = 0; // double-tap: trigger dash saja (arah dari stik kiri)
@@ -200,7 +205,8 @@ addEventListener(
         aimStart(x, y);
         continue;
       }
-      if (x < UW * 0.5 && !JS.on) {
+      if (!JS.on && inZone(HC.move, x, y)) {
+        // area gerak (bawaan: seluruh sisi kiri layar)
         JS.on = 1;
         JS.id = t.identifier;
         JS.ox = x;
@@ -218,6 +224,10 @@ addEventListener(
     for (const t of e.changedTouches) {
       const tx_ = t.clientX,
         ty_ = t.clientY;
+      if (S == 'hudedit') {
+        heMove(t.identifier, tx_, ty_);
+        continue;
+      }
       if (AIM.on && t.identifier == AIM.id) aimFrom(tx_, ty_);
       if (SK.on && t.identifier == SK.id) skAimFrom(tx_, ty_);
       if (JS.on && t.identifier == JS.id) {
@@ -238,6 +248,10 @@ addEventListener(
 );
 const tend = (e) => {
   for (const t of e.changedTouches) {
+    if (S == 'hudedit') {
+      heEnd(t.identifier, t.clientX, t.clientY, e.type);
+      continue;
+    }
     if (JS.on && t.identifier == JS.id) {
       JS.on = 0;
       JS.x = JS.y = 0;

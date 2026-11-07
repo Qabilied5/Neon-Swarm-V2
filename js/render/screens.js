@@ -23,6 +23,7 @@ function drawMenu() {
           'WAVE 6+ musuh berevolusi  ·  WAVE 8+ 3 tabrakan = MATI  ·  WAVE 15+ super boss',
           '#ff8da1',
         ],
+        ['Tombol HUD (kanan atas): atur posisi tombol & luas area gerak / serang', '#7aa2c0'],
       ];
     lines.forEach((l, i) => tx(l[0], UW / 2, y0 + i * (sz + 9), sz, l[1]));
     sy = y0 + lines.length * (sz + 9) + 26;
@@ -87,6 +88,7 @@ function drawPause() {
       16,
       '#7aa2c0',
     );
+    if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', UW / 2, UH / 2 + 58, 13, '#7aa2c0');
   }
 }
 function drawLevelup() {

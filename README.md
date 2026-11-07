@@ -19,6 +19,16 @@ Game arcade survival berbasis canvas, bisa dimainkan di desktop dan **HP (landsc
 | Skill | Q / E / R | tombol Q / E / R |
 | Heal | C (cooldown 60 dtk) | tombol ✚ |
 | Pause | P | tombol pause |
+| Atur HUD | - | tombol **HUD** (kanan atas) di menu / pause |
+
+## Atur HUD (mobile)
+
+Tombol **HUD** di menu utama / layar pause membuka editor tata letak kontrol:
+
+- **Seret** tombol DASH, Q, E, R, ✚ untuk memindahkannya; pilih lalu **− / +** untuk mengubah ukurannya.
+- **Area gerak** (hijau, tempat stik gerak muncul) dan **area serang** (merah, tahan = tembak, double-tap = dash): seret untuk memindahkan, tarik sudut **◢** untuk mengubah luas, atau pakai − / +.
+- **GARIS AREA: ON** menampilkan garis tepi kedua area saat bermain. **RESET** (tekan 2x) mengembalikan tata letak bawaan.
+- Pengaturan tersimpan otomatis di perangkat (`localStorage` kunci `ns_hud`).
 
 ## Rilis versi baru
 
@@ -64,7 +74,8 @@ js/
   ui/cards.js                     Layout & klik kartu upgrade
   ui/buttons.js                   Tombol UI kecil (fullscreen, pause) + hit test
   ui/fullscreen.js                Fungsi fullscreen
-  ui/touch-layout.js              Layout kontrol sentuh (landscape): stik kiri, tombol serang kanan dikelilingi dash & skill
+  ui/touch-layout.js              Layout kontrol sentuh (landscape) + konfigurasi HUD (HC: area gerak/serang, posisi & ukuran tombol, disimpan ke localStorage)
+  ui/hud-edit.js                  Editor HUD sentuh (tombol HUD di menu/pause): seret/ubah ukuran tombol & area gerak/serang
   ui/touch-hud.js                 Gambar kontrol sentuh: stik kiri, tombol serang (dengan knob bidik), tombol dash & skill
   ui/skill-hud.js                 Gambar ikon skill Q/E/R + heal C di desktop
   render/primitives.js            Helper gambar: poly(), neon(), tx() teks, bar()

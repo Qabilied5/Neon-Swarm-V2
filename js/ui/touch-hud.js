@@ -1,7 +1,11 @@
 // Gambar kontrol sentuh: hanya tombol dash, skill & heal.
-// Stik gerak (kiri) dan area serang (kanan) sengaja TANPA UI: sentuh di mana saja di sisi layarnya.
+// Stik gerak dan area serang sengaja TANPA UI: sentuh di mana saja di dalam areanya (garis tepi area opsional: HC.show).
 function touchHud() {
   g.shadowBlur = 0;
+  if (HC.show) {
+    drawZone('move', false); // garis tepi area gerak / serang (opsi di editor HUD)
+    drawZone('aim', false);
+  }
   for (const b of vbtns()) drawTBtn(b);
   g.globalAlpha = 1;
 }

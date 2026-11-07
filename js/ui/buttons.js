@@ -1,6 +1,6 @@
 // Tombol UI kecil (fullscreen, pause) + hit test
 function uiBtns() {
-  if (S == 'dead') return [];
+  if (S == 'dead' || S == 'hudedit') return [];
   const b = [],
     k = 1; // UI sudah di ruang layar: ukuran tombol tidak ikut zoom
   let x = UW - SAFE.r - 26 * k;
@@ -9,7 +9,11 @@ function uiBtns() {
     b.push({ k: 'fs', x, y: 84 * k, r: 20 * k });
     x -= 48 * k;
   }
-  if (TOUCH && (S == 'play' || S == 'pause')) b.push({ k: 'pause', x, y: 84 * k, r: 20 * k });
+  if (TOUCH && (S == 'play' || S == 'pause')) {
+    b.push({ k: 'pause', x, y: 84 * k, r: 20 * k });
+    x -= 48 * k;
+  }
+  if (TOUCH && (S == 'menu' || S == 'pause')) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol
   return b;
 }
 const uiHit = (x, y) => {
@@ -18,6 +22,7 @@ const uiHit = (x, y) => {
 };
 function uiAct(u) {
   if (u == 'fs') goFS();
+  else if (u == 'hud') heOpen();
   else if (S == 'play') S = 'pause';
   else if (S == 'pause') S = 'play';
 }
@@ -42,6 +47,8 @@ function uiDraw() {
           g.lineTo(b.x + sx * 3 * k, b.y + sy * 8 * k);
         }
       g.stroke();
+    } else if (b.k == 'hud') {
+      tx('HUD', b.x, b.y + 4 * k, 11 * k, '#22d3ee', 'center', 0);
     } else {
       g.fillStyle = '#22d3ee';
       g.fillRect(b.x - 6 * k, b.y - 7 * k, 4 * k, 14 * k);

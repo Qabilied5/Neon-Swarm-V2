@@ -51,6 +51,7 @@ const VERSIONED = [
   'js/ui/fullscreen.js',
   'js/ui/touch-layout.js',
   'js/ui/touch-hud.js',
+  'js/ui/hud-edit.js',
   'js/ui/skill-hud.js',
   'js/render/primitives.js',
   'js/render/background.js',
