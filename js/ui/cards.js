@@ -4,7 +4,7 @@ const cl3 = () => {
     cw = Math.min(230, (sw - 60) / 3),
     gp = 20,
     x0 = SAFE.l + (sw - (3 * cw + 2 * gp)) / 2;
-  return { cw, gp, x0, ch: 170, y0: UH / 2 - 85 };
+  return { cw, gp, x0, ch: 186, y0: UH / 2 - 88 }; // tinggi memuat ikon SVG + nama + deskripsi 3 baris
 };
 function cardAt(x, y) {
   const c = cl3();

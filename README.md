@@ -88,6 +88,7 @@ js/
   ui/touch-hud.js                 Gambar kontrol sentuh: stik kiri, tombol serang (dengan knob bidik), tombol dash & skill
   ui/skill-hud.js                 Gambar ikon skill Q/E/R + heal C di desktop
   render/primitives.js            Helper gambar: poly(), neon(), tx() teks, bar()
+  render/icons.js                 Ikon SVG (upgrade level-up + tombol dash/skill/heal): ICON, drawIcon(), btnGlyph()
   render/background.js            Latar & grid
   render/entities.js              Gambar orb, peluru, musuh, pemain
   render/aim.js                   Garis bidik (khusus sentuh): redup = bidik otomatis, terang + panah = bidik manual
@@ -110,7 +111,7 @@ js/
 
 | Mau tambah... | Edit file... |
 | --- | --- |
-| Upgrade baru | `data/upgrades.js` |
+| Upgrade baru | `data/upgrades.js` (elemen ke-4 = kunci ikon; gambar ikonnya di `render/icons.js`) |
 | Tipe musuh baru | `data/enemies.js` (stat) + `update/enemies.js` (AI) + `enemies/spawn.js` / `update/waves.js` (kapan muncul) |
 | Skill baru | `combat/skills.js` + tombol di `input/keyboard-mouse.js`, `ui/skill-hud.js`, dan `TBTN` di `ui/touch-layout.js` |
 | Posisi / ukuran tombol sentuh | `ui/touch-layout.js` (sudut `a` & radius `r` per tombol) |

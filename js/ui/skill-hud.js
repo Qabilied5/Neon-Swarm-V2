@@ -2,10 +2,10 @@
 function skillHud() {
   // hanya skill yang sudah terbuka (+ heal C); yang masih terkunci tidak ditampilkan
   const list = [
-    ['q', 'Q', '#22d3ee'],
-    ['e', 'E', '#ff2e63'],
-    ['r', 'R', '#b967ff'],
-    ['c', 'C', '#39ff88'],
+    ['q', 'Q', '#22d3ee', 'nova'],
+    ['e', 'E', '#ff2e63', 'laser'],
+    ['r', 'R', '#b967ff', 'hole'],
+    ['c', 'C', '#39ff88', 'heal'],
   ].filter((k) => k[0] == 'c' || P.sk[k[0]] > 0);
   list.forEach((k, i) => {
     const x = UW / 2 - (list.length * 56 - 8) / 2 + i * 56,
@@ -23,7 +23,12 @@ function skillHud() {
       g.fillStyle = 'rgba(0,0,0,.7)';
       g.fillRect(x, y, 48, 48 * cl(cd / (isC ? HEAL_CD : 9), 0, 1));
     }
-    tx(k[1], x + 24, y + 30, 22, lv ? k[2] : '#2a4560', 'center', lv && cd <= 0 ? 12 : 0);
+    // ikon SVG di tengah kotak (redup saat cooldown), huruf tombol keyboard kecil di pojok kiri atas
+    g.globalAlpha = cd > 0 ? 0.45 : 1;
+    if (!drawIcon(k[3], x + 24, y + 22, 32, k[2], lv && cd <= 0 ? 10 : 0))
+      tx(k[1], x + 24, y + 30, 22, lv ? k[2] : '#2a4560', 'center', lv && cd <= 0 ? 12 : 0);
+    g.globalAlpha = 1;
+    tx(k[1], x + 6, y + 12, 11, lv ? k[2] : '#2a4560', 'left');
     if (isC) tx(cd > 0 ? Math.ceil(cd) + 's' : '+30%', x + 24, y + 43, 10, '#7aa2c0');
     else if (lv) tx('Lv' + lv, x + 24, y + 43, 10, '#7aa2c0');
   });

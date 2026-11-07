@@ -3,13 +3,13 @@
 const bs = () => cl(innerHeight / 400, 0.75, 1.2); // skala UI menurut tinggi layar (UI di ruang layar, tidak ikut zoom dunia)
 
 // Tombol di sekeliling titik serang. a = sudut (derajat, 180 = kiri titik serang, searah jarum jam)
-// Tambah tombol baru di sini (+ f = fungsi aksi). Maks ~6 tombol agar tidak berdesakan.
+// Tambah tombol baru di sini (+ f = fungsi aksi, i = kunci ikon SVG di render/icons.js, l = label teks cadangan). Maks ~6 tombol agar tidak berdesakan.
 const TBTN = [
-  { k: 'dash', l: 'DASH', c: '#ffd166', a: 348, r: 30, f: () => dash() },
-  { k: 'q', l: 'Q', c: '#22d3ee', a: 222, r: 26, f: () => nova() },
-  { k: 'e', l: 'E', c: '#ff2e63', a: 264, r: 26, f: () => laser() },
-  { k: 'r', l: 'R', c: '#b967ff', a: 306, r: 26, f: () => hole() },
-  { k: 'c', l: '✚', c: '#39ff88', a: 180, r: 26, f: () => heal() },
+  { k: 'dash', l: 'DASH', i: 'dash', c: '#ffd166', a: 348, r: 30, f: () => dash() },
+  { k: 'q', l: 'Q', i: 'nova', c: '#22d3ee', a: 222, r: 26, f: () => nova() },
+  { k: 'e', l: 'E', i: 'laser', c: '#ff2e63', a: 264, r: 26, f: () => laser() },
+  { k: 'r', l: 'R', i: 'hole', c: '#b967ff', a: 306, r: 26, f: () => hole() },
+  { k: 'c', l: '✚', i: 'heal', c: '#39ff88', a: 180, r: 26, f: () => heal() },
 ];
 
 // ---- KONFIGURASI HUD (disimpan di localStorage 'ns_hud') ----

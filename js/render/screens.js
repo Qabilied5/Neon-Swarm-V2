@@ -225,15 +225,18 @@ function drawLevelup() {
       12,
     );
     cards.forEach((u, i) => {
-      const x = c.x0 + i * (c.cw + c.gp);
-      neon(hv == i ? '#39ff88' : '#22d3ee', hv == i ? '#39ff8822' : '#0a1220');
+      const x = c.x0 + i * (c.cw + c.gp),
+        hot = hv == i;
+      neon(hot ? '#39ff88' : '#22d3ee', hot ? '#39ff8822' : '#0a1220');
       g.fillRect(x, c.y0, c.cw, c.ch);
       g.strokeRect(x, c.y0, c.cw, c.ch);
       tx(String(i + 1), x + 14, c.y0 + 24, 16, '#7aa2c0', 'left');
-      tx(u[0], x + c.cw / 2, c.y0 + 70, Math.min(17, c.cw / 11), '#fff', 'center', 8);
+      // ikon SVG upgrade (u[3], render/icons.js); sedikit membesar saat disorot
+      drawIcon(u[3], x + c.cw / 2, c.y0 + 52, Math.min(72, c.cw * 0.34) * (hot ? 1.1 : 1), hot ? '#39ff88' : '#22d3ee', TOUCH ? 6 : 12);
+      tx(u[0], x + c.cw / 2, c.y0 + 118, Math.min(17, c.cw / 11), '#fff', 'center', 8);
       const w = u[1].split(' ');
       let ln = '',
-        y = c.y0 + 108;
+        y = c.y0 + 140;
       for (const q of w) {
         if ((ln + q).length > 20) {
           tx(ln, x + c.cw / 2, y, 13, '#7aa2c0');

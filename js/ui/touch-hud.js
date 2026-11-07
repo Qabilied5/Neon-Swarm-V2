@@ -56,6 +56,6 @@ function drawTBtn(b) {
   const big = b.k == 'dash' ? 13 : 20;
   if (b.k == 'c' && cd > 0)
     tx(String(Math.ceil(cd)), b.x, b.y + 6, 16, b.c, 'center', 0); // sisa detik heal
-  else tx(b.l, b.x, b.y + big * 0.3, big, on ? b.c : '#2a4560', 'center', rdy && !skill ? 8 : 0);
+  else if (!btnGlyph(b, rdy && !skill ? 8 : 0)) tx(b.l, b.x, b.y + big * 0.3, big, on ? b.c : '#2a4560', 'center', rdy && !skill ? 8 : 0); // ikon SVG; teks hanya cadangan
   g.globalAlpha = 1;
 }

@@ -227,7 +227,7 @@ function drawHudEdit() {
     g.arc(b.x, b.y, b.r, 0, TAU);
     g.fill();
     g.stroke();
-    tx(b.l, b.x, b.y + big * 0.3, big, b.c, 'center', 0);
+    if (!btnGlyph(b)) tx(b.l, b.x, b.y + big * 0.3, big, b.c, 'center', 0);
     if (sel) {
       g.strokeStyle = '#fff';
       g.lineWidth = 2;
