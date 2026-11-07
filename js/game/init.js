@@ -1,5 +1,6 @@
 // init() = reset & mulai game, banner() = teks tengah layar
 function init() {
+  TUT.on = 0; // mode tutorial dinyalakan lagi oleh tutStart() setelah init()
   P = {
     x: W / 2,
     y: H / 2,

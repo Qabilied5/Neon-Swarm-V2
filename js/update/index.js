@@ -11,4 +11,5 @@ function upd(dt) {
   updParticles(dt);
   updVortex(dt);
   updTimers(dt);
+  tutUpd(dt);
 }

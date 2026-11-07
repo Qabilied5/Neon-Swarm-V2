@@ -119,7 +119,7 @@ function drawMenu() {
   tx(TOUCH ? 'TAP TO PLAY' : 'CLICK TO PLAY', cx, L.promptY, cl(UH / 22, 17, 24), '#ffd166', 'center', 12);
   g.globalAlpha = 1;
 
-  // ---- tombol TUTORIAL (belum ada aksi) ----
+  // ---- tombol TUTORIAL ----
   const b = L.btn,
     hot = !TOUCH && menuBtnHit(MU.x, MU.y),
     bc = '#22d3ee';
@@ -147,19 +147,18 @@ const PAU = { conf: 0 }; // waktu (T) tekan pertama RESTART
 function pauseLayout() {
   const sw = UW - SAFE.l - SAFE.r,
     cx = SAFE.l + sw / 2,
-    bw = cl(sw * 0.2, 130, 190),
+    n = TUT.on ? 3 : 2, // tutorial: + tombol KELUAR
+    bw = cl(sw * (n == 3 ? 0.17 : 0.2), 110, 190),
     bh = cl(UH * 0.1, 38, 46),
     gp = 14,
     ty = UH * 0.34,
-    by = ty + 28;
+    by = ty + 28,
+    ks = n == 3 ? ['resume', 'restart', 'exit'] : ['resume', 'restart'];
   return {
     cx,
     ty,
     hy: by + bh + 28,
-    btns: [
-      { k: 'resume', x: cx - bw - gp / 2, y: by, w: bw, h: bh },
-      { k: 'restart', x: cx + gp / 2, y: by, w: bw, h: bh },
-    ],
+    btns: ks.map((k, i) => ({ k, x: cx - (n * bw + (n - 1) * gp) / 2 + i * (bw + gp), y: by, w: bw, h: bh })),
   };
 }
 function pauseBtnAt(x, y) {
@@ -171,10 +170,13 @@ function pauseAct(k) {
   if (k == 'resume') {
     PAU.conf = 0;
     S = 'play';
+  } else if (k == 'exit') {
+    PAU.conf = 0;
+    tutExit(); // keluar dari tutorial ke menu
   } else if (k == 'restart') {
     if (PAU.conf && T - PAU.conf < 3) {
       PAU.conf = 0;
-      init(); // mulai ulang dari awal
+      TUT.on ? tutStart() : init(); // mulai ulang dari awal (tutorial: ulang tutorial)
     } else PAU.conf = T; // tekan pertama = minta konfirmasi
   }
 }
@@ -188,9 +190,9 @@ function drawPause() {
   tx('PAUSE', L.cx, L.ty, Math.min(60, UH / 6), '#22d3ee', 'center', 20);
   for (const b of L.btns) {
     const re = b.k == 'restart',
-      c = re ? (confirm ? '#ffd166' : '#ff2e63') : '#22d3ee',
+      c = b.k == 'exit' ? '#7aa2c0' : re ? (confirm ? '#ffd166' : '#ff2e63') : '#22d3ee',
       hot = !TOUCH && pauseBtnAt(MU.x, MU.y) == b.k,
-      label = re ? (confirm ? 'YAKIN? TEKAN LAGI' : 'RESTART') : 'LANJUT';
+      label = b.k == 'exit' ? 'KELUAR' : re ? (confirm ? 'YAKIN? TEKAN LAGI' : 'RESTART') : 'LANJUT';
     g.shadowColor = c;
     g.shadowBlur = hot || (re && confirm) ? 16 : 6;
     g.fillStyle = hot ? c + '33' : 'rgba(10,18,32,.85)';
@@ -200,7 +202,7 @@ function drawPause() {
     g.fill();
     g.stroke();
     g.shadowBlur = 0;
-    tx(label, b.x + b.w / 2, b.y + b.h / 2 + 5, re && confirm ? 12 : 15, c, 'center', 0);
+    tx(label, b.x + b.w / 2, b.y + b.h / 2 + 5, re && confirm ? (b.w < 140 ? 10 : 12) : 15, c, 'center', 0);
   }
   if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', L.cx, L.hy, 13, '#7aa2c0');
   lbDrawTop3(L.hy + (TOUCH ? 30 : 4), 14);

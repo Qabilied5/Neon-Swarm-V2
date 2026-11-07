@@ -24,11 +24,16 @@ function dash() {
   P.dc = P.dashCD;
   P.inv = 0.3;
   snd(200, 0.15, 'sawtooth', 0.05);
+  if (TUT.on) tutDash();
 }
 function hurt(d, c) {
-  if (P.inv > 0) return;
+  if (P.inv > 0) {
+    if (TUT.on) tutBlocked(); // tutorial: tampilkan efek KEBAL saat serangan tertahan dash
+    return;
+  }
   if (c && wave >= LET) d = Math.max(d, Math.ceil(P.mh / 3));
   P.hp -= d;
+  if (TUT.on && P.hp < 1) P.hp = P.mh; // tutorial: tidak bisa mati
   P.inv = 0.7;
   shake = 10;
   flash = 0.25;

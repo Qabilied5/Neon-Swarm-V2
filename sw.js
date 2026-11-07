@@ -54,6 +54,7 @@ const VERSIONED = [
   'js/ui/hud-edit.js',
   'js/ui/skill-hud.js',
   'js/net/leaderboard.js',
+  'js/game/tutorial.js',
   'js/render/primitives.js',
   'js/render/background.js',
   'js/render/entities.js',

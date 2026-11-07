@@ -137,6 +137,7 @@ function skTarget(k) {
 // jalankan skill dengan bidikan (dipanggil saat jari dilepas)
 function castSkill(k) {
   const t = skTarget(k);
+  TUT.man = t.man; // tutorial: skill dibidik dengan geser jari?
   if (k == 'q') {
     if (t.man) nova(t.x, t.y);
     else nova();
@@ -163,8 +164,18 @@ addEventListener(
         continue;
       }
       if (uiHit(x, y)) continue;
+      if (S == 'play' && TUT.on) {
+        const k = tutBtnAt(x, y); // tombol panel tutorial (LEWATI / KELUAR / MAIN / MENU)
+        if (k) {
+          tutAct(k);
+          continue;
+        }
+      }
       if (S == 'menu' || S == 'dead') {
-        if (menuBtnHit(x, y)) continue; // tombol TUTORIAL: belum ada aksi, jangan mulai game
+        if (menuBtnHit(x, y)) {
+          tutStart(); // tombol TUTORIAL
+          continue;
+        }
         if (S == 'dead' && lbBtnHit(x, y)) continue; // tombol KIRIM SKOR: aksi saat jari dilepas
         if (deadT <= 0) init();
         continue;
@@ -203,7 +214,9 @@ addEventListener(
         const now = performance.now();
         if (now - RT.t < DASH_GAP && P && S == 'play') {
           RT.t = 0; // double-tap: trigger dash saja (arah dari stik kiri)
+          if (TUT.on) TUT.dbl = 1; // tutorial: tandai dash ini lewat double-tap
           dash();
+          TUT.dbl = 0;
         }
         AIM.on = 1;
         AIM.id = t.identifier;

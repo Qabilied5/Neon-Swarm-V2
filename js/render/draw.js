@@ -8,6 +8,7 @@ function draw() {
   drawOverlayFx();
   drawHud();
   uiDraw();
+  drawTutorial();
   drawMenu();
   drawPause();
   drawLevelup();

@@ -1,7 +1,7 @@
 // Timer wave & spawn musuh
 function updWaves(dt) {
   const solo = boss && (boss.sup || boss.sec); // boss solo: wave berhenti, tanpa musuh lain
-  if (!solo) waveT += dt;
+  if (!solo && !TUT.on) waveT += dt; // tutorial: wave dibekukan
   if (nextBoss > 0 && (nextBoss -= dt) <= 0 && !boss) {
     if (wave >= SUP) spawnSuper();
     else spawnBoss();

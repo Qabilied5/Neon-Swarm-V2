@@ -27,6 +27,7 @@ function nova(cx = P.x, cy = P.y) {
   shake = Math.max(shake, 9);
   pf(cx, cy, 40, '#22d3ee', 420, 0.7);
   snd(120, 0.4, 'sawtooth', 0.08);
+  if (TUT.on) tutSkill('q');
 }
 // ang opsional: arah laser (default = arah bidik pemain P.a)
 function laser(ang = P.a) {
@@ -47,6 +48,7 @@ function laser(ang = P.a) {
   shake = Math.max(shake, 12);
   snd(70, 0.35, 'sawtooth', 0.09);
   snd(1200, 0.2, 'square', 0.03);
+  if (TUT.on) tutSkill('e');
 }
 // x,y opsional: titik pusat black hole (default = posisi kursor / bidik)
 function hole(x = M.x, y = M.y) {
@@ -54,6 +56,7 @@ function hole(x = M.x, y = M.y) {
   P.cd.r = Math.max(6, 14 - P.sk.r * 1.5);
   VX.push({ x: cl(x, 0, W), y: cl(y, 0, H), l: 3.5, m: 3.5, r: 170 + P.sk.r * 25 });
   snd(80, 0.6, 'sine', 0.09);
+  if (TUT.on) tutSkill('r');
 }
 
 // Heal (C): pulihkan HEAL_PCT dari max HP, cooldown HEAL_CD detik
