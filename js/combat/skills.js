@@ -41,12 +41,27 @@ function laser(ang = P.a) {
   P.a = ang;
   const ux = Math.cos(ang),
     uy = Math.sin(ang);
+  const hits = []; // musuh yang terkena sinar + jaraknya sepanjang sinar
   for (const e of E) {
     const px = e.x - P.x,
       py = e.y - P.y,
-      t = px * ux + py * uy; // jarak musuh sepanjang sinar
-    // damage naik sesuai jarak: LASER_DMG (100) di jarak >= LASER_FAR, minimum LASER_MIN x LASER_DMG di dekat pemain
-    if (t > 0 && Math.abs(px * uy - py * ux) < e.r + 12 + P.sk.e * 3) hit(e, LASER_DMG * cl(t / LASER_FAR, LASER_MIN, 1));
+      t = px * ux + py * uy;
+    if (t > 0 && Math.abs(px * uy - py * ux) < e.r + 12 + P.sk.e * 3) hits.push({ e, t });
+  }
+  // EKSEKUSI: musuh biasa (bukan boss) yang paling belakang/terjauh di sinar
+  let far = null;
+  for (const h of hits) if (h.e.k != 'boss' && (!far || h.t > far.t)) far = h;
+  for (const h of hits) {
+    // damage naik sesuai jarak: LASER_DMG (100) di jarak >= LASER_FAR, minimum LASER_MIN x LASER_DMG di dekat pemain.
+    // Musuh terjauh mendapat tambahan LASER_EXEC x max HP (hampir pasti musnah). Boss: hanya damage jarak (maks 100). Semua bisa crit (hit()).
+    let d = LASER_DMG * cl(h.t / LASER_FAR, LASER_MIN, 1);
+    if (h == far) d += LASER_EXEC * h.e.mh;
+    hit(h.e, d);
+  }
+  if (far) {
+    RG.push({ x: far.e.x, y: far.e.y, r: 0, mr: far.e.r * 3 + 20, c: '#ff2e63', w: 4, l: 0.35, m: 0.35 });
+    pf(far.e.x, far.e.y, 14, '#ff2e63', 260, 0.5);
+    if (FT.length < 80) FT.push({ x: far.e.x, y: far.e.y - far.e.r - 14, t: 0.9, s: 'EKSEKUSI!', c: '#ff2e63', z: 16 });
   }
   BM.push({ x: P.x, y: P.y, a: ang, l: 0.35, m: 0.35, ramp: 1 });
   for (let i = 0; i < 30; i++) pf(P.x + ux * i * 40, P.y + uy * i * 40, 1, '#ff2e63', 90, 0.5);

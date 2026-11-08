@@ -22,7 +22,7 @@ const UP = [
   ['DASH+', 'cooldown dash -25%', () => (P.dashCD *= 0.75), 'dashup', 0, 1],
   ['ORBITAL SHURIKEN', 'shuriken memutar, 30 dmg/hit; mulai 2, tiap stack +1', () => (P.orb = P.orb ? P.orb + 1 : ORB_START), 'orbital'],
   ['SKILL: NOVA (Q)', 'shockwave: melukai & mendorong semua musuh sekitar', () => P.sk.q++, 'nova', 0, 1],
-  ['SKILL: LASER (E)', 'sinar tembus; makin jauh musuh, damage makin besar (maks 100)', () => P.sk.e++, 'laser', 0, 1],
+  ['SKILL: LASER (E)', 'musuh terjauh kena 90% HP; makin jauh damage makin besar', () => P.sk.e++, 'laser', 0, 1],
   ['SKILL: BLACK HOLE (R)', 'lubang hitam menyedot & melukai musuh', () => P.sk.r++, 'hole', 0, 1],
   ['CHAIN LIGHTNING', 'petir ke musuh dekat; tiap stack +jangkauan & +1 target', () => P.ch++, 'chain'],
   ['EXPLOSIVE ROUNDS', 'peluru meledak area kecil', () => P.boom++, 'boom'],

@@ -32,10 +32,12 @@ const ORB_R = 150,
 const CHAIN_R0 = 145,
   CHAIN_RS = 45;
 
-// Laser (E): damage = LASER_DMG pada jarak >= LASER_FAR dari pemain, makin dekat makin kecil (minimum LASER_MIN x LASER_DMG)
+// Laser (E): damage = LASER_DMG pada jarak >= LASER_FAR dari pemain, makin dekat makin kecil (minimum LASER_MIN x LASER_DMG).
+// Eksekusi: musuh BIASA yang paling belakang (terjauh) di sinar menerima tambahan LASER_EXEC x max HP-nya (boss tidak: damage boss maks LASER_DMG).
 const LASER_DMG = 100,
   LASER_FAR = 700,
-  LASER_MIN = 0.1;
+  LASER_MIN = 0.1,
+  LASER_EXEC = 0.9;
 
 // Secret boss muncul di wave ini (wave 15 & 20 lanjut ke super boss setelah dikalahkan)
 const SEC_WAVES = [6, 11, 15, 20];
