@@ -1,8 +1,12 @@
 // Skill aktif: nova() Q, laser() E, hole() R, teleport() T
+// setCd(k, detik): mulai cooldown skill k & catat nilai maksimumnya (P.cm) supaya UI cooldown (lingkaran / kotak) akurat
+function setCd(k, v) {
+  P.cd[k] = P.cm[k] = v;
+}
 // cx,cy opsional: pusat ledakan (default = posisi pemain)
 function nova(cx = P.x, cy = P.y) {
   if (!P.sk.q || P.cd.q > 0) return;
-  P.cd.q = Math.max(3, 9 - P.sk.q);
+  setCd('q', Math.max(3, 9 - P.sk.q));
   const r = 210 + P.sk.q * 35,
     d = 40 + P.dmg * 3;
   RG.push(
@@ -32,18 +36,19 @@ function nova(cx = P.x, cy = P.y) {
 // ang opsional: arah laser (default = arah bidik pemain P.a)
 function laser(ang = P.a) {
   if (!P.sk.e || P.cd.e > 0) return;
-  P.cd.e = Math.max(3, 8 - P.sk.e);
+  setCd('e', Math.max(3, 8 - P.sk.e));
   if (ang == null) ang = P.a;
   P.a = ang;
   const ux = Math.cos(ang),
-    uy = Math.sin(ang),
-    d = 70 + P.dmg * 5;
+    uy = Math.sin(ang);
   for (const e of E) {
     const px = e.x - P.x,
-      py = e.y - P.y;
-    if (px * ux + py * uy > 0 && Math.abs(px * uy - py * ux) < e.r + 12 + P.sk.e * 3) hit(e, d);
+      py = e.y - P.y,
+      t = px * ux + py * uy; // jarak musuh sepanjang sinar
+    // damage naik sesuai jarak: LASER_DMG (100) di jarak >= LASER_FAR, minimum LASER_MIN x LASER_DMG di dekat pemain
+    if (t > 0 && Math.abs(px * uy - py * ux) < e.r + 12 + P.sk.e * 3) hit(e, LASER_DMG * cl(t / LASER_FAR, LASER_MIN, 1));
   }
-  BM.push({ x: P.x, y: P.y, a: ang, l: 0.35, m: 0.35 });
+  BM.push({ x: P.x, y: P.y, a: ang, l: 0.35, m: 0.35, ramp: 1 });
   for (let i = 0; i < 30; i++) pf(P.x + ux * i * 40, P.y + uy * i * 40, 1, '#ff2e63', 90, 0.5);
   shake = Math.max(shake, 12);
   snd(70, 0.35, 'sawtooth', 0.09);
@@ -53,7 +58,7 @@ function laser(ang = P.a) {
 // x,y opsional: titik pusat black hole (default = posisi kursor / bidik)
 function hole(x = M.x, y = M.y) {
   if (!P.sk.r || P.cd.r > 0) return;
-  P.cd.r = Math.max(6, 14 - P.sk.r * 1.5);
+  setCd('r', Math.max(6, 14 - P.sk.r * 1.5));
   VX.push({ x: cl(x, 0, W), y: cl(y, 0, H), l: 3.5, m: 3.5, r: 170 + P.sk.r * 25 });
   snd(80, 0.6, 'sine', 0.09);
   if (TUT.on) tutSkill('r');
@@ -72,7 +77,7 @@ function teleport(x = M.x, y = M.y) {
     oy = P.y,
     nx = cl(P.x + dx * k, P.r, W - P.r),
     ny = cl(P.y + dy * k, P.r, H - P.r);
-  P.cd.tp = TP_CD;
+  setCd('tp', TP_CD);
   for (let i = 0; i <= 14; i++) pf(ox + ((nx - ox) * i) / 14, oy + ((ny - oy) * i) / 14, 2, '#ff9f1c', 90, 0.45); // jejak warp
   RG.push(
     { x: ox, y: oy, r: 0, mr: 70, c: '#ff9f1c', w: 5, l: 0.35, m: 0.35 },
@@ -92,7 +97,7 @@ function teleport(x = M.x, y = M.y) {
 // Heal (C): pulihkan HEAL_PCT dari max HP, cooldown HEAL_CD detik
 function heal() {
   if (P.cd.c > 0) return;
-  P.cd.c = HEAL_CD;
+  setCd('c', HEAL_CD);
   const amt = Math.round(P.mh * HEAL_PCT);
   P.hp = Math.min(P.mh, P.hp + amt);
   RG.push({ x: P.x, y: P.y, r: 0, mr: 90, c: '#39ff88', w: 6, l: 0.5, m: 0.5 });

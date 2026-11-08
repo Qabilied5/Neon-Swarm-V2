@@ -97,7 +97,11 @@ const ICON = {
     cir(51, 12, 8, IC.y) +
     ln(51, 12, 51, 7, IC.y) +
     ln(51, 12, 55, 14, IC.y),
-  orbital: () => ply(32, 32, 8, -Math.PI / 2) + cir(32, 32, 22, IC.c, 2, 0.4) + blade(-0.8) + blade(-0.8 + Math.PI),
+  orbital: () =>
+    ply(32, 32, 8, -Math.PI / 2) +
+    cir(32, 32, 22, IC.c, 2, 0.4, '3 4') +
+    shp(sStar(52, 20, 10, 3.5, 4, 0.5), IC.y, 0.4) +
+    shp(sStar(12, 44, 10, 3.5, 4, 1.1), IC.y, 0.4),
   repair: () =>
     `<path d="M32 56 C8 40 6 22 18 15 C25 11 32 16 32 22 C32 16 39 11 46 15 C58 22 56 40 32 56 Z" fill="${IC.r}" fill-opacity=".2" stroke="${IC.r}"/>` +
     ln(32, 26, 32, 42, IC.g, 3.5) +

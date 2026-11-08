@@ -14,7 +14,7 @@ function drawTBtn(b) {
     skill = isSkillBtn(b.k), // Q/E/R/Teleport: opasitas bersama HC.so; dash & heal: HC.op[k] sendiri-sendiri (editor HUD)
     op = btnOp(b.k),
     cd = b.k == 'dash' ? P.dc : P.cd[b.k],
-    mx = b.k == 'dash' ? P.dashCD : b.k == 'c' ? HEAL_CD : b.k == 'tp' ? TP_CD : 9,
+    mx = b.k == 'dash' ? P.dashCD : P.cm[b.k] || 9, // cooldown maksimum skill (diisi setCd saat dipakai)
     rdy = on && cd <= 0,
     pr = (TPR[b.k] || 0) > T,
     aiming = SK.on && SK.k == b.k,
@@ -55,8 +55,9 @@ function drawTBtn(b) {
   }
   g.globalAlpha = Math.min(1, al + 0.1); // label ikut opasitas tombol
   const big = b.k == 'dash' ? 13 : 20;
-  if ((b.k == 'c' || b.k == 'tp') && cd > 0)
-    tx(String(Math.ceil(cd)), b.x, b.y + 6, 16, b.c, 'center', 0); // sisa detik heal / teleport
+  if (cd > 0)
+    // sisa detik cooldown di semua tombol (dash: 1 desimal karena cooldown-nya singkat)
+    tx(b.k == 'dash' ? cd.toFixed(1) : String(Math.ceil(cd)), b.x, b.y + 6, b.k == 'dash' ? 14 : 16, b.c, 'center', 0);
   else if (!btnGlyph(b, rdy && !skill ? 8 : 0)) tx(b.l, b.x, b.y + big * 0.3, big, on ? b.c : '#2a4560', 'center', rdy && !skill ? 8 : 0); // ikon SVG; teks hanya cadangan
   g.globalAlpha = 1;
 }

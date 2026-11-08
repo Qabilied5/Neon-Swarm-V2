@@ -98,6 +98,13 @@ function drawBeams() {
       g.stroke();
     } else {
       neon('#ff2e63');
+      if (b.ramp) {
+        // laser pemain: makin jauh dari pemain makin terang = makin besar damage (lihat LASER_FAR)
+        const gr = g.createLinearGradient(b.x, b.y, b.x + ux * LASER_FAR, b.y + uy * LASER_FAR);
+        gr.addColorStop(0, 'rgba(255,46,99,.25)');
+        gr.addColorStop(1, '#ff2e63');
+        g.strokeStyle = gr;
+      }
       g.globalAlpha = k;
       g.lineWidth = 6 + (b.w || 24) * k;
       g.beginPath();

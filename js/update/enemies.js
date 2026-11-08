@@ -179,14 +179,18 @@ function updEnemies(dt) {
         e.y -= ((P.y - e.y) / dp) * 6;
       }
     }
+    // Orbital Shuriken: ORB_DMG per kena; tiap shuriken punya jeda ORB_HITCD pada musuh yang sama
     for (let j = 0; j < P.orb; j++) {
-      const a = P.ot + (j * TAU) / P.orb;
-      if (
-        Math.hypot(e.x - (P.x + Math.cos(a) * ORB_R), e.y - (P.y + Math.sin(a) * ORB_R)) <
-        e.r + ORB_HIT
-      ) {
-        e.hp -= P.dmg * 6 * dt;
-        e.fl = 0.05;
+      const a = P.ot + (j * TAU) / P.orb,
+        ox = P.x + Math.cos(a) * ORB_R,
+        oy = P.y + Math.sin(a) * ORB_R;
+      if (Math.hypot(e.x - ox, e.y - oy) < e.r + ORB_HIT) {
+        const oh = e.oh || (e.oh = []);
+        if ((oh[j] || 0) <= T) {
+          oh[j] = T + ORB_HITCD;
+          hit(e, ORB_DMG);
+          pf(ox, oy, 4, '#ffd166', 160, 0.25);
+        }
       }
     }
   }

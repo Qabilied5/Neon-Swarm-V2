@@ -18,14 +18,15 @@ const TBTN = [
 // move / aim = area sentuh (pecahan layar 0..1): sentuhan di dalam move = stik gerak, di dalam aim = serang/bidik (+ double-tap dash).
 // btn[k] = { x, y, s }: posisi tengah tombol (pecahan layar) & pengali ukuran; tidak ada entri = posisi bawaan.
 // show = 1: garis tepi kedua area digambar juga saat bermain.
-// so = opasitas tombol skill (Q/E/R/Teleport, satu grup karena saling berhubungan) 0.1..1, bawaan 0.1.
+// so = opasitas tombol skill (Q/E/R/Teleport, satu grup karena saling berhubungan) 0.1..1, bawaan 0.4.
+// ver = versi format simpanan: ver 2 = bawaan skill 40% (konfigurasi lama yang masih 10% dianggap belum diubah pemain -> ikut bawaan baru).
 // op[k] = opasitas tiap tombol non-skill (dash, heal) 0.1..1, bawaan 0.9; diatur satu per satu.
 const HC_MINW = 0.12, // lebar / tinggi minimum area (pecahan layar)
   HC_MINH = 0.2,
   HC_SMIN = 0.6, // batas pengali ukuran tombol
   HC_SMAX = 2,
   HC_OMIN = 0.1, // opasitas skill minimum (tombol tetap bisa disentuh walau nyaris tak terlihat)
-  HC_SO = 0.1, // opasitas skill bawaan
+  HC_SO = 0.4, // opasitas skill bawaan (40%)
   HC_OP = 0.9; // opasitas bawaan tombol non-skill (dash, heal)
 const isSkillBtn = (k) => k == 'q' || k == 'e' || k == 'r' || k == 'tp'; // tombol yang opasitasnya bisa diatur (HC.so)
 const hcDef = () => ({
@@ -35,6 +36,7 @@ const hcDef = () => ({
   show: 0,
   so: HC_SO,
   op: {},
+  ver: 2,
 });
 // opasitas tombol k: skill (Q/E/R/Teleport) = HC.so bersama; tombol lain (dash, heal) = HC.op[k] masing-masing
 const btnOp = (k) => (isSkillBtn(k) ? HC.so : Number.isFinite(HC.op[k]) ? HC.op[k] : HC_OP);
@@ -56,7 +58,7 @@ function hcLoad() {
           d.btn[k] = { x: cl(v.x, 0, 1), y: cl(v.y, 0, 1), s: cl(v.s, HC_SMIN, HC_SMAX) };
       }
       d.show = o.show ? 1 : 0;
-      if (Number.isFinite(o.so)) d.so = cl(o.so, HC_OMIN, 1);
+      if (Number.isFinite(o.so) && (o.ver || o.so !== 0.1)) d.so = cl(o.so, HC_OMIN, 1); // simpanan lama (tanpa ver) bernilai 0.1 = bawaan lama -> pakai bawaan baru
       for (const k in o.op || {})
         if (TBTN.some((b) => b.k == k) && !isSkillBtn(k) && Number.isFinite(o.op[k])) d.op[k] = cl(o.op[k], HC_OMIN, 1);
     }

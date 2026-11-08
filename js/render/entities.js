@@ -116,12 +116,32 @@ function drawEnemies() {
       bar(e.x - 14, e.y - e.r - 8, 28, 3, e.hp / e.mh, e.c);
   }
 }
+// Orbital Shuriken: bintang 4 bilah yang berputar pada porosnya sambil mengorbit pemain, dengan jejak busur tipis
 function drawOrbitals() {
   for (let j = 0; j < P.orb; j++) {
-    const a = P.ot + (j * TAU) / P.orb;
-    neon('#ffd166', '#ffd166');
+    const a = P.ot + (j * TAU) / P.orb,
+      x = P.x + Math.cos(a) * ORB_R,
+      y = P.y + Math.sin(a) * ORB_R,
+      spin = T * 14 + j;
+    neon('#ffd166', '#ffd16655');
+    g.globalAlpha = 0.25; // jejak orbit
     g.beginPath();
-    g.arc(P.x + Math.cos(a) * ORB_R, P.y + Math.sin(a) * ORB_R, ORB_SIZE, 0, TAU);
+    g.arc(P.x, P.y, ORB_R, a - 0.5, a);
+    g.stroke();
+    g.globalAlpha = 1;
+    g.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const rr = i % 2 ? ORB_SIZE * 0.36 : ORB_SIZE,
+        t = spin + (i * Math.PI) / 4;
+      g[i ? 'lineTo' : 'moveTo'](x + Math.cos(t) * rr, y + Math.sin(t) * rr);
+    }
+    g.closePath();
+    g.fill();
+    g.stroke();
+    g.shadowBlur = 0;
+    g.fillStyle = '#04060d'; // lubang tengah shuriken
+    g.beginPath();
+    g.arc(x, y, ORB_SIZE * 0.17, 0, TAU);
     g.fill();
   }
 }

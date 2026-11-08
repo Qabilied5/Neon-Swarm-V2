@@ -19,10 +19,23 @@ const mob = (m, d) => (TOUCH ? m : d);
 const HEAL_CD = 60,
   HEAL_PCT = 0.3;
 
-// Orbital blade: jarak orbit dari pemain, radius tabrakan, radius gambar
-const ORB_R = 100,
-  ORB_HIT = 13,
-  ORB_SIZE = 10;
+// Orbital Shuriken: jarak orbit dari pemain, radius tabrakan, radius gambar, damage per kena,
+// jeda kena ulang pada musuh yang sama (per shuriken), jumlah shuriken saat pertama diambil (stack berikutnya +1)
+const ORB_R = 150,
+  ORB_HIT = 20,
+  ORB_SIZE = 16,
+  ORB_DMG = 30,
+  ORB_HITCD = 0.4,
+  ORB_START = 2;
+
+// Chain Lightning: jangkauan sambaran = CHAIN_R0 + CHAIN_RS * stack (stack 1 = 190px), jumlah target = stack + 1
+const CHAIN_R0 = 145,
+  CHAIN_RS = 45;
+
+// Laser (E): damage = LASER_DMG pada jarak >= LASER_FAR dari pemain, makin dekat makin kecil (minimum LASER_MIN x LASER_DMG)
+const LASER_DMG = 100,
+  LASER_FAR = 700,
+  LASER_MIN = 0.1;
 
 // Secret boss muncul di wave ini (wave 15 & 20 lanjut ke super boss setelah dikalahkan)
 const SEC_WAVES = [6, 11, 15, 20];

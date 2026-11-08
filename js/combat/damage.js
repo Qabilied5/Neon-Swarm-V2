@@ -50,9 +50,10 @@ function hit(e, d) {
     });
 }
 function chain(e, d) {
-  let n = P.ch + 1,
+  let n = P.ch + 1, // jumlah target & jangkauan sambaran sama-sama naik tiap stack
+    rg = CHAIN_R0 + CHAIN_RS * P.ch,
     f = e;
-  for (const o of E.filter((o) => o != e && Math.hypot(o.x - e.x, o.y - e.y) < 190)
+  for (const o of E.filter((o) => o != e && Math.hypot(o.x - e.x, o.y - e.y) < rg)
     .sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))
     .slice(0, n)) {
     hit(o, d * 0.5);

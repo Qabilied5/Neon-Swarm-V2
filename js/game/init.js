@@ -29,6 +29,7 @@ function init() {
     sk: { q: 0, e: 0, r: 0, tp: 0 }, // tp = Teleport (T)
     up: {}, // jumlah stack tiap upgrade yang sudah diambil: { 'MAGNET': 2, ... } (badge naik level di kartu)
     cd: { q: 0, e: 0, r: 0, c: 0, tp: 0 },
+    cm: { q: 9, e: 8, r: 14, c: HEAL_CD, tp: TP_CD }, // cooldown maksimum terakhir tiap skill (setCd) - pembagi UI cooldown
     ch: 0,
     boom: 0,
     vamp: 0,
