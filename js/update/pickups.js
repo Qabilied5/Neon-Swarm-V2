@@ -16,7 +16,11 @@ function updOrbs(dt) {
         P.lv++;
         P.need = Math.round(P.need * 1.35 + 2);
         cards = shuf(UP.filter((u) => !u[5] || (P.up[u[0]] || 0) < u[5])).slice(0, 3); // upgrade ber-batas stack disembunyikan setelah maksimal
-        if (P.lv == 2) cards[0] = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[5])); // skill pertama = Q/E/R
+        if (P.lv == 2) {
+          // skill pertama = Q/E/R (Teleport tidak); tanpa kartu kembar
+          const sk = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[0].includes('TELEPORT')));
+          cards = [sk, ...cards.filter((c) => c !== sk).slice(0, 2)];
+        }
         S = 'levelup';
         RG.push({ x: P.x, y: P.y, r: 0, mr: 280, c: '#ffd166', w: 7, l: 0.7, m: 0.7 });
         snd(660, 0.3, 'triangle', 0.07);

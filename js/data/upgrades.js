@@ -2,7 +2,7 @@
 // Format: [nama, deskripsi, efek, kunci ikon SVG, instan?]. Ikon didefinisikan di render/icons.js (ICON).
 // Upgrade yang muncul lagi setelah pernah diambil menampilkan badge hijau "LV n > n+1" (stack dihitung di P.up).
 // Elemen ke-5 = 1 untuk upgrade instan yang tidak menumpuk (mis. REPAIR): tanpa badge.
-// Elemen ke-6 (opsional) = batas stack: setelah tercapai upgrade tidak muncul lagi di kartu (mis. Teleport, Sandevistan).
+// Elemen ke-6 (opsional) = batas stack: setelah tercapai upgrade tidak muncul lagi di kartu (mis. skill Q/E/R/Teleport, Sandevistan, Super Shield).
 const UP = [
   ['RAPID FIRE', '+25% kecepatan tembak', () => (P.rate *= 1.25), 'rapid'],
   ['DAMAGE UP', '+30% damage peluru', () => (P.dmg *= 1.3), 'damage'],
@@ -22,9 +22,9 @@ const UP = [
   ['DASH+', 'cooldown dash -25%', () => (P.dashCD *= 0.75), 'dashup'],
   ['ORBITAL BLADE', '+1 bilah mengorbit', () => P.orb++, 'orbital'],
   ['REPAIR', 'pulihkan 50 HP', () => (P.hp = Math.min(P.mh, P.hp + 50)), 'repair', 1],
-  ['SKILL: NOVA (Q)', 'shockwave: melukai & mendorong semua musuh sekitar', () => P.sk.q++, 'nova'],
-  ['SKILL: LASER (E)', 'sinar menembus semua musuh ke arah kursor', () => P.sk.e++, 'laser'],
-  ['SKILL: BLACK HOLE (R)', 'lubang hitam menyedot & melukai musuh', () => P.sk.r++, 'hole'],
+  ['SKILL: NOVA (Q)', 'shockwave: melukai & mendorong semua musuh sekitar', () => P.sk.q++, 'nova', 0, 1],
+  ['SKILL: LASER (E)', 'sinar menembus semua musuh ke arah kursor', () => P.sk.e++, 'laser', 0, 1],
+  ['SKILL: BLACK HOLE (R)', 'lubang hitam menyedot & melukai musuh', () => P.sk.r++, 'hole', 0, 1],
   ['CHAIN LIGHTNING', 'peluru memicu petir ke musuh terdekat', () => P.ch++, 'chain'],
   ['EXPLOSIVE ROUNDS', 'peluru meledak area kecil', () => P.boom++, 'boom'],
   ['VAMPIRISM', 'setiap kill memulihkan HP (makin besar tiap wave)', () => P.vamp++, 'vamp'],
