@@ -18,15 +18,20 @@ const TBTN = [
 // move / aim = area sentuh (pecahan layar 0..1): sentuhan di dalam move = stik gerak, di dalam aim = serang/bidik (+ double-tap dash).
 // btn[k] = { x, y, s }: posisi tengah tombol (pecahan layar) & pengali ukuran; tidak ada entri = posisi bawaan.
 // show = 1: garis tepi kedua area digambar juga saat bermain.
+// so = opasitas tombol skill (Q/E/R/Teleport) 0.1..1, bawaan 0.1; dash & heal tetap 0.9.
 const HC_MINW = 0.12, // lebar / tinggi minimum area (pecahan layar)
   HC_MINH = 0.2,
   HC_SMIN = 0.6, // batas pengali ukuran tombol
-  HC_SMAX = 2;
+  HC_SMAX = 2,
+  HC_OMIN = 0.1, // opasitas skill minimum (tombol tetap bisa disentuh walau nyaris tak terlihat)
+  HC_SO = 0.1; // opasitas skill bawaan
+const isSkillBtn = (k) => k == 'q' || k == 'e' || k == 'r' || k == 'tp'; // tombol yang opasitasnya bisa diatur (HC.so)
 const hcDef = () => ({
   move: { x: 0, y: 0, w: 0.5, h: 1 },
   aim: { x: 0.5, y: 0, w: 0.5, h: 1 },
   btn: {},
   show: 0,
+  so: HC_SO,
 });
 function hcZone(z) {
   const w = cl(z.w, HC_MINW, 1),
@@ -46,6 +51,7 @@ function hcLoad() {
           d.btn[k] = { x: cl(v.x, 0, 1), y: cl(v.y, 0, 1), s: cl(v.s, HC_SMIN, HC_SMAX) };
       }
       d.show = o.show ? 1 : 0;
+      if (Number.isFinite(o.so)) d.so = cl(o.so, HC_OMIN, 1);
     }
   } catch (e) {}
   return d;
@@ -92,7 +98,7 @@ function buildTUI() {
   };
 }
 // tombol yang tampil & bisa disentuh: skill Q/E/R/Teleport yang masih terkunci (belum dipilih di level-up) disembunyikan
-const vbtns = () => tui().btns.filter((b) => !(b.k == 'q' || b.k == 'e' || b.k == 'r' || b.k == 'tp') || (P && P.sk[b.k] > 0));
+const vbtns = () => tui().btns.filter((b) => !isSkillBtn(b.k) || (P && P.sk[b.k] > 0));
 
 // hasil di-cache, dihitung ulang hanya saat ukuran layar / safe-area / konfigurasi HUD berubah (set TUI = null)
 function tui() {

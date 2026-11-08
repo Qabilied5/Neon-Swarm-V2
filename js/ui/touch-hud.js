@@ -11,15 +11,15 @@ function touchHud() {
 }
 function drawTBtn(b) {
   const on = true, // tombol yang digambar selalu sudah terbuka (yang terkunci disembunyikan, lihat vbtns)
-    skill = b.k == 'q' || b.k == 'e' || b.k == 'r' || b.k == 'tp', // Q/E/R/Teleport: opacity 10%
+    skill = isSkillBtn(b.k), // Q/E/R/Teleport: opasitas HC.so (bawaan 10%, bisa diatur di editor HUD)
     cd = b.k == 'dash' ? P.dc : P.cd[b.k],
     mx = b.k == 'dash' ? P.dashCD : b.k == 'c' ? HEAL_CD : b.k == 'tp' ? TP_CD : 9,
     rdy = on && cd <= 0,
     pr = (TPR[b.k] || 0) > T,
     aiming = SK.on && SK.k == b.k,
     r = b.r * (pr ? 1.12 : 1),
-    // skill: 10% (naik sedikit saat ditekan / dibidik agar ada umpan balik); belum terbuka lebih redup
-    al = skill ? (pr || aiming ? 0.6 : 0.1) : 0.9;
+    // skill: HC.so (naik ke min. 60% saat ditekan / dibidik agar ada umpan balik)
+    al = skill ? (pr || aiming ? Math.max(HC.so, 0.6) : HC.so) : 0.9;
   g.globalAlpha = al;
   g.fillStyle = pr ? b.c + '55' : '#0a1220';
   g.strokeStyle = b.c;

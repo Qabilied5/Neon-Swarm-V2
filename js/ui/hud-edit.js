@@ -1,6 +1,6 @@
-// EDITOR HUD (sentuh): atur posisi & ukuran tombol (DASH, Q, E, R, ✚) serta area gerak (kiri) dan area serang (kanan).
+// EDITOR HUD (sentuh): atur posisi & ukuran tombol (DASH, Q, E, R, Teleport, ✚), opasitas tombol skill, serta area gerak (kiri) dan area serang (kanan).
 // Dibuka lewat tombol HUD di menu / pause (S = 'hudedit'), hasil disimpan otomatis (localStorage 'ns_hud', lihat touch-layout.js).
-//  - seret tombol / area = pindah  ·  tarik sudut ◢ area = ubah ukuran  ·  pilih elemen lalu − / + = perbesar / perkecil
+//  - seret tombol / area = pindah  ·  tarik sudut ◢ area = ubah ukuran  ·  pilih elemen lalu UKURAN −/+ = perbesar / perkecil  ·  OPAS −/+ = opasitas semua tombol skill (HC.so)
 const HE = { sel: null, id: null, mode: null, ox: 0, oy: 0, ret: 'menu', pb: null, rt: 0 };
 const HE_NAME = { dash: 'TOMBOL DASH', q: 'SKILL Q', e: 'SKILL E', r: 'SKILL R', c: 'TOMBOL HEAL', tp: 'SKILL TELEPORT', move: 'AREA GERAK', aim: 'AREA SERANG' };
 const HE_COL = { move: '#39ff88', aim: '#ff2e63' };
@@ -18,27 +18,38 @@ function heClose() {
   S = HE.ret;
 }
 
-// deretan tombol panel atas (posisi px layar)
+// tombol panel atas, 2 baris (posisi px layar):
+//  baris 1: UKURAN -/+ (elemen terpilih) · OPAS -/+ (opasitas semua tombol skill)
+//  baris 2: GARIS AREA · RESET · SELESAI
 function heUI() {
-  const sc = Math.min(1, (UW - SAFE.l - SAFE.r - 16) / 430),
-    h = 36 * sc,
+  const sc = Math.min(1, (UW - SAFE.l - SAFE.r - 16) / 380),
+    h = 32 * sc,
     gap = 8 * sc,
-    defs = [
-      ['dec', '−', 44],
-      ['inc', '+', 44],
-      ['show', '', 136],
-      ['reset', '', 84],
-      ['done', 'SELESAI', 96],
+    rows = [
+      [
+        ['dec', 'UKURAN −', 88],
+        ['inc', 'UKURAN +', 88],
+        ['odec', 'OPAS −', 88],
+        ['oinc', 'OPAS +', 88],
+      ],
+      [
+        ['show', '', 136],
+        ['reset', '', 84],
+        ['done', 'SELESAI', 96],
+      ],
     ],
-    total = defs.reduce((a, d) => a + d[2] * sc, 0) + gap * (defs.length - 1),
-    y = SAFE.t + 10;
-  let x = (UW - total) / 2;
-  return defs.map((d) => {
-    const w = d[2] * sc,
-      r = { k: d[0], l: d[1], x, y, w, h, sc };
-    x += w + gap;
-    return r;
+    out = [];
+  rows.forEach((defs, i) => {
+    const total = defs.reduce((a, d) => a + d[2] * sc, 0) + gap * (defs.length - 1),
+      y = SAFE.t + 8 + i * (h + 6 * sc);
+    let x = (UW - total) / 2;
+    for (const d of defs) {
+      const w = d[2] * sc;
+      out.push({ k: d[0], l: d[1], x, y, w, h, sc });
+      x += w + gap;
+    }
   });
+  return out;
 }
 const heIn = (b, x, y) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h;
 
@@ -146,6 +157,8 @@ function heAct(k) {
       HE.sel = null;
       HE.rt = 0;
     } else HE.rt = T + 2.5; // tekan sekali lagi untuk konfirmasi
+  } else if (k == 'oinc' || k == 'odec') {
+    HC.so = +cl(HC.so + (k == 'oinc' ? 0.1 : -0.1), HC_OMIN, 1).toFixed(2); // opasitas semua tombol skill
   } else if ((k == 'inc' || k == 'dec') && HE.sel) {
     const f = k == 'inc' ? 1 : -1;
     if (HC[HE.sel]) {
@@ -219,7 +232,20 @@ function drawHudEdit() {
     const sel = HE.sel == b.k,
       sp = TBTN.find((t) => t.k == b.k),
       big = (b.k == 'dash' ? 13 : 20) * (b.r / (sp.r * u));
-    g.globalAlpha = 0.95;
+    const skill = isSkillBtn(b.k),
+      al = skill ? HC.so : 0.95; // pratinjau opasitas nyata seperti saat bermain
+    if (skill) {
+      // penanda lokasi: cincin putus-putus tetap terlihat walau opasitas sangat rendah
+      g.globalAlpha = 0.5;
+      g.strokeStyle = b.c;
+      g.lineWidth = 1.5;
+      g.setLineDash([4, 4]);
+      g.beginPath();
+      g.arc(b.x, b.y, b.r, 0, TAU);
+      g.stroke();
+      g.setLineDash([]);
+    }
+    g.globalAlpha = al;
     g.fillStyle = '#0a1220';
     g.strokeStyle = b.c;
     g.lineWidth = 3;
@@ -227,6 +253,7 @@ function drawHudEdit() {
     g.arc(b.x, b.y, b.r, 0, TAU);
     g.fill();
     g.stroke();
+    g.globalAlpha = skill ? Math.min(1, al + 0.1) : 0.95;
     if (!btnGlyph(b)) tx(b.l, b.x, b.y + big * 0.3, big, b.c, 'center', 0);
     if (sel) {
       g.strokeStyle = '#fff';
@@ -253,9 +280,9 @@ function drawHudEdit() {
     g.roundRect ? g.roundRect(b.x, b.y, b.w, b.h, 8 * b.sc) : g.rect(b.x, b.y, b.w, b.h);
     g.fill();
     g.stroke();
-    tx(l, b.x + b.w / 2, b.y + b.h / 2 + 5 * b.sc, (b.l.length == 1 ? 20 : 12) * b.sc, c, 'center', 0);
+    tx(l, b.x + b.w / 2, b.y + b.h / 2 + 5 * b.sc, 12 * b.sc, c, 'center', 0);
   }
-  const p = heUI()[0],
+  const p = heUI().pop(), // baris terakhir panel
     s = HE.sel;
   let info = 'Pilih tombol / area untuk diatur';
   if (s) {
@@ -263,7 +290,8 @@ function drawHudEdit() {
     info = HE_NAME[s] + '  ·  ' + pct;
   }
   g.globalAlpha = 1;
-  tx(info, UW / 2, p.y + p.h + 22, 13, '#ffd166', 'center', 0);
-  tx('Seret = pindah  ·  tarik ◢ = ubah ukuran area  ·  − / + = ubah ukuran yang dipilih', UW / 2, UH - SAFE.b - 8, 11, '#7aa2c0', 'center', 0);
+  info += '   ·   OPASITAS SKILL ' + Math.round(HC.so * 100) + '%';
+  tx(info, UW / 2, p.y + p.h + 20, 12, '#ffd166', 'center', 0);
+  tx('Seret = pindah  ·  ◢ = ukuran area  ·  UKURAN = elemen terpilih  ·  OPAS = opasitas skill', UW / 2, UH - SAFE.b - 8, 11, '#7aa2c0', 'center', 0);
   g.globalAlpha = 1;
 }
