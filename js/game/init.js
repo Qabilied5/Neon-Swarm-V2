@@ -35,6 +35,10 @@ function init() {
     crit: 0.08,
     ss: 0, // peluang Super Shot per tembakan
     sandy: 0, // 1 = upgrade Sandevistan aktif
+    sh: 0, // 1 = punya Super Shield
+    shn: 0, // sisa serangan yang bisa ditahan shield (0 = hancur / sedang pulih)
+    shc: 0, // detik sampai shield aktif lagi
+    shf: 0, // kilatan saat shield terkena
   };
   DC = null;
   GH = [];

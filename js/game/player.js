@@ -40,6 +40,10 @@ function hurt(d, c) {
     return;
   }
   if (c && wave >= LET) d = Math.max(d, Math.ceil(P.mh / 3));
+  if (P.sh && P.shn > 0) {
+    d = Math.max(1, Math.ceil(d * SH_RED)); // SUPER SHIELD: damage dikurangi 50%
+    shieldHit();
+  }
   P.hp -= d;
   if (TUT.on && P.hp < 1) P.hp = P.mh; // tutorial: tidak bisa mati
   P.inv = 0.7;
@@ -48,6 +52,22 @@ function hurt(d, c) {
   snd(110, 0.2, 'sawtooth', 0.07);
   pf(P.x, P.y, 14, '#ff2e63');
   if (P.hp <= 0) die();
+}
+// SUPER SHIELD: satu serangan tertahan -> sisa berkurang; habis = hancur, aktif lagi setelah SH_CD detik (updShield di update/fx.js)
+function shieldHit() {
+  P.shn--;
+  P.shf = 0.3;
+  RG.push({ x: P.x, y: P.y, r: P.r, mr: P.r + 34, c: '#4da3ff', w: 3, l: 0.3, m: 0.3 });
+  if (P.shn > 0) {
+    snd(520, 0.12, 'triangle', 0.05);
+    if (FT.length < 80) FT.push({ x: P.x, y: P.y - P.r - 14, t: 0.8, s: 'SHIELD ' + P.shn + '/' + SH_HITS, c: '#4da3ff', z: 14 });
+  } else {
+    P.shc = SH_CD;
+    pf(P.x, P.y, 26, '#4da3ff', 320, 0.7);
+    RG.push({ x: P.x, y: P.y, r: P.r, mr: P.r + 80, c: '#4da3ff', w: 5, l: 0.5, m: 0.5 });
+    snd(160, 0.3, 'sawtooth', 0.07);
+    FT.push({ x: P.x, y: P.y - P.r - 14, t: 1.1, s: 'SHIELD HANCUR', c: '#ff8da1', z: 16 });
+  }
 }
 function die() {
   S = 'dead';

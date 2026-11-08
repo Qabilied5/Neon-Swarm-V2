@@ -23,6 +23,19 @@ function drawHud() {
     tx('HP ' + Math.ceil(P.hp), L + 20, 42, 12, '#ff8da1', 'left');
     bar(L + 16, 50, hw, 6, P.xp / P.need, '#ffd166');
     tx('LV ' + P.lv, L + 20, 72, 12, '#ffd166', 'left');
+    if (P.sh) {
+      // SUPER SHIELD: ●●● = sisa serangan yang tertahan, angka = detik sampai aktif lagi
+      const on = P.shn > 0;
+      tx(
+        on ? '◈ ' + '●'.repeat(P.shn) + '○'.repeat(SH_HITS - P.shn) : '◈ ' + Math.ceil(P.shc) + 's',
+        L + 78,
+        72,
+        12,
+        on ? '#4da3ff' : '#5b7894',
+        'left',
+        on ? 6 : 0,
+      );
+    }
     if (wave >= LET) {
       const n = Math.ceil(P.hp / Math.ceil(P.mh / 3));
       tx(

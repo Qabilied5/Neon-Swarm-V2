@@ -2,7 +2,7 @@
 // Bahasa visual mengikuti isi game: pemain = segitiga cyan, orb XP = berlian kuning, musuh = poligon merah, peluru = garis hijau.
 // Kanvas ikon 64x64. Tambah ikon baru: satu entri di ICON (fungsi yang mengembalikan string elemen SVG), lalu pakai kuncinya di
 // data/upgrades.js (elemen ke-4 tiap upgrade) atau di TBTN (field i, ui/touch-layout.js).
-const IC = { c: '#22d3ee', y: '#ffd166', g: '#39ff88', r: '#ff2e63', p: '#b967ff', w: '#e8f4ff', o: '#ff9f1c' };
+const IC = { b: '#4da3ff', c: '#22d3ee', y: '#ffd166', g: '#39ff88', r: '#ff2e63', p: '#b967ff', w: '#e8f4ff', o: '#ff9f1c' };
 
 // ---- pembangun elemen SVG ----
 const _p = (x, y) => x.toFixed(1) + ',' + y.toFixed(1);
@@ -160,6 +160,11 @@ const ICON = {
     shp(sPoly(21, 32, 9, 3, 0), IC.c, 0.12, 0.35) +
     shp(sPoly(10, 32, 8, 3, 0), IC.r, 0.08, 0.2) +
     cir(10, 32, 13, IC.r, 2, 0.5, '3 4'),
+  // efek: Super Shield (perisai biru + 3 titik = 3 serangan tertahan)
+  shield: () =>
+    shp('32,6 54,14 54,33 32,58 10,33 10,14', IC.b, 0.22) +
+    shp('32,14 47,19 47,32 32,49 17,32 17,19', IC.b, 0.1, 0.5) +
+    `<circle cx="22" cy="30" r="3" fill="${IC.b}" stroke="none"/><circle cx="32" cy="30" r="3" fill="${IC.b}" stroke="none"/><circle cx="42" cy="30" r="3" fill="${IC.b}" stroke="none"/>`,
   // lencana "upgrade bisa di-stack" (dua chevron naik, hijau)
   levelup: () => cir(32, 32, 27, IC.g, 2.5, 0.9) + `<circle cx="32" cy="32" r="27" fill="${IC.g}" fill-opacity=".15" stroke="none"/>` + pln('20,34 32,22 44,34', IC.g, 4) + pln('20,47 32,35 44,47', IC.g, 4, 0.55),
   // tombol

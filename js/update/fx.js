@@ -50,8 +50,22 @@ function updDecoy(dt) {
     GH = GH.filter((o) => o.t > 0);
   }
 }
+// SUPER SHIELD: setelah hancur, hitung mundur lalu aktif lagi dengan SH_HITS penuh
+function updShield(dt) {
+  if (!P.sh) return;
+  if (P.shf > 0) P.shf -= dt;
+  if (P.shn <= 0 && P.shc > 0 && (P.shc -= dt) <= 0) {
+    P.shc = 0;
+    P.shn = SH_HITS;
+    RG.push({ x: P.x, y: P.y, r: P.r + 40, mr: P.r, c: '#4da3ff', w: 4, l: 0.4, m: 0.4 });
+    pf(P.x, P.y, 14, '#4da3ff', 200, 0.5);
+    FT.push({ x: P.x, y: P.y - P.r - 14, t: 1, s: 'SHIELD AKTIF', c: '#4da3ff', z: 16 });
+    snd(740, 0.2, 'triangle', 0.06);
+  }
+}
 function updTimers(dt) {
   updDecoy(dt);
+  updShield(dt);
   for (const a of RG) a.l -= dt;
   for (const a of AR) a.l -= dt;
   for (const a of BM) a.l -= dt;

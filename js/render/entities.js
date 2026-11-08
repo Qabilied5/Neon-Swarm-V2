@@ -137,6 +137,44 @@ function drawPlayer() {
     g.stroke();
     g.globalAlpha = 1;
   }
+  if (S != 'dead') drawShield();
+}
+// SUPER SHIELD: cincin biru berisi 1 busur per sisa serangan (3 -> 2 -> 1); saat pulih: busur redup menunjukkan progres
+function drawShield() {
+  if (!P.sh) return;
+  const R0 = P.r + 20,
+    c = '#4da3ff';
+  g.save();
+  g.lineCap = 'round';
+  if (P.shn > 0) {
+    const fl = P.shf > 0 ? 1 : 0, // kilat putih saat terkena
+      rot = T * 0.9,
+      col = fl ? '#ffffff' : c;
+    g.fillStyle = c;
+    g.globalAlpha = 0.07 + 0.05 * Math.sin(T * 4) + fl * 0.15;
+    g.beginPath();
+    g.arc(P.x, P.y, R0, 0, TAU);
+    g.fill();
+    g.strokeStyle = col;
+    g.shadowColor = c;
+    g.shadowBlur = TOUCH ? 6 : 12;
+    g.lineWidth = (fl ? 4 : 3) * ZK;
+    g.globalAlpha = 0.7 + 0.2 * Math.sin(T * 5);
+    const seg = TAU / SH_HITS;
+    for (let i = 0; i < P.shn; i++) {
+      g.beginPath();
+      g.arc(P.x, P.y, R0, rot + i * seg, rot + i * seg + seg * 0.78);
+      g.stroke();
+    }
+  } else if (P.shc > 0) {
+    g.strokeStyle = c;
+    g.globalAlpha = 0.28;
+    g.lineWidth = 2 * ZK;
+    g.beginPath();
+    g.arc(P.x, P.y, R0, -Math.PI / 2, -Math.PI / 2 + TAU * (1 - P.shc / SH_CD)); // makin penuh = makin dekat aktif
+    g.stroke();
+  }
+  g.restore();
 }
 
 // Sandevistan: jejak bayangan sepanjang dash (aberasi kromatik merah/cyan)

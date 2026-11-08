@@ -32,4 +32,18 @@ const UP = [
   ['SKILL: TELEPORT (T)', 'pindah instan ke titik bidik, cooldown 40 detik', () => P.sk.tp++, 'teleport', 0, 1],
   ['SUPER SHOT', '+5% peluang peluru super (damage 100) tiap tembakan', () => (P.ss += SS_CHANCE), 'supershot', 0, 6],
   ['SANDEVISTAN', 'musuh menyerang bayangan awal dash selama 1,5 dtk', () => P.sandy++, 'sande', 0, 1],
+  // SUPER SHIELD: hanya muncul 1x (batas stack 1), tidak bisa di-stack. Logika: hurt() di game/player.js, pemulihan: updShield() di update/fx.js
+  [
+    'SUPER SHIELD',
+    '-50% damage, tahan 3 serangan, pulih 20s',
+    () => {
+      if (P.sh) return;
+      P.sh = 1;
+      P.shn = SH_HITS;
+      P.shc = 0;
+    },
+    'shield',
+    0,
+    1,
+  ],
 ];
