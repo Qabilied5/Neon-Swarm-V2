@@ -10,7 +10,8 @@ function menuLayout() {
     elev = cl(UH * 0.035, 8, 20), // kartu peringkat 1 lebih tinggi
     gap = cl(UH * 0.05, 12, 34),
     bh = cl(UH * 0.075, 34, 44),
-    bw = cl(sw * 0.22, 150, 210),
+    bw = cl(sw * 0.2, 130, 190),
+    bg = 14, // jarak antar tombol TUTORIAL & RANKING
     total = big + gap + 32 + ch + elev + gap + 22 + gap + bh,
     y0 = Math.max(SAFE.t + 8, (UH - total) / 2),
     titleY = y0 + big * 0.82,
@@ -18,12 +19,27 @@ function menuLayout() {
     cardsY = lblY + 26 + elev, // sisi atas kartu non-juara; kartu juara naik sebesar elev
     promptY = cardsY + ch + gap + 14,
     btnY = promptY + gap + 6;
-  return { sw, cx, big, ch, elev, gap, titleY, lblY, cardsY, promptY, btn: { x: cx - bw / 2, y: btnY, w: bw, h: bh } };
+  return {
+    sw,
+    cx,
+    big,
+    ch,
+    elev,
+    gap,
+    titleY,
+    lblY,
+    cardsY,
+    promptY,
+    btn: { x: cx - bg / 2 - bw, y: btnY, w: bw, h: bh }, // TUTORIAL
+    btn2: { x: cx + bg / 2, y: btnY, w: bw, h: bh }, // RANKING
+  };
 }
+// tombol menu yang tersentuh: 'tut' (TUTORIAL), 'rank' (RANKING) atau null
 const menuBtnHit = (x, y) => {
-  if (S != 'menu') return false;
-  const b = menuLayout().btn;
-  return x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6;
+  if (S != 'menu') return null;
+  const L = menuLayout(),
+    at = (b) => x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6;
+  return at(L.btn) ? 'tut' : at(L.btn2) ? 'rank' : null;
 };
 function rrect(x, y, w, h, r) {
   g.beginPath();
@@ -119,10 +135,12 @@ function drawMenu() {
   tx(TOUCH ? 'TAP TO PLAY' : 'CLICK TO PLAY', cx, L.promptY, cl(UH / 22, 17, 24), '#ffd166', 'center', 12);
   g.globalAlpha = 1;
 
-  // ---- tombol TUTORIAL ----
-  const b = L.btn,
-    hot = !TOUCH && menuBtnHit(MU.x, MU.y),
-    bc = '#22d3ee';
+  // ---- tombol TUTORIAL & RANKING ----
+  const hov = !TOUCH && menuBtnHit(MU.x, MU.y);
+  drawMenuBtn(L.btn, 'TUTORIAL', '#22d3ee', hov == 'tut', 'help');
+  drawMenuBtn(L.btn2, 'RANKING', '#ffd166', hov == 'rank', 'rank');
+}
+function drawMenuBtn(b, label, bc, hot, icon) {
   g.shadowColor = bc;
   g.shadowBlur = hot ? 16 : 6;
   g.fillStyle = hot ? 'rgba(34,211,238,.22)' : 'rgba(10,18,32,.8)';
@@ -136,24 +154,31 @@ function drawMenu() {
     ix = b.x + b.h * 0.55,
     iy = b.y + b.h / 2;
   g.lineWidth = 1.5;
-  g.beginPath();
-  g.arc(ix, iy, ir, 0, TAU);
-  g.stroke();
-  tx('?', ix, iy + ir * 0.38, ir * 1.35, bc, 'center', 0);
-  tx('TUTORIAL', b.x + b.w / 2 + b.h * 0.2, b.y + b.h / 2 + 5, 15, bc, 'center', 0);
+  if (icon == 'rank') {
+    // ikon podium: 3 batang (tengah tertinggi)
+    g.fillStyle = bc;
+    const bwid = ir * 0.62;
+    for (const [dx, hh] of [[-1, 0.9], [0, 1.5], [1, 0.6]]) g.fillRect(ix + dx * (bwid + 1.5) - bwid / 2, iy + ir - ir * hh * 1.1, bwid, ir * hh * 1.1);
+  } else {
+    g.beginPath();
+    g.arc(ix, iy, ir, 0, TAU);
+    g.stroke();
+    tx('?', ix, iy + ir * 0.38, ir * 1.35, bc, 'center', 0);
+  }
+  tx(label, b.x + b.w / 2 + b.h * 0.2, b.y + b.h / 2 + 5, 15, bc, 'center', 0);
 }
 // ---------- PAUSE: tombol LANJUT & RESTART (restart perlu tekan 2x agar tidak terpencet tanpa sengaja) ----------
 const PAU = { conf: 0 }; // waktu (T) tekan pertama RESTART
 function pauseLayout() {
   const sw = UW - SAFE.l - SAFE.r,
     cx = SAFE.l + sw / 2,
-    n = TUT.on ? 3 : 2, // tutorial: + tombol KELUAR
-    bw = cl(sw * (n == 3 ? 0.17 : 0.2), 110, 190),
+    n = TUT.on ? 4 : 3, // tutorial: + tombol KELUAR
+    bw = cl(sw * (n == 4 ? 0.15 : 0.18), 100, 190),
     bh = cl(UH * 0.1, 38, 46),
     gp = 14,
     ty = UH * 0.34,
     by = ty + 28,
-    ks = n == 3 ? ['resume', 'restart', 'exit'] : ['resume', 'restart'];
+    ks = n == 4 ? ['resume', 'restart', 'rank', 'exit'] : ['resume', 'restart', 'rank'];
   return {
     cx,
     ty,
@@ -166,8 +191,10 @@ function pauseBtnAt(x, y) {
   const b = pauseLayout().btns.find((b) => x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6);
   return b ? b.k : null;
 }
-function pauseAct(k) {
-  if (k == 'resume') {
+function pauseAct(k, id) {
+  if (k == 'rank') {
+    rankOpen(id); // id = sentuhan pembuka (agar touchend-nya tidak langsung menutup)
+  } else if (k == 'resume') {
     PAU.conf = 0;
     S = 'play';
   } else if (k == 'exit') {
@@ -190,9 +217,9 @@ function drawPause() {
   tx('PAUSE', L.cx, L.ty, Math.min(60, UH / 6), '#22d3ee', 'center', 20);
   for (const b of L.btns) {
     const re = b.k == 'restart',
-      c = b.k == 'exit' ? '#7aa2c0' : re ? (confirm ? '#ffd166' : '#ff2e63') : '#22d3ee',
+      c = b.k == 'exit' ? '#7aa2c0' : b.k == 'rank' ? '#ffd166' : re ? (confirm ? '#ffd166' : '#ff2e63') : '#22d3ee',
       hot = !TOUCH && pauseBtnAt(MU.x, MU.y) == b.k,
-      label = b.k == 'exit' ? 'KELUAR' : re ? (confirm ? 'YAKIN? TEKAN LAGI' : 'RESTART') : 'LANJUT';
+      label = b.k == 'exit' ? 'KELUAR' : b.k == 'rank' ? 'RANKING' : re ? (confirm ? 'YAKIN? TEKAN LAGI' : 'RESTART') : 'LANJUT';
     g.shadowColor = c;
     g.shadowBlur = hot || (re && confirm) ? 16 : 6;
     g.fillStyle = hot ? c + '33' : 'rgba(10,18,32,.85)';

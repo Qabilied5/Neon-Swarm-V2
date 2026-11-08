@@ -160,6 +160,7 @@ addEventListener(
     for (const t of e.changedTouches) {
       const x = t.clientX,
         y = t.clientY; // koordinat layar asli (ruang UI)
+      if (RK.on) continue; // layar ranking: ditutup saat jari dilepas (touchend)
       if (S == 'hudedit') {
         heStart(t.identifier, x, y); // editor HUD: seret tombol / area
         continue;
@@ -173,8 +174,10 @@ addEventListener(
         }
       }
       if (S == 'menu' || S == 'dead') {
-        if (menuBtnHit(x, y)) {
-          tutStart(); // tombol TUTORIAL
+        const mb = menuBtnHit(x, y);
+        if (mb) {
+          if (mb == 'rank') rankOpen(t.identifier); // tombol RANKING
+          else tutStart(); // tombol TUTORIAL
           continue;
         }
         if (S == 'dead' && lbBtnHit(x, y)) continue; // tombol KIRIM SKOR: aksi saat jari dilepas
@@ -188,7 +191,7 @@ addEventListener(
       }
       if (S == 'pause') {
         const k = pauseBtnAt(x, y);
-        if (k) pauseAct(k); // LANJUT / RESTART
+        if (k) pauseAct(k, t.identifier); // LANJUT / RESTART / RANKING
         else S = 'play'; // sentuh area lain = lanjut (perilaku lama)
         continue;
       }
@@ -246,6 +249,7 @@ addEventListener(
     for (const t of e.changedTouches) {
       const tx_ = t.clientX,
         ty_ = t.clientY;
+      if (RK.on) continue;
       if (S == 'hudedit') {
         heMove(t.identifier, tx_, ty_);
         continue;
@@ -270,6 +274,12 @@ addEventListener(
 );
 const tend = (e) => {
   for (const t of e.changedTouches) {
+    if (RK.on) {
+      // layar ranking: tap (jari dilepas) = tutup; jari pembuka diabaikan
+      if (t.identifier == RK.id) RK.id = null;
+      else if (e.type == 'touchend') rankTap();
+      continue;
+    }
     if (S == 'hudedit') {
       heEnd(t.identifier, t.clientX, t.clientY, e.type);
       continue;

@@ -289,3 +289,95 @@ async function lbSubmit() {
     lbMsg(e.name == 'AbortError' || e instanceof TypeError ? 'Gagal terhubung. Periksa koneksi lalu coba lagi.' : e.message, 1);
   }
 }
+
+// ---------- LAYAR RANKING (TOP 10) ----------
+// Overlay penuh yang dibuka dari tombol RANKING di menu & pause. S (menu / pause) tidak berubah, jadi game yang di-pause tetap aman.
+// Data = cache LB.top (maks 10) yang disegarkan dari server saat dibuka; offline -> tampilkan cache terakhir.
+const RK = { on: 0, t0: 0, id: null, me: '' };
+function rankOpen(id) {
+  if (RK.on) return;
+  RK.on = 1;
+  RK.t0 = T;
+  RK.id = id == null ? null : id; // id sentuhan pembuka: touchend-nya jangan langsung menutup
+  try {
+    RK.me = (localStorage.getItem('ns_name') || '').toLowerCase();
+  } catch (e) {
+    RK.me = '';
+  }
+  lbRefresh(true, true); // ambil data terbaru
+}
+const rankClose = () => (RK.on = 0);
+const rankTap = () => T - RK.t0 > 0.25 && rankClose(); // jeda singkat agar tap pembuka tidak langsung menutup
+function drawRank() {
+  if (!RK.on) return;
+  const sw = UW - SAFE.l - SAFE.r,
+    cx = SAFE.l + sw / 2,
+    tsz = cl(UH / 10, 22, 38),
+    ty = SAFE.t + tsz + 6,
+    bh = cl(UH * 0.1, 34, 42),
+    bw = cl(sw * 0.22, 130, 180),
+    by = UH - SAFE.b - bh - 10,
+    y0 = ty + 38,
+    y1 = by - 22,
+    top = LB.top.slice(0, 10);
+  g.shadowBlur = 0;
+  g.globalAlpha = 1;
+  g.fillStyle = 'rgba(2,4,12,.98)';
+  g.fillRect(0, 0, UW, UH);
+  tx('RANKING', cx, ty, tsz, '#ffd166', 'center', 14);
+  tx('TOP 10 SKOR TERTINGGI', cx, ty + 20, 12, '#7aa2c0');
+
+  const online = LB_ON && navigator.onLine;
+  if (!top.length) {
+    const m = !LB_ON
+      ? 'Ranking online belum diaktifkan'
+      : !navigator.onLine
+        ? 'Offline · ranking tidak tersedia'
+        : LB.busy
+          ? 'Memuat ranking…'
+          : 'Belum ada data ranking';
+    tx(m, cx, (y0 + y1) / 2, 16, '#7aa2c0');
+  } else {
+    const two = sw >= 520, // layar lebar: 2 kolom x 5 baris
+      per = two ? 5 : 10,
+      rh = Math.min(two ? 40 : 30, (y1 - y0) / per),
+      colW = two ? Math.min(sw / 2 - 14, 340) : Math.min(sw - 24, 420);
+    top.forEach((e, i) => {
+      const col = two ? (i < 5 ? 0 : 1) : 0,
+        row = two ? i % 5 : i,
+        x = two ? cx + (col ? 8 : -colW - 8) : cx - colW / 2,
+        y = y0 + row * rh,
+        h = rh - 4,
+        c = i < 3 ? LB_MEDAL[i] : '#7aa2c0',
+        me = RK.me && e.name.toLowerCase() == RK.me,
+        sz = cl(h * 0.46, 11, 17);
+      g.fillStyle = me ? 'rgba(57,255,136,.12)' : i < 3 ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.03)';
+      g.strokeStyle = me ? '#39ff88' : i < 3 ? c + '88' : 'rgba(122,162,192,.25)';
+      g.lineWidth = me ? 2 : 1;
+      rrect(x, y, colW, h, 8);
+      g.fill();
+      g.stroke();
+      const my = y + h / 2 + sz * 0.36;
+      tx(String(i + 1), x + 12, my, sz * 1.1, c, 'left', i < 3 ? 6 : 0);
+      const sc = e.score.toLocaleString('id-ID');
+      tx(sc, x + colW - 12, my, sz * 1.05, i < 3 ? c : '#e8f4ff', 'right', 0);
+      tx(fitText(e.name, sz, colW - 48 - lbW(sc, sz * 1.05) - 14), x + 46, my, sz, me ? '#39ff88' : '#e8f4ff', 'left', 0);
+    });
+  }
+  // status data
+  const st = !online && top.length ? 'offline · menampilkan data tersimpan terakhir' : LB.busy && top.length ? 'memperbarui…' : '';
+  if (st) tx(st, cx, y1 + 12, 11, '#7aa2c0');
+  // tombol KEMBALI
+  const hot = !TOUCH && MU.x >= cx - bw / 2 && MU.x <= cx + bw / 2 && MU.y >= by && MU.y <= by + bh,
+    bc = '#22d3ee';
+  g.shadowColor = bc;
+  g.shadowBlur = hot ? 16 : 6;
+  g.fillStyle = hot ? 'rgba(34,211,238,.22)' : 'rgba(10,18,32,.85)';
+  g.strokeStyle = bc;
+  g.lineWidth = 2;
+  rrect(cx - bw / 2, by, bw, bh, bh / 2);
+  g.fill();
+  g.stroke();
+  g.shadowBlur = 0;
+  tx('KEMBALI', cx, by + bh / 2 + 5, 15, bc, 'center', 0);
+}

@@ -1,6 +1,14 @@
 // Input keyboard & mouse
 addEventListener('keydown', (e) => {
   if (LB.open) return; // sedang mengetik nama di dialog kirim skor
+  if (RK.on) {
+    // layar ranking: Esc / Enter / Spasi / Backspace = kembali
+    if (['Escape', 'Enter', 'Space', 'Backspace', 'NumpadEnter'].includes(e.code)) {
+      e.preventDefault();
+      rankTap();
+    }
+    return;
+  }
   K[e.code] = 1;
   if (e.code == 'Space') e.preventDefault();
   const c = e.code;
@@ -41,6 +49,10 @@ addEventListener('mousedown', (e) => {
   M.y = e.clientY / ZM;
   MU.x = e.clientX;
   MU.y = e.clientY;
+  if (RK.on) {
+    rankTap(); // klik di mana saja = kembali
+    return;
+  }
   const u = uiHit(MU.x, MU.y);
   if (u) {
     uiAct(u);
@@ -58,8 +70,10 @@ addEventListener('mousedown', (e) => {
     if (k) pauseAct(k);
     return;
   }
-  if (menuBtnHit(MU.x, MU.y)) {
-    tutStart(); // tombol TUTORIAL
+  const mb = menuBtnHit(MU.x, MU.y);
+  if (mb) {
+    if (mb == 'rank') rankOpen(); // tombol RANKING
+    else tutStart(); // tombol TUTORIAL
     return;
   }
   if (S == 'dead' && lbBtnHit(MU.x, MU.y)) {

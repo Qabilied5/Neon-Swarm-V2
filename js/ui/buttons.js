@@ -1,6 +1,6 @@
 // Tombol UI kecil (fullscreen, pause) + hit test
 function uiBtns() {
-  if (S == 'dead' || S == 'hudedit') return [];
+  if (S == 'dead' || S == 'hudedit' || RK.on) return [];
   const b = [],
     k = 1; // UI sudah di ruang layar: ukuran tombol tidak ikut zoom
   let x = UW - SAFE.r - 26 * k;

@@ -14,5 +14,6 @@ function draw() {
   drawLevelup();
   drawDead();
   drawHudEdit();
+  drawRank();
   g.restore();
 }
