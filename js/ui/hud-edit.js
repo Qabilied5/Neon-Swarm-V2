@@ -1,7 +1,8 @@
 // EDITOR HUD (sentuh): atur posisi & ukuran tombol (DASH, Q, E, R, Teleport, ✚), opasitas tombol skill, serta area gerak (kiri) dan area serang (kanan).
 // Dibuka lewat tombol HUD di menu / pause (S = 'hudedit'), hasil disimpan otomatis (localStorage 'ns_hud', lihat touch-layout.js).
-//  - seret tombol / area = pindah  ·  tarik sudut ◢ area = ubah ukuran  ·  pilih elemen lalu UKURAN −/+ = perbesar / perkecil  ·  OPAS −/+ = opasitas semua tombol skill (HC.so)
-const HE = { sel: null, id: null, mode: null, ox: 0, oy: 0, ret: 'menu', pb: null, rt: 0 };
+// OPAS −/+ = opasitas tombol TERPILIH: dash & heal masing-masing sendiri; Q/E/R/Teleport satu grup (HC.so).
+//  - seret tombol / area = pindah  ·  tarik sudut ◢ area = ubah ukuran  ·  pilih elemen lalu UKURAN −/+ = perbesar / perkecil  ·  pilih tombol lalu OPAS −/+ = opasitasnya
+const HE = { sel: null, id: null, mode: null, ox: 0, oy: 0, ret: 'menu', pb: null, rt: 0, note: '', nt: 0 };
 const HE_NAME = { dash: 'TOMBOL DASH', q: 'SKILL Q', e: 'SKILL E', r: 'SKILL R', c: 'TOMBOL HEAL', tp: 'SKILL TELEPORT', move: 'AREA GERAK', aim: 'AREA SERANG' };
 const HE_COL = { move: '#39ff88', aim: '#ff2e63' };
 
@@ -19,7 +20,7 @@ function heClose() {
 }
 
 // tombol panel atas, 2 baris (posisi px layar):
-//  baris 1: UKURAN -/+ (elemen terpilih) · OPAS -/+ (opasitas semua tombol skill)
+//  baris 1: UKURAN -/+ (elemen terpilih) · OPAS -/+ (opasitas tombol terpilih)
 //  baris 2: GARIS AREA · RESET · SELESAI
 function heUI() {
   const sc = Math.min(1, (UW - SAFE.l - SAFE.r - 16) / 380),
@@ -158,7 +159,12 @@ function heAct(k) {
       HE.rt = 0;
     } else HE.rt = T + 2.5; // tekan sekali lagi untuk konfirmasi
   } else if (k == 'oinc' || k == 'odec') {
-    HC.so = +cl(HC.so + (k == 'oinc' ? 0.1 : -0.1), HC_OMIN, 1).toFixed(2); // opasitas semua tombol skill
+    const f = k == 'oinc' ? 0.1 : -0.1;
+    if (!HE.sel || HC[HE.sel]) {
+      HE.note = 'Pilih sebuah tombol dulu untuk mengatur opasitasnya'; // area gerak / serang tidak punya opasitas
+      HE.nt = T + 2.5;
+    } else if (isSkillBtn(HE.sel)) HC.so = +cl(HC.so + f, HC_OMIN, 1).toFixed(2); // Q/E/R/Teleport berbagi satu opasitas
+    else HC.op[HE.sel] = +cl(btnOp(HE.sel) + f, HC_OMIN, 1).toFixed(2); // dash / heal: sendiri-sendiri
   } else if ((k == 'inc' || k == 'dec') && HE.sel) {
     const f = k == 'inc' ? 1 : -1;
     if (HC[HE.sel]) {
@@ -233,8 +239,8 @@ function drawHudEdit() {
       sp = TBTN.find((t) => t.k == b.k),
       big = (b.k == 'dash' ? 13 : 20) * (b.r / (sp.r * u));
     const skill = isSkillBtn(b.k),
-      al = skill ? HC.so : 0.95; // pratinjau opasitas nyata seperti saat bermain
-    if (skill) {
+      al = btnOp(b.k); // pratinjau opasitas nyata seperti saat bermain
+    if (al < 0.5) {
       // penanda lokasi: cincin putus-putus tetap terlihat walau opasitas sangat rendah
       g.globalAlpha = 0.5;
       g.strokeStyle = b.c;
@@ -253,7 +259,7 @@ function drawHudEdit() {
     g.arc(b.x, b.y, b.r, 0, TAU);
     g.fill();
     g.stroke();
-    g.globalAlpha = skill ? Math.min(1, al + 0.1) : 0.95;
+    g.globalAlpha = Math.min(1, al + 0.1);
     if (!btnGlyph(b)) tx(b.l, b.x, b.y + big * 0.3, big, b.c, 'center', 0);
     if (sel) {
       g.strokeStyle = '#fff';
@@ -287,11 +293,13 @@ function drawHudEdit() {
   let info = 'Pilih tombol / area untuk diatur';
   if (s) {
     const pct = HC[s] ? Math.round(HC[s].w * 100) + '% × ' + Math.round(HC[s].h * 100) + '%' : Math.round(((HC.btn[s] || { s: 1 }).s) * 100) + '%';
-    info = HE_NAME[s] + '  ·  ' + pct;
+    info = HE_NAME[s] + '  ·  UKURAN ' + pct;
   }
   g.globalAlpha = 1;
-  info += '   ·   OPASITAS SKILL ' + Math.round(HC.so * 100) + '%';
+  if (s && !HC[s]) info += '  ·  OPASITAS ' + Math.round(btnOp(s) * 100) + '%' + (isSkillBtn(s) ? ' (grup skill Q/E/R/T)' : '');
   tx(info, UW / 2, p.y + p.h + 20, 12, '#ffd166', 'center', 0);
-  tx('Seret = pindah  ·  ◢ = ukuran area  ·  UKURAN = elemen terpilih  ·  OPAS = opasitas skill', UW / 2, UH - SAFE.b - 8, 11, '#7aa2c0', 'center', 0);
+  // petunjuk di bawah info (bukan di tepi bawah layar, supaya tidak menimpa pegangan ◢ area)
+  const hint = HE.nt > T ? HE.note : 'Seret = pindah  ·  ◢ = ukuran area  ·  UKURAN / OPAS = untuk elemen terpilih';
+  tx(hint, UW / 2, p.y + p.h + 38, 11, HE.nt > T ? '#ff8da1' : '#7aa2c0', 'center', 0);
   g.globalAlpha = 1;
 }

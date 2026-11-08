@@ -11,15 +11,16 @@ function touchHud() {
 }
 function drawTBtn(b) {
   const on = true, // tombol yang digambar selalu sudah terbuka (yang terkunci disembunyikan, lihat vbtns)
-    skill = isSkillBtn(b.k), // Q/E/R/Teleport: opasitas HC.so (bawaan 10%, bisa diatur di editor HUD)
+    skill = isSkillBtn(b.k), // Q/E/R/Teleport: opasitas bersama HC.so; dash & heal: HC.op[k] sendiri-sendiri (editor HUD)
+    op = btnOp(b.k),
     cd = b.k == 'dash' ? P.dc : P.cd[b.k],
     mx = b.k == 'dash' ? P.dashCD : b.k == 'c' ? HEAL_CD : b.k == 'tp' ? TP_CD : 9,
     rdy = on && cd <= 0,
     pr = (TPR[b.k] || 0) > T,
     aiming = SK.on && SK.k == b.k,
     r = b.r * (pr ? 1.12 : 1),
-    // skill: HC.so (naik ke min. 60% saat ditekan / dibidik agar ada umpan balik)
-    al = skill ? (pr || aiming ? Math.max(HC.so, 0.6) : HC.so) : 0.9;
+    // opasitas tombol (naik ke min. 60% saat ditekan / dibidik agar ada umpan balik)
+    al = pr || aiming ? Math.max(op, 0.6) : op;
   g.globalAlpha = al;
   g.fillStyle = pr ? b.c + '55' : '#0a1220';
   g.strokeStyle = b.c;
@@ -52,7 +53,7 @@ function drawTBtn(b) {
     g.arc(b.x + SK.kx, b.y + SK.ky, b.r * 0.45, 0, TAU);
     g.fill();
   }
-  g.globalAlpha = skill ? Math.min(1, al + 0.1) : 1; // label ikut transparan pada tombol skill
+  g.globalAlpha = Math.min(1, al + 0.1); // label ikut opasitas tombol
   const big = b.k == 'dash' ? 13 : 20;
   if ((b.k == 'c' || b.k == 'tp') && cd > 0)
     tx(String(Math.ceil(cd)), b.x, b.y + 6, 16, b.c, 'center', 0); // sisa detik heal / teleport
