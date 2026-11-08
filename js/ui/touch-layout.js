@@ -3,6 +3,7 @@
 const bs = () => cl(innerHeight / 400, 0.75, 1.2); // skala UI menurut tinggi layar (UI di ruang layar, tidak ikut zoom dunia)
 
 // Tombol di sekeliling titik serang. a = sudut (derajat, 180 = kiri titik serang, searah jarum jam)
+// rr (opsional) = pengali jarak dari titik serang (bawaan 1; >1 = lingkar luar, untuk tombol tambahan).
 // Tambah tombol baru di sini (+ f = fungsi aksi, i = kunci ikon SVG di render/icons.js, l = label teks cadangan). Maks ~6 tombol agar tidak berdesakan.
 const TBTN = [
   { k: 'dash', l: 'DASH', i: 'dash', c: '#ffd166', a: 348, r: 30, f: () => dash() },
@@ -10,6 +11,7 @@ const TBTN = [
   { k: 'e', l: 'E', i: 'laser', c: '#ff2e63', a: 264, r: 26, f: () => laser() },
   { k: 'r', l: 'R', i: 'hole', c: '#b967ff', a: 306, r: 26, f: () => hole() },
   { k: 'c', l: '✚', i: 'heal', c: '#39ff88', a: 180, r: 26, f: () => heal() },
+  { k: 'tp', l: 'T', i: 'teleport', c: '#ff9f1c', a: 205, rr: 1.55, r: 26, f: () => teleport() }, // lingkar luar kiri-atas
 ];
 
 // ---- KONFIGURASI HUD (disimpan di localStorage 'ns_hud') ----
@@ -82,15 +84,15 @@ function buildTUI() {
         r = b.r * u * (hc ? hc.s : 1);
       return {
         ...b,
-        x: hc ? cl(hc.x * UW, SAFE.l + r, UW - SAFE.r - r) : cx + R * Math.cos((b.a * Math.PI) / 180),
-        y: hc ? cl(hc.y * UH, r, UH - SAFE.b - r) : cy + R * Math.sin((b.a * Math.PI) / 180),
+        x: hc ? cl(hc.x * UW, SAFE.l + r, UW - SAFE.r - r) : cx + R * (b.rr || 1) * Math.cos((b.a * Math.PI) / 180),
+        y: hc ? cl(hc.y * UH, r, UH - SAFE.b - r) : cy + R * (b.rr || 1) * Math.sin((b.a * Math.PI) / 180),
         r,
       };
     }),
   };
 }
-// tombol yang tampil & bisa disentuh: skill Q/E/R yang masih terkunci (belum dipilih di level-up) disembunyikan
-const vbtns = () => tui().btns.filter((b) => !(b.k == 'q' || b.k == 'e' || b.k == 'r') || (P && P.sk[b.k] > 0));
+// tombol yang tampil & bisa disentuh: skill Q/E/R/Teleport yang masih terkunci (belum dipilih di level-up) disembunyikan
+const vbtns = () => tui().btns.filter((b) => !(b.k == 'q' || b.k == 'e' || b.k == 'r' || b.k == 'tp') || (P && P.sk[b.k] > 0));
 
 // hasil di-cache, dihitung ulang hanya saat ukuran layar / safe-area / konfigurasi HUD berubah (set TUI = null)
 function tui() {

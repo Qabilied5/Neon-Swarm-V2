@@ -1,4 +1,4 @@
-// Skill aktif: nova() Q, laser() E, hole() R
+// Skill aktif: nova() Q, laser() E, hole() R, teleport() T
 // cx,cy opsional: pusat ledakan (default = posisi pemain)
 function nova(cx = P.x, cy = P.y) {
   if (!P.sk.q || P.cd.q > 0) return;
@@ -57,6 +57,36 @@ function hole(x = M.x, y = M.y) {
   VX.push({ x: cl(x, 0, W), y: cl(y, 0, H), l: 3.5, m: 3.5, r: 170 + P.sk.r * 25 });
   snd(80, 0.6, 'sine', 0.09);
   if (TUT.on) tutSkill('r');
+}
+
+// Teleport (T / tombol sentuh): pindah instan ke titik bidik (maks TP_RANGE), cooldown TP_CD detik, kebal sesaat saat tiba
+// x,y opsional: titik tujuan (default = posisi kursor)
+function teleport(x = M.x, y = M.y) {
+  if (!P.sk.tp || P.cd.tp > 0) return;
+  const dx = x - P.x,
+    dy = y - P.y,
+    d = Math.hypot(dx, dy);
+  if (d < 25) return; // titik terlalu dekat: jangan buang cooldown
+  const k = Math.min(1, TP_RANGE / d),
+    ox = P.x,
+    oy = P.y,
+    nx = cl(P.x + dx * k, P.r, W - P.r),
+    ny = cl(P.y + dy * k, P.r, H - P.r);
+  P.cd.tp = TP_CD;
+  for (let i = 0; i <= 14; i++) pf(ox + ((nx - ox) * i) / 14, oy + ((ny - oy) * i) / 14, 2, '#ff9f1c', 90, 0.45); // jejak warp
+  RG.push(
+    { x: ox, y: oy, r: 0, mr: 70, c: '#ff9f1c', w: 5, l: 0.35, m: 0.35 },
+    { x: nx, y: ny, r: 0, mr: 110, c: '#ff9f1c', w: 6, l: 0.45, m: 0.45 },
+    { x: nx, y: ny, r: 0, mr: 60, c: '#fff', w: 2, l: 0.3, m: 0.3 },
+  );
+  pf(ox, oy, 24, '#ff9f1c', 300, 0.6);
+  pf(nx, ny, 30, '#ffd166', 360, 0.7);
+  P.x = nx;
+  P.y = ny;
+  P.inv = Math.max(P.inv, 0.3);
+  shake = Math.max(shake, 5);
+  snd(300, 0.25, 'sine', 0.07);
+  snd(1100, 0.2, 'triangle', 0.05);
 }
 
 // Heal (C): pulihkan HEAL_PCT dari max HP, cooldown HEAL_CD detik

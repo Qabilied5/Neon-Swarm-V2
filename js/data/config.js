@@ -27,5 +27,12 @@ const ORB_R = 100,
 // Secret boss muncul di wave ini (wave 15 & 20 lanjut ke super boss setelah dikalahkan)
 const SEC_WAVES = [6, 11, 15, 20];
 
+// Skill & efek baru
+const TP_CD = 40, // Teleport (T): cooldown (detik)
+  TP_RANGE = 450, // jarak teleport maksimum (px dunia); titik bidik yang lebih jauh dijepit ke jarak ini
+  SS_CHANCE = 0.05, // Super Shot: peluang per tembakan, bertambah segini tiap stack upgrade
+  SS_DMG = 100, // damage peluru super (tetap, tidak dikali P.dmg)
+  SANDY_T = 1.5; // Sandevistan: lama musuh menargetkan bayangan awal dash (detik)
+
 // Panjang setengah garis laser layar penuh (px) - cukup untuk menutup layar 4K
 const LASER_LEN = 2600;

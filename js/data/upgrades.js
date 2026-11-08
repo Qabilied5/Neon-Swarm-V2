@@ -2,6 +2,7 @@
 // Format: [nama, deskripsi, efek, kunci ikon SVG, instan?]. Ikon didefinisikan di render/icons.js (ICON).
 // Upgrade yang muncul lagi setelah pernah diambil menampilkan badge hijau "LV n > n+1" (stack dihitung di P.up).
 // Elemen ke-5 = 1 untuk upgrade instan yang tidak menumpuk (mis. REPAIR): tanpa badge.
+// Elemen ke-6 (opsional) = batas stack: setelah tercapai upgrade tidak muncul lagi di kartu (mis. Teleport, Sandevistan).
 const UP = [
   ['RAPID FIRE', '+25% kecepatan tembak', () => (P.rate *= 1.25), 'rapid'],
   ['DAMAGE UP', '+30% damage peluru', () => (P.dmg *= 1.3), 'damage'],
@@ -28,4 +29,7 @@ const UP = [
   ['EXPLOSIVE ROUNDS', 'peluru meledak area kecil', () => P.boom++, 'boom'],
   ['VAMPIRISM', 'setiap kill memulihkan HP (makin besar tiap wave)', () => P.vamp++, 'vamp'],
   ['CRITICAL', '+20% peluang crit (damage x3.5)', () => (P.crit += 0.2), 'crit'],
+  ['SKILL: TELEPORT (T)', 'pindah instan ke titik bidik, cooldown 40 detik', () => P.sk.tp++, 'teleport', 0, 1],
+  ['SUPER SHOT', '+5% peluang peluru super (damage 100) tiap tembakan', () => (P.ss += SS_CHANCE), 'supershot', 0, 6],
+  ['SANDEVISTAN', 'musuh menyerang bayangan awal dash selama 1,5 dtk', () => P.sandy++, 'sande', 0, 1],
 ];

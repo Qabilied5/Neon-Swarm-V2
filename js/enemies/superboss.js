@@ -30,7 +30,8 @@ function sup(e, dt, d, ux, uy) {
   }
   e.x = cl(e.x, e.r, W - e.r);
   e.y = cl(e.y, e.r, H - e.r);
-  const A = Math.atan2(P.y - e.y, P.x - e.x),
+  const tg = tgt(), // bayangan Sandevistan (jika aktif) atau pemain
+    A = Math.atan2(tg.y - e.y, tg.x - e.x),
     sh = (a, v, dm, rr = 6) =>
       EB.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: rr, d: dm, life: 6 });
   if (!e.at) {
@@ -70,8 +71,8 @@ function sup(e, dt, d, ux, uy) {
     for (let j = 0; j < (rg > 1 ? 2 : 1); j++)
       HZ.push({
         k: 'ring',
-        x: P.x + (j ? R(-200, 200) : R(-30, 30)),
-        y: P.y + (j ? R(-200, 200) : R(-30, 30)),
+        x: tg.x + (j ? R(-200, 200) : R(-30, 30)),
+        y: tg.y + (j ? R(-200, 200) : R(-30, 30)),
         r: 125,
         t: 0.9,
         m: 0.9,

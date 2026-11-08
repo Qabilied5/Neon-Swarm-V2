@@ -38,7 +38,20 @@ function updVortex(dt) {
       });
   }
 }
+// Sandevistan: hitung mundur bayangan target musuh & pudarkan jejak bayangan dash
+function updDecoy(dt) {
+  if (DC && (DC.t -= dt) <= 0) {
+    pf(DC.x, DC.y, 14, '#22d3ee', 220, 0.5);
+    RG.push({ x: DC.x, y: DC.y, r: 0, mr: 50, c: '#22d3ee', w: 3, l: 0.3, m: 0.3 });
+    DC = null;
+  }
+  if (GH.length) {
+    for (const o of GH) o.t -= dt;
+    GH = GH.filter((o) => o.t > 0);
+  }
+}
 function updTimers(dt) {
+  updDecoy(dt);
   for (const a of RG) a.l -= dt;
   for (const a of AR) a.l -= dt;
   for (const a of BM) a.l -= dt;

@@ -1,10 +1,12 @@
 // AI per tipe musuh + tabrakan dengan pemain + orbital blade
 function updEnemies(dt) {
+  const tg = tgt(); // sasaran musuh: bayangan Sandevistan (jika aktif) atau pemain
   for (let i = E.length - 1; i >= 0; i--) {
     const e = E[i],
-      d = Math.hypot(P.x - e.x, P.y - e.y) || 1,
-      ux = (P.x - e.x) / d,
-      uy = (P.y - e.y) / d;
+      d = Math.hypot(tg.x - e.x, tg.y - e.y) || 1,
+      ux = (tg.x - e.x) / d,
+      uy = (tg.y - e.y) / d,
+      dp = tg == P ? d : Math.hypot(P.x - e.x, P.y - e.y) || 1; // jarak ke pemain asli (tabrakan tetap dengan pemain)
     if (e.fl > 0) e.fl -= dt;
     if (e.k == 'shooter') {
       const m = d > 280 ? 1 : d < 200 ? -1 : 0;
@@ -136,8 +138,8 @@ function updEnemies(dt) {
         if (e.cd < 0) {
           e.cd = R(3, 4);
           e.tp = 0.6;
-          e.tx = cl(P.x + R(-90, 90), 40, W - 40);
-          e.ty = cl(P.y + R(-90, 90), 40, H - 40);
+          e.tx = cl(tg.x + R(-90, 90), 40, W - 40);
+          e.ty = cl(tg.y + R(-90, 90), 40, H - 40);
         }
       }
     } else if (e.k == 'ringer') {
@@ -170,11 +172,11 @@ function updEnemies(dt) {
       kill(e, i);
       continue;
     }
-    if (d < e.r + P.r) {
+    if (dp < e.r + P.r) {
       hurt(e.dm, 1);
       if (!e.sec) {
-        e.x -= ux * 6;
-        e.y -= uy * 6;
+        e.x -= ((P.x - e.x) / dp) * 6;
+        e.y -= ((P.y - e.y) / dp) * 6;
       }
     }
     for (let j = 0; j < P.orb; j++) {

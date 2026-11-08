@@ -26,14 +26,18 @@ function init() {
     lv: 1,
     need: 6,
     a: 0,
-    sk: { q: 0, e: 0, r: 0 },
+    sk: { q: 0, e: 0, r: 0, tp: 0 }, // tp = Teleport (T)
     up: {}, // jumlah stack tiap upgrade yang sudah diambil: { 'MAGNET': 2, ... } (badge naik level di kartu)
-    cd: { q: 0, e: 0, r: 0, c: 0 },
+    cd: { q: 0, e: 0, r: 0, c: 0, tp: 0 },
     ch: 0,
     boom: 0,
     vamp: 0,
     crit: 0.08,
+    ss: 0, // peluang Super Shot per tembakan
+    sandy: 0, // 1 = upgrade Sandevistan aktif
   };
+  DC = null;
+  GH = [];
   B = [];
   E = [];
   EB = [];

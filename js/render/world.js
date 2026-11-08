@@ -6,6 +6,8 @@ function drawWorld() {
   drawEnemyBullets();
   drawEnemies();
   drawOrbitals();
+  drawGhosts();
+  drawDecoy();
   drawPlayer();
   drawAim();
   drawHazards();

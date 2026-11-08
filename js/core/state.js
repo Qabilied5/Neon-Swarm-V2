@@ -9,6 +9,10 @@ const AIM = { on: 0, id: null, man: 0, x: 1, y: 0, kx: 0, ky: 0, ox: 0, oy: 0, l
 // Bidik skill (Q/E/R): tahan tombol skill lalu geser untuk mengarahkan, lepas untuk menembakkan.
 // k = tombol aktif, man = 1 jika digeser keluar deadzone, x,y = arah, d = jarak 0..1, kx,ky = posisi knob
 const SK = { on: 0, id: null, k: null, man: 0, x: 1, y: 0, d: 0, kx: 0, ky: 0 };
+// Sandevistan: DC = bayangan awal dash { x, y, a, t, m } (musuh menargetkannya selama t > 0), GH = jejak bayangan sepanjang dash
+let DC = null,
+  GH = [];
+const tgt = () => (DC && DC.t > 0 ? DC : P); // sasaran gerak & bidik musuh: bayangan jika aktif, kalau tidak pemain
 let HZ = [],
   RG = [],
   AR = [],

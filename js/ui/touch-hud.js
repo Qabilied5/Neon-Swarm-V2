@@ -11,9 +11,9 @@ function touchHud() {
 }
 function drawTBtn(b) {
   const on = true, // tombol yang digambar selalu sudah terbuka (yang terkunci disembunyikan, lihat vbtns)
-    skill = b.k == 'q' || b.k == 'e' || b.k == 'r', // Q/E/R: opacity 10%
+    skill = b.k == 'q' || b.k == 'e' || b.k == 'r' || b.k == 'tp', // Q/E/R/Teleport: opacity 10%
     cd = b.k == 'dash' ? P.dc : P.cd[b.k],
-    mx = b.k == 'dash' ? P.dashCD : b.k == 'c' ? HEAL_CD : 9,
+    mx = b.k == 'dash' ? P.dashCD : b.k == 'c' ? HEAL_CD : b.k == 'tp' ? TP_CD : 9,
     rdy = on && cd <= 0,
     pr = (TPR[b.k] || 0) > T,
     aiming = SK.on && SK.k == b.k,
@@ -54,8 +54,8 @@ function drawTBtn(b) {
   }
   g.globalAlpha = skill ? Math.min(1, al + 0.1) : 1; // label ikut transparan pada tombol skill
   const big = b.k == 'dash' ? 13 : 20;
-  if (b.k == 'c' && cd > 0)
-    tx(String(Math.ceil(cd)), b.x, b.y + 6, 16, b.c, 'center', 0); // sisa detik heal
+  if ((b.k == 'c' || b.k == 'tp') && cd > 0)
+    tx(String(Math.ceil(cd)), b.x, b.y + 6, 16, b.c, 'center', 0); // sisa detik heal / teleport
   else if (!btnGlyph(b, rdy && !skill ? 8 : 0)) tx(b.l, b.x, b.y + big * 0.3, big, on ? b.c : '#2a4560', 'center', rdy && !skill ? 8 : 0); // ikon SVG; teks hanya cadangan
   g.globalAlpha = 1;
 }

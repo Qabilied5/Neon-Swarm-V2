@@ -133,6 +133,13 @@ const ICON = {
     foe(56, 8, 4.5) +
     foe(8, 56, 4.5) +
     foe(56, 56, 4.5),
+  teleport: () =>
+    ply(12, 48, 8, -Math.PI / 4, 0.3) +
+    cir(12, 48, 13, IC.o, 2, 0.35, '3 4') +
+    arw(23, 38, 36, 25, IC.o, 7, 3, 0.9) +
+    ply(48, 16, 9, -Math.PI / 4) +
+    cir(48, 16, 12, IC.o, 2.5, 0.9) +
+    cir(48, 16, 17, IC.o, 2, 0.35),
   laser: () => ply(10, 32, 8) + foe(26, 32, 6) + foe(40, 32, 6) + foe(54, 32, 6) + ln(18, 32, 63, 32, IC.r, 8, 0.55) + ln(18, 32, 63, 32, IC.w, 2.5),
   hole: () =>
     pln(spiral(0), IC.p) +
@@ -140,6 +147,19 @@ const ICON = {
     `<circle cx="32" cy="32" r="6" fill="#04060d" stroke="${IC.p}"/>` +
     foe(52, 15, 3.5) +
     foe(12, 49, 3.5),
+  // efek: peluru super (emas, berekor) & Sandevistan (bayangan dash merah/cyan)
+  supershot: () =>
+    ln(2, 32, 30, 32, IC.y, 3.5, 0.7) +
+    ln(6, 24, 26, 24, IC.y, 2.5, 0.35) +
+    ln(6, 40, 26, 40, IC.y, 2.5, 0.35) +
+    shp(sStar(46, 32, 17, 8, 8, 0.2), IC.y, 0.25) +
+    shp(sPoly(46, 32, 6, 4), IC.w, 0.8),
+  sande: () =>
+    shp(sPoly(48, 32, 9, 3, 0), IC.c, 0.3) +
+    shp(sPoly(34, 32, 9, 3, 0), IC.r, 0.2, 0.6) +
+    shp(sPoly(21, 32, 9, 3, 0), IC.c, 0.12, 0.35) +
+    shp(sPoly(10, 32, 8, 3, 0), IC.r, 0.08, 0.2) +
+    cir(10, 32, 13, IC.r, 2, 0.5, '3 4'),
   // lencana "upgrade bisa di-stack" (dua chevron naik, hijau)
   levelup: () => cir(32, 32, 27, IC.g, 2.5, 0.9) + `<circle cx="32" cy="32" r="27" fill="${IC.g}" fill-opacity=".15" stroke="none"/>` + pln('20,34 32,22 44,34', IC.g, 4) + pln('20,47 32,35 44,47', IC.g, 4, 0.55),
   // tombol

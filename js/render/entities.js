@@ -9,6 +9,20 @@ function drawOrbs() {
 }
 function drawBullets() {
   for (const b of B) {
+    if (b.ss) {
+      // peluru super (Super Shot): emas, tebal, berekor panjang
+      neon('#ffd166', '#fff');
+      g.lineWidth = 5 * ZK;
+      g.beginPath();
+      g.moveTo(b.x, b.y);
+      g.lineTo(b.x - b.vx * 0.06, b.y - b.vy * 0.06);
+      g.stroke();
+      g.fillStyle = '#fff';
+      g.beginPath();
+      g.arc(b.x, b.y, b.r * 0.75, 0, TAU);
+      g.fill();
+      continue;
+    }
     neon('#39ff88', '#39ff88');
     g.beginPath();
     g.moveTo(b.x, b.y);
@@ -123,4 +137,57 @@ function drawPlayer() {
     g.stroke();
     g.globalAlpha = 1;
   }
+}
+
+// Sandevistan: jejak bayangan sepanjang dash (aberasi kromatik merah/cyan)
+function drawGhosts() {
+  if (!GH.length) return;
+  g.shadowBlur = 0;
+  g.lineWidth = 2 * ZK;
+  for (const o of GH) {
+    g.globalAlpha = (o.t / o.m) * 0.5;
+    g.strokeStyle = '#ff2e63';
+    g.fillStyle = '#ff2e6322';
+    poly(o.x - 4, o.y, P.r + 2, 3, o.a);
+    g.fill();
+    g.stroke();
+    g.strokeStyle = '#22d3ee';
+    g.fillStyle = '#22d3ee22';
+    poly(o.x + 4, o.y, P.r + 2, 3, o.a);
+    g.fill();
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+}
+// Sandevistan: bayangan hologram di posisi awal dash (target musuh) + cincin sisa waktu
+function drawDecoy() {
+  if (!DC) return;
+  const fl = DC.t < 0.4 && Math.floor(T * 24) % 2 ? 0.35 : 1, // berkedip saat hampir habis
+    pr = (T * 1.6) % 1;
+  g.globalAlpha = (0.55 + 0.25 * Math.sin(T * 14)) * fl;
+  neon('#22d3ee', '#22d3ee33');
+  poly(DC.x, DC.y, P.r + 2, 3, DC.a);
+  g.fill();
+  g.stroke();
+  g.shadowBlur = 0;
+  g.lineWidth = ZK;
+  g.globalAlpha = 0.35 * fl;
+  for (let j = -1; j <= 1; j++) {
+    g.beginPath();
+    g.moveTo(DC.x - P.r - 6, DC.y + j * 7);
+    g.lineTo(DC.x + P.r + 6, DC.y + j * 7);
+    g.stroke();
+  }
+  g.lineWidth = 2 * ZK;
+  g.globalAlpha = 0.8 * fl;
+  g.strokeStyle = '#ff2e63';
+  g.beginPath();
+  g.arc(DC.x, DC.y, P.r + 14, -Math.PI / 2, -Math.PI / 2 + TAU * cl(DC.t / DC.m, 0, 1));
+  g.stroke();
+  g.globalAlpha = (1 - pr) * 0.35 * fl;
+  g.strokeStyle = '#22d3ee';
+  g.beginPath();
+  g.arc(DC.x, DC.y, P.r + 14 + pr * 34, 0, TAU);
+  g.stroke();
+  g.globalAlpha = 1;
 }

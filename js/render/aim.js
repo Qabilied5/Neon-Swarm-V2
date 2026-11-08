@@ -32,7 +32,7 @@ function drawAim() {
 function drawSkillAim() {
   const k = SK.k,
     t = skTarget(k),
-    col = k == 'q' ? '#22d3ee' : k == 'e' ? '#ff2e63' : '#b967ff';
+    col = k == 'q' ? '#22d3ee' : k == 'e' ? '#ff2e63' : k == 'tp' ? '#ff9f1c' : '#b967ff';
   g.strokeStyle = col;
   g.fillStyle = col;
   g.lineWidth = 2;
@@ -54,6 +54,30 @@ function drawSkillAim() {
     g.beginPath();
     g.moveTo(P.x, P.y);
     g.lineTo(P.x + ux * 1400, P.y + uy * 1400);
+    g.stroke();
+  } else if (k == 'tp') {
+    // Teleport: lingkar jangkauan maks + titik mendarat (bayangan pemain) + garis lintasan
+    g.globalAlpha = 0.25;
+    g.beginPath();
+    g.arc(P.x, P.y, TP_RANGE, 0, TAU);
+    g.stroke();
+    g.setLineDash([]);
+    g.globalAlpha = 0.18;
+    g.beginPath();
+    g.arc(t.x, t.y, P.r + 10, 0, TAU);
+    g.fill();
+    g.globalAlpha = 0.85;
+    g.lineWidth = 2;
+    g.beginPath();
+    g.arc(t.x, t.y, P.r + 10, 0, TAU);
+    g.stroke();
+    poly(t.x, t.y, P.r + 2, 3, t.a);
+    g.stroke();
+    g.globalAlpha = 0.35;
+    g.setLineDash([8, 8]);
+    g.beginPath();
+    g.moveTo(P.x, P.y);
+    g.lineTo(t.x, t.y);
     g.stroke();
   } else {
     const r = k == 'q' ? 210 + P.sk.q * 35 : 170 + P.sk.r * 25;

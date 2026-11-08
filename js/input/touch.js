@@ -16,8 +16,8 @@ const RT = { t: 0 }; // waktu lepas tap singkat terakhir di sisi kanan
 const LM = { x: 0, y: 0 }; // arah gerak terakhir pemain (vektor satuan) = arah dash jika stik kiri tidak ditahan
 
 // jarak bidik maksimum (satuan dunia) untuk skill yang menargetkan titik
-const SK_RANGE = { q: 230, r: 380 };
-const SK_AIMABLE = { q: 1, e: 1, r: 1 };
+const SK_RANGE = { q: 230, r: 380 }; // (teleport memakai TP_RANGE di data/config.js)
+const SK_AIMABLE = { q: 1, e: 1, r: 1, tp: 1 };
 
 // BIDIK SERANGAN DASAR: tahan di mana saja di sisi kanan layar -> muncul lingkaran bidik (reticle) di dunia game.
 // Geser jari = lingkaran ikut bergerak (relatif, bisa ke mana saja di layar). Pemain menembak ke arah lingkaran.
@@ -129,8 +129,8 @@ function skTarget(k) {
     ax = man ? SK.x : Math.cos(P.a),
     ay = man ? SK.y : Math.sin(P.a),
     d = man ? SK.d : 0,
-    rg = k == 'r' ? SK_RANGE.r * Math.max(d, 0.25) : SK_RANGE.q * d, // tap tanpa geser: R jatuh di depan pemain, Q di pemain
-    dist = man ? rg : k == 'r' ? 220 : 0;
+    rg = k == 'r' ? SK_RANGE.r * Math.max(d, 0.25) : k == 'tp' ? TP_RANGE * Math.max(d, 0.3) : SK_RANGE.q * d, // tap tanpa geser: R jatuh di depan pemain, Q di pemain, Teleport setengah jarak maks ke arah bidik
+    dist = man ? rg : k == 'r' ? 220 : k == 'tp' ? TP_RANGE * 0.5 : 0;
   return { man, a: Math.atan2(ay, ax), x: cl(P.x + ax * dist, 0, W), y: cl(P.y + ay * dist, 0, H) };
 }
 
@@ -143,6 +143,7 @@ function castSkill(k) {
     else nova();
   } else if (k == 'e') laser(t.a);
   else if (k == 'r') hole(t.x, t.y);
+  else if (k == 'tp') teleport(t.x, t.y);
 }
 
 addEventListener(

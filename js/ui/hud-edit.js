@@ -2,7 +2,7 @@
 // Dibuka lewat tombol HUD di menu / pause (S = 'hudedit'), hasil disimpan otomatis (localStorage 'ns_hud', lihat touch-layout.js).
 //  - seret tombol / area = pindah  ·  tarik sudut ◢ area = ubah ukuran  ·  pilih elemen lalu − / + = perbesar / perkecil
 const HE = { sel: null, id: null, mode: null, ox: 0, oy: 0, ret: 'menu', pb: null, rt: 0 };
-const HE_NAME = { dash: 'TOMBOL DASH', q: 'SKILL Q', e: 'SKILL E', r: 'SKILL R', c: 'TOMBOL HEAL', move: 'AREA GERAK', aim: 'AREA SERANG' };
+const HE_NAME = { dash: 'TOMBOL DASH', q: 'SKILL Q', e: 'SKILL E', r: 'SKILL R', c: 'TOMBOL HEAL', tp: 'SKILL TELEPORT', move: 'AREA GERAK', aim: 'AREA SERANG' };
 const HE_COL = { move: '#39ff88', aim: '#ff2e63' };
 
 function heOpen() {

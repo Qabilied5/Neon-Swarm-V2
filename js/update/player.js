@@ -1,3 +1,25 @@
+// Super Shot: 1 peluru tambahan lurus ke arah bidik, damage tetap SS_DMG (tetap bisa crit)
+function superShot() {
+  const ux = Math.cos(P.a),
+    uy = Math.sin(P.a);
+  B.push({
+    x: P.x + ux * 16,
+    y: P.y + uy * 16,
+    vx: ux * BUL_SPD * 1.2,
+    vy: uy * BUL_SPD * 1.2,
+    r: 8,
+    d: SS_DMG,
+    p: P.pier,
+    life: 1.2,
+    h: new Set(),
+    ss: 1,
+  });
+  RG.push({ x: P.x + ux * 20, y: P.y + uy * 20, r: 0, mr: 38, c: '#ffd166', w: 4, l: 0.25, m: 0.25 });
+  pf(P.x + ux * 20, P.y + uy * 20, 8, '#ffd166', 260, 0.3);
+  shake = Math.max(shake, 3);
+  snd(160, 0.18, 'sawtooth', 0.07);
+  snd(900, 0.08, 'square', 0.03);
+}
 // Gerak, bidik (mouse / tombol serang sentuh), dash, tembak pemain (sentuh: hanya saat tombol serang ditahan)
 function updPlayer(dt) {
   let dx = (K.KeyD || K.ArrowRight ? 1 : 0) - (K.KeyA || K.ArrowLeft ? 1 : 0),
@@ -37,6 +59,7 @@ function updPlayer(dt) {
     P.x += P.ddx * 720 * dt;
     P.y += P.ddy * 720 * dt;
     pf(P.x, P.y, 2, '#22d3ee', 30, 0.3);
+    if (P.sandy && GH.length < 60) GH.push({ x: P.x, y: P.y, a: P.a, t: 0.45, m: 0.45 }); // bayangan mengikuti dash
   } else {
     P.x += (dx / l) * P.sp * dt;
     P.y += (dy / l) * P.sp * dt;
@@ -64,6 +87,7 @@ function updPlayer(dt) {
         h: new Set(),
       });
     }
+    if (P.ss && Math.random() < P.ss) superShot(); // SUPER SHOT: peluang per tembakan
     snd(500 + R(0, 80), 0.04, 'square', 0.015);
   }
   P.ot += dt * 3;

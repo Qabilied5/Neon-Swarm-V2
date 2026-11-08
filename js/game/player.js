@@ -20,6 +20,14 @@ function dash() {
   const l = Math.hypot(dx, dy);
   P.ddx = dx / l;
   P.ddy = dy / l;
+  if (P.sandy) {
+    // SANDEVISTAN: bayangan di posisi awal dash; musuh menargetkannya selama SANDY_T detik (lihat tgt() di core/state.js)
+    DC = { x: P.x, y: P.y, a: P.a, t: SANDY_T, m: SANDY_T };
+    GH.push({ x: P.x, y: P.y, a: P.a, t: 0.5, m: 0.5 });
+    RG.push({ x: P.x, y: P.y, r: 0, mr: 60, c: '#22d3ee', w: 4, l: 0.35, m: 0.35 });
+    pf(P.x, P.y, 12, '#ff2e63', 200, 0.4);
+    snd(420, 0.2, 'triangle', 0.05);
+  }
   P.dash = 0.16;
   P.dc = P.dashCD;
   P.inv = 0.3;

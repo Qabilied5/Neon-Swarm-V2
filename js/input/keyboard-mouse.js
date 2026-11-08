@@ -25,6 +25,7 @@ addEventListener('keydown', (e) => {
     if (c == 'KeyQ') nova();
     if (c == 'KeyE') laser();
     if (c == 'KeyR') hole();
+    if (c == 'KeyT') teleport(); // ke posisi kursor (maks TP_RANGE)
     if (c == 'KeyC') heal();
   }
 });
