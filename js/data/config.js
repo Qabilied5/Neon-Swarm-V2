@@ -7,7 +7,7 @@ const tier = (w) => (w >= 11 ? 3 : w >= 6 ? 2 : 1),
 
 // Vampirism: HP per kill = level * VAMP_BASE * (1 + (wave-1) * VAMP_WAVE) -> makin besar tiap wave
 // (wave 1 = x1, wave 10 = x2.35, wave 20 = x3.85 dengan VAMP_WAVE 0.15)
-const VAMP_BASE = 1, // HP per kill per level (level = P.vamp) WAVE 1 : 1, WAVE 10 : 2.35, WAVE 20 : 3.85
+const VAMP_BASE = 1,
   VAMP_WAVE = 0.15,
   vampHeal = () => P.vamp * VAMP_BASE * (1 + (wave - 1) * VAMP_WAVE);
 
@@ -21,7 +21,7 @@ const HEAL_CD = 60,
 
 // Orbital Shuriken: jarak orbit dari pemain, radius tabrakan, radius gambar, damage per kena,
 // jeda kena ulang pada musuh yang sama (per shuriken), jumlah shuriken saat pertama diambil (stack berikutnya +1)
-const ORB_R = 250,
+const ORB_R = 150,
   ORB_HIT = 20,
   ORB_SIZE = 16,
   ORB_DMG = 30,

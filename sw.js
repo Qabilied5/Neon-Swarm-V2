@@ -53,6 +53,7 @@ const VERSIONED = [
   'js/ui/touch-hud.js',
   'js/ui/hud-edit.js',
   'js/ui/skill-hud.js',
+  'js/ui/stats.js',
   'js/net/leaderboard.js',
   'js/game/tutorial.js',
   'js/render/primitives.js',

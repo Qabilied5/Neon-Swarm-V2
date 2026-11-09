@@ -197,6 +197,10 @@ addEventListener(
         if (i >= 0) pickCard(i);
         continue;
       }
+      if (S == 'pause' && ST.on) {
+        if (ST.id === null) statStart(t.identifier, y); // panel STAT: seret = scroll, tap LANJUT = tutup
+        continue;
+      }
       if (S == 'pause') {
         const k = pauseBtnAt(x, y);
         if (k) pauseAct(k, t.identifier); // LANJUT / RESTART / RANKING
@@ -262,6 +266,7 @@ addEventListener(
         heMove(t.identifier, tx_, ty_);
         continue;
       }
+      if (ST.on && t.identifier === ST.id) statMove(ty_);
       if (AIM.on && t.identifier == AIM.id) aimFrom(tx_, ty_);
       if (SK.on && t.identifier == SK.id) skAimFrom(tx_, ty_);
       if (JS.on && t.identifier == JS.id) {
@@ -292,6 +297,11 @@ const tend = (e) => {
       heEnd(t.identifier, t.clientX, t.clientY, e.type);
       continue;
     }
+    let stMoved = 0; // seretan scroll panel STAT: lepas di atas tombol UI jangan dihitung klik
+    if (ST.on && t.identifier === ST.id) {
+      stMoved = ST.mv;
+      statEnd(t.identifier, t.clientX, t.clientY, e.type);
+    }
     if (JS.on && t.identifier == JS.id) {
       JS.on = 0;
       JS.x = JS.y = 0;
@@ -316,7 +326,7 @@ const tend = (e) => {
       SK.kx = SK.ky = 0;
     }
     if (e.type == 'touchend') {
-      const u = uiHit(t.clientX, t.clientY);
+      const u = stMoved ? null : uiHit(t.clientX, t.clientY);
       if (u) uiAct(u);
       else if (S == 'dead' && lbBtnHit(t.clientX, t.clientY)) lbOpen();
       else if (!fsTried && !STANDALONE && S == 'play') {

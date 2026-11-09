@@ -12,6 +12,8 @@ function uiBtns() {
   if (TOUCH && (S == 'play' || S == 'pause')) {
     b.push({ k: 'pause', x, y: 84 * k, r: 20 * k });
     x -= 48 * k;
+    b.push({ k: 'stat', x, y: 84 * k, r: 20 * k }); // STAT: pause + tampilkan statistik & upgrade (ui/stats.js)
+    x -= 48 * k;
   }
   if (TOUCH && (S == 'menu' || S == 'pause')) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol
   return b;
@@ -22,9 +24,23 @@ const uiHit = (x, y) => {
 };
 function uiAct(u) {
   if (u == 'fs') goFS();
-  else if (u == 'hud') heOpen();
-  else if (S == 'play') S = 'pause';
-  else if (S == 'pause') S = 'play';
+  else if (u == 'hud') {
+    ST.on = 0;
+    heOpen();
+  } else if (u == 'stat') {
+    // dari main: pause + buka panel; saat panel terbuka: lanjut main; saat pause biasa: buka panel
+    if (S == 'play') {
+      S = 'pause';
+      statOpen();
+    } else if (S == 'pause') {
+      if (ST.on) statClose();
+      else statOpen();
+    }
+  } else if (S == 'play') S = 'pause';
+  else if (S == 'pause') {
+    ST.on = 0;
+    S = 'play';
+  }
 }
 function uiDraw() {
   const k = 1;
@@ -49,6 +65,8 @@ function uiDraw() {
       g.stroke();
     } else if (b.k == 'hud') {
       tx('HUD', b.x, b.y + 4 * k, 11 * k, '#22d3ee', 'center', 0);
+    } else if (b.k == 'stat') {
+      tx('STAT', b.x, b.y + 4 * k, 10 * k, S == 'pause' && ST.on ? '#39ff88' : '#22d3ee', 'center', 0);
     } else {
       g.fillStyle = '#22d3ee';
       g.fillRect(b.x - 6 * k, b.y - 7 * k, 4 * k, 14 * k);

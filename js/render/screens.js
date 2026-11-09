@@ -187,7 +187,7 @@ function pauseLayout() {
   };
 }
 function pauseBtnAt(x, y) {
-  if (S != 'pause') return null;
+  if (S != 'pause' || ST.on) return null; // panel STAT menutupi tombol pause
   const b = pauseLayout().btns.find((b) => x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6);
   return b ? b.k : null;
 }
@@ -208,7 +208,14 @@ function pauseAct(k, id) {
   }
 }
 function drawPause() {
-  if (S != 'pause') return;
+  if (S != 'pause') {
+    ST.on = 0; // panel STAT hanya hidup selama pause
+    return;
+  }
+  if (ST.on) {
+    drawStats();
+    return;
+  }
   const L = pauseLayout(),
     confirm = PAU.conf && T - PAU.conf < 3;
   if (!confirm) PAU.conf = 0;
