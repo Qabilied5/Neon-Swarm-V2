@@ -43,8 +43,8 @@ const LASER_DMG = 100,
 const SEC_WAVES = [6, 11, 15, 20];
 
 // Skill & efek baru
-const TP_CD = 40, // Teleport (T): cooldown (detik)
-  TP_RANGE = 450, // jarak teleport maksimum (px dunia); titik bidik yang lebih jauh dijepit ke jarak ini
+const TP_CD = 15, // Teleport (T): cooldown (detik)
+  TP_RANGE = 550, // jarak teleport maksimum (px dunia); titik bidik yang lebih jauh dijepit ke jarak ini
   SS_CHANCE = 0.05, // Super Shot: peluang per tembakan, bertambah segini tiap stack upgrade
   SS_DMG = 100, // damage peluru super (tetap, tidak dikali P.dmg)
   SANDY_T = 1.5, // Sandevistan: lama musuh menargetkan bayangan awal dash (detik)
