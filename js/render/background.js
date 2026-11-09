@@ -19,4 +19,5 @@ function drawBackground() {
     g.lineTo(W, y);
   }
   g.stroke();
+  g.restore();
 }
