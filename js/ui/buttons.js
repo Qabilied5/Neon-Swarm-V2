@@ -9,10 +9,12 @@ function uiBtns() {
     b.push({ k: 'fs', x, y: 84 * k, r: 20 * k });
     x -= 48 * k;
   }
-  if (TOUCH && (S == 'play' || S == 'pause')) {
-    b.push({ k: 'pause', x, y: 84 * k, r: 20 * k });
-    x -= 48 * k;
-    b.push({ k: 'stat', x, y: 84 * k, r: 20 * k }); // STAT: pause + tampilkan statistik & upgrade (ui/stats.js)
+  if (S == 'play' || S == 'pause') {
+    if (TOUCH) {
+      b.push({ k: 'pause', x, y: 84 * k, r: 20 * k }); // desktop pakai P / Esc untuk pause
+      x -= 48 * k;
+    }
+    b.push({ k: 'stat', x, y: 84 * k, r: 20 * k }); // STAT: pause + tampilkan statistik & upgrade (ui/stats.js), desktop + HP
     x -= 48 * k;
   }
   if (TOUCH && (S == 'menu' || S == 'pause')) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol

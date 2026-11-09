@@ -238,8 +238,14 @@ function drawPause() {
     g.shadowBlur = 0;
     tx(label, b.x + b.w / 2, b.y + b.h / 2 + 5, re && confirm ? (b.w < 140 ? 10 : 12) : 15, c, 'center', 0);
   }
-  if (TOUCH) tx('tombol HUD (kanan atas) = atur tata letak kontrol', L.cx, L.hy, 13, '#7aa2c0');
-  lbDrawTop3(L.hy + (TOUCH ? 30 : 4), 14);
+  tx(
+    TOUCH ? 'tombol HUD (kanan atas) = atur tata letak kontrol' : 'tombol STAT (kanan atas) / tekan I = statistik & upgrade',
+    L.cx,
+    L.hy,
+    13,
+    '#7aa2c0',
+  );
+  lbDrawTop3(L.hy + 30, 14);
 }
 function drawLevelup() {
   if (S == 'levelup') {

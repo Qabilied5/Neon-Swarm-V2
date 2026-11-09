@@ -25,7 +25,21 @@ addEventListener('keydown', (e) => {
   if (c == 'KeyM') mute = !mute;
   if (c == 'KeyP' || c == 'Escape') {
     if (S == 'play') S = 'pause';
-    else if (S == 'pause') S = 'play';
+    else if (S == 'pause') {
+      ST.on = 0;
+      S = 'play';
+    }
+  }
+  if (c == 'KeyI' || c == 'Tab') {
+    // panel STAT: buka (pause) / tutup (lanjut main)
+    e.preventDefault();
+    if (S == 'play') {
+      S = 'pause';
+      statOpen();
+    } else if (S == 'pause') {
+      if (ST.on) statClose();
+      else statOpen();
+    }
   }
   if (S == 'levelup' && '123'.includes(e.key)) pickCard(+e.key - 1);
   if (S == 'play') {
@@ -64,6 +78,10 @@ addEventListener('mousedown', (e) => {
       tutAct(k); // LEWATI / KELUAR / MAIN / MENU
       return;
     }
+  }
+  if (S == 'pause' && ST.on) {
+    if (statBtnHit(MU.x, MU.y)) statClose(); // tombol LANJUT di panel STAT
+    return;
   }
   if (S == 'pause') {
     const k = pauseBtnAt(MU.x, MU.y);
