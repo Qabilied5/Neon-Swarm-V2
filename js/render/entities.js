@@ -7,6 +7,35 @@ function drawOrbs() {
     g.stroke();
   }
 }
+// Free Heal: heksagon hijau melayang naik-turun dengan tanda plus; berkedip saat wave hampir berganti
+function drawHeals() {
+  for (const h of HL) {
+    const y = h.y + Math.sin(T * 2.4 + h.ph) * 6 * ZK,
+      r = 14 * ZK,
+      blink = waveT > 19 ? 0.45 + 0.55 * Math.abs(Math.sin(T * 8)) : 1;
+    g.globalAlpha = blink;
+    neon('#39ff88', '#39ff8833');
+    poly(h.x, y, r, 6, T * 0.8);
+    g.fill();
+    g.stroke();
+    g.lineCap = 'round';
+    g.beginPath();
+    g.moveTo(h.x - r * 0.45, y);
+    g.lineTo(h.x + r * 0.45, y);
+    g.moveTo(h.x, y - r * 0.45);
+    g.lineTo(h.x, y + r * 0.45);
+    g.stroke();
+    g.lineCap = 'butt';
+    g.globalAlpha = 0.25 * blink; // bayangan di tanah: memberi kesan melayang
+    g.shadowBlur = 0;
+    g.fillStyle = '#39ff88';
+    g.beginPath();
+    g.ellipse(h.x, h.y + r + 8 * ZK, r * 0.7, r * 0.22, 0, 0, TAU);
+    g.fill();
+  }
+  g.shadowBlur = 0;
+  g.globalAlpha = 1;
+}
 function drawBullets() {
   for (const b of B) {
     if (b.ss) {

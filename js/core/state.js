@@ -38,6 +38,9 @@ let S = 'menu',
   spawnT = 0,
   boss = null,
   nextBoss = 0, // timer: boss biasa muncul setelah secret boss kalah (wave 15 & 20)
+  HL = [], // Free Heal yang sedang melayang { x, y, ph }
+  hlWave = 0, // wave terakhir yang sudah dijadwalkan Free Heal-nya (maks 1 per wave)
+  hlAt = -1, // detik (waveT) kapan Free Heal wave ini muncul; -1 = tidak ada jadwal
   cards = [],
   shake = 0,
   msg = '',

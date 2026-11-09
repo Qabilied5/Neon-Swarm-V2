@@ -29,3 +29,32 @@ function updOrbs(dt) {
     }
   }
 }
+
+// Free Heal: item hijau melayang, memulihkan FH_HP HP saat disentuh pemain
+function spawnHeal() {
+  let x = W / 2,
+    y = H / 2;
+  for (let i = 0; i < 12; i++) {
+    x = R(W * 0.12, W * 0.88); // jauhi tepi (tertutup tombol sentuh / HUD)
+    y = R(H * 0.15, H * 0.85);
+    if (Math.hypot(x - P.x, y - P.y) > 140) break; // jangan langsung menempel di pemain
+  }
+  HL.push({ x, y, ph: R(0, TAU) });
+  RG.push({ x, y, r: 0, mr: 60, c: '#39ff88', w: 4, l: 0.4, m: 0.4 });
+  pf(x, y, 12, '#39ff88', 160, 0.5);
+  snd(700, 0.15, 'sine', 0.04);
+}
+function updHeals() {
+  for (let i = HL.length - 1; i >= 0; i--) {
+    const h = HL[i];
+    if (Math.hypot(P.x - h.x, P.y - h.y) < P.r + 16 * ZK) {
+      HL.splice(i, 1);
+      P.hp = Math.min(P.mh, P.hp + FH_HP);
+      RG.push({ x: h.x, y: h.y, r: 0, mr: 90, c: '#39ff88', w: 6, l: 0.5, m: 0.5 });
+      pf(h.x, h.y, 24, '#39ff88', 260, 0.7);
+      if (FT.length < 80) FT.push({ x: P.x, y: P.y - P.r - 10, t: 1, s: '+' + FH_HP + ' HP', c: '#39ff88', z: 18 });
+      snd(520, 0.3, 'triangle', 0.07);
+      snd(780, 0.3, 'sine', 0.05);
+    }
+  }
+}

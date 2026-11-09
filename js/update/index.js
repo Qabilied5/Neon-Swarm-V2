@@ -8,6 +8,7 @@ function upd(dt) {
   updEnemyBullets(dt);
   updHazards(dt);
   updOrbs(dt);
+  updHeals();
   updParticles(dt);
   updVortex(dt);
   updTimers(dt);

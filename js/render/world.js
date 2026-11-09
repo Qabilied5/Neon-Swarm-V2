@@ -2,6 +2,7 @@
 function drawWorld() {
   g.translate(R(-1, 1) * shake, R(-1, 1) * shake);
   drawOrbs();
+  drawHeals();
   drawBullets();
   drawEnemyBullets();
   drawEnemies();

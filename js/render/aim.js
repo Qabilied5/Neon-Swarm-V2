@@ -38,22 +38,42 @@ function drawSkillAim() {
   g.lineWidth = 2;
   g.setLineDash([8, 8]);
   if (k == 'e') {
+    // Laser (gaya Teleport): lingkar jangkauan geser + penanda titik bidik + garis ke penanda; sinar menembus lurus melewati penanda
     const ux = Math.cos(t.a),
       uy = Math.sin(t.a),
-      w = 12 + P.sk.e * 3;
-    g.globalAlpha = P.sk.e ? 0.18 : 0.08;
+      w = 12 + P.sk.e * 3,
+      px = P.x + ux * t.dist,
+      py = P.y + uy * t.dist,
+      u = tui().u * ZK,
+      mr = 16 * u;
+    g.globalAlpha = P.sk.e ? 0.18 : 0.08; // pita lebar = area kena sinar
     g.lineWidth = w * 2;
     g.setLineDash([]);
     g.beginPath();
     g.moveTo(P.x, P.y);
     g.lineTo(P.x + ux * 1400, P.y + uy * 1400);
     g.stroke();
-    g.globalAlpha = 0.6;
     g.lineWidth = 2;
+    g.globalAlpha = 0.25; // lingkar jangkauan maks geser
     g.setLineDash([8, 8]);
     g.beginPath();
+    g.arc(P.x, P.y, LASER_AIM, 0, TAU);
+    g.stroke();
+    g.globalAlpha = 0.35; // garis lintasan pemain -> penanda
+    g.beginPath();
     g.moveTo(P.x, P.y);
-    g.lineTo(P.x + ux * 1400, P.y + uy * 1400);
+    g.lineTo(px, py);
+    g.stroke();
+    g.setLineDash([]);
+    g.globalAlpha = 0.18; // penanda titik bidik
+    g.beginPath();
+    g.arc(px, py, mr, 0, TAU);
+    g.fill();
+    g.globalAlpha = 0.85;
+    g.beginPath();
+    g.arc(px, py, mr, 0, TAU);
+    g.stroke();
+    poly(px, py, mr * 0.6, 3, t.a);
     g.stroke();
   } else if (k == 'tp') {
     // Teleport: lingkar jangkauan maks + titik mendarat (bayangan pemain) + garis lintasan

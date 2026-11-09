@@ -52,5 +52,16 @@ const TP_CD = 15, // Teleport (T): cooldown (detik)
   SH_CD = 20, // Super Shield: detik sampai aktif lagi setelah hancur
   SH_RED = 0.5; // Super Shield: damage yang tetap diterima saat shield aktif (0.5 = dikurangi 50%)
 
+// Laser (E) - bidik sentuh seperti Teleport: jarak geser jari = jarak titik bidik dari pemain (maks LASER_AIM px dunia).
+// Sinar tetap menembus lurus ke arah titik bidik; jarak hanya mengatur posisi penanda di pratinjau.
+const LASER_AIM = 450;
+
+// Free Heal: objek melayang yang memulihkan HP tetap. Muncul acak mulai wave FH_WAVE, maks 1 per wave,
+// di detik acak FH_MIN..FH_MAX sejak awal wave (1 wave = 22 detik). Item yang tidak diambil hilang saat wave berganti.
+const FH_HP = 20,
+  FH_WAVE = 10,
+  FH_MIN = 2,
+  FH_MAX = 18;
+
 // Panjang setengah garis laser layar penuh (px) - cukup untuk menutup layar 4K
 const LASER_LEN = 2600;

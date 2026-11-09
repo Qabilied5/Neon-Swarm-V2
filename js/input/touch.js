@@ -129,9 +129,17 @@ function skTarget(k) {
     ax = man ? SK.x : Math.cos(P.a),
     ay = man ? SK.y : Math.sin(P.a),
     d = man ? SK.d : 0,
-    rg = k == 'r' ? SK_RANGE.r * Math.max(d, 0.25) : k == 'tp' ? TP_RANGE * Math.max(d, 0.3) : SK_RANGE.q * d, // tap tanpa geser: R jatuh di depan pemain, Q di pemain, Teleport setengah jarak maks ke arah bidik
-    dist = man ? rg : k == 'r' ? 220 : k == 'tp' ? TP_RANGE * 0.5 : 0;
-  return { man, a: Math.atan2(ay, ax), x: cl(P.x + ax * dist, 0, W), y: cl(P.y + ay * dist, 0, H) };
+    rg =
+      k == 'r'
+        ? SK_RANGE.r * Math.max(d, 0.25)
+        : k == 'tp'
+          ? TP_RANGE * Math.max(d, 0.3)
+          : k == 'e'
+            ? LASER_AIM * Math.max(d, 0.3) // Laser: jarak geser = jarak penanda bidik (seperti Teleport)
+            : SK_RANGE.q * d, // tap tanpa geser: R jatuh di depan pemain, Q di pemain, Teleport & Laser setengah jarak maks ke arah bidik
+    dist = man ? rg : k == 'r' ? 220 : k == 'tp' ? TP_RANGE * 0.5 : k == 'e' ? LASER_AIM * 0.5 : 0;
+  // dist = jarak titik bidik dari pemain (tanpa jepit layar) - dipakai penanda laser supaya tetap lurus di garis sinar
+  return { man, a: Math.atan2(ay, ax), dist, x: cl(P.x + ax * dist, 0, W), y: cl(P.y + ay * dist, 0, H) };
 }
 
 // jalankan skill dengan bidikan (dipanggil saat jari dilepas)

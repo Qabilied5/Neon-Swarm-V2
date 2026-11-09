@@ -54,6 +54,9 @@ function init() {
   FT = [];
   BM = [];
   VX = [];
+  HL = [];
+  hlWave = 0;
+  hlAt = -1;
   combo = 0;
   comboT = 0;
   stop = 0;

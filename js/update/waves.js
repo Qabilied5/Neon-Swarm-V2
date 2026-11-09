@@ -9,6 +9,7 @@ function updWaves(dt) {
   if (waveT >= 22) {
     waveT = 0;
     wave++;
+    HL = []; // Free Heal yang tidak diambil hilang saat wave berganti
     const nt = tier(wave) != tier(wave - 1);
     if (nt) evolve();
     banner(
@@ -24,6 +25,15 @@ function updWaves(dt) {
       if (wave >= SUP) spawnSuper();
       else spawnBoss();
     }
+  }
+  // FREE HEAL: mulai wave FH_WAVE, jadwalkan 1 item per wave di waktu acak
+  if (wave >= FH_WAVE && hlWave != wave) {
+    hlWave = wave;
+    hlAt = R(FH_MIN, FH_MAX);
+  }
+  if (hlAt >= 0 && waveT >= hlAt && !solo) {
+    hlAt = -1;
+    spawnHeal();
   }
   spawnT -= dt;
   if (spawnT < 0 && !solo && E.length < Math.min(9 + wave, 22)) {
