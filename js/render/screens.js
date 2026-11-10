@@ -239,7 +239,7 @@ function drawPause() {
     tx(label, b.x + b.w / 2, b.y + b.h / 2 + 5, re && confirm ? (b.w < 140 ? 10 : 12) : 15, c, 'center', 0);
   }
   tx(
-    TOUCH ? 'tombol HUD (kanan atas) = atur tata letak kontrol' : 'tombol STAT (kanan atas) / tekan I = statistik, upgrade & enchant',
+    TOUCH ? 'tombol HUD (kanan atas) = atur tata letak kontrol' : 'tombol STAT (kanan atas) / I = statistik · TAB = enchant',
     L.cx,
     L.hy,
     13,

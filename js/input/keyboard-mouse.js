@@ -30,7 +30,24 @@ addEventListener('keydown', (e) => {
       S = 'play';
     }
   }
-  if (c == 'KeyI' || c == 'Tab') {
+  if (c == 'Tab') {
+    // TAB = menu ENCHANT (tab ENCHANT di panel STAT). Buka -> tab Enchant; sedang di tab STAT -> pindah ke Enchant; sedang di Enchant -> tutup
+    e.preventDefault();
+    if (S == 'play') {
+      S = 'pause';
+      statOpen();
+      if (!TUT.on) ST.tab = 1; // tutorial: tab Enchant tidak tersedia
+    } else if (S == 'pause') {
+      if (!ST.on) {
+        statOpen();
+        if (!TUT.on) ST.tab = 1;
+      } else if (ST.tab == 0 && !TUT.on) {
+        ST.tab = 1;
+        ST.sy = 0;
+      } else statClose();
+    }
+  }
+  if (c == 'KeyI') {
     // panel STAT: buka (pause) / tutup (lanjut main)
     e.preventDefault();
     if (S == 'play') {
