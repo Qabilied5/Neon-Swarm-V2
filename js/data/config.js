@@ -90,6 +90,7 @@ const DEAD_CRIT = 0.5, // Deadeye: tambahan pengali crit per stack (dasar x3.5),
   THORN_DMG = 20, THORN_R = 120, // Thorns: damage per stack (+ dmg x3) & radius saat pemain terkena serangan
   ADR_T = 2, ADR_SPD = 0.08, ADR_RATE = 0.06, // Adrenaline: lama buff setelah kill, +gerak & +tembak per stack
   SCV_PCT = 0.12, // Scavenger: peluang drop orb XP tambahan per stack
+  GOLD_ORB_MUL = 3, // GOLD RUSH: jumlah orb tambahan per drop jadi x3 (2 -> 6 orb); turunkan ke 2 kalau terlalu banyak
   CDR_PCT = 0.1, // Cooldown Core: pengurang cooldown skill & heal per stack (maks 60%)
   REAR_DMG = 0.6, // Rear Gun: damage peluru belakang (x damage biasa)
   MINE_R = 90, MINE_T = 16, // Mine Layer: radius ledakan & umur ranjau

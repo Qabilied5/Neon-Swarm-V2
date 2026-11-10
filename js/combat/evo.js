@@ -79,8 +79,11 @@ function killFx(e) {
   if (P.adr) P.evt.adr = ADR_T + (ev('blitz') ? 1 : 0);
   if (ev('blitz')) P.dc = Math.max(0, P.dc - 0.4);
   // SCAVENGER (+ GOLD RUSH): orb XP tambahan
-  if (P.scv && Math.random() < Math.min(0.9, SCV_PCT * P.scv))
-    for (let j = 0; j < 2; j++) O.push({ x: e.x + R(-14, 14), y: e.y + R(-14, 14), v: Math.max(1, e.xp) });
+  if (P.scv && Math.random() < Math.min(0.9, SCV_PCT * P.scv)) {
+    const n = 2 * (ev('gold') ? GOLD_ORB_MUL : 1), // GOLD RUSH: orb tambahan melimpah (maks 3x lipat)
+      sp = ev('gold') ? 26 : 14;
+    for (let j = 0; j < n; j++) O.push({ x: e.x + R(-sp, sp), y: e.y + R(-sp, sp), v: Math.max(1, e.xp) });
+  }
   if (ev('gold')) {
     score += Math.round(e.xp * 5); // +50% skor dasar kill
     if (HL.length < 2 && Math.random() < 0.06) HL.push({ x: cl(e.x, 30, W - 30), y: cl(e.y, 30, H - 30), ph: R(0, TAU) });

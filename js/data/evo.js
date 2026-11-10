@@ -277,14 +277,14 @@ const EVO = [
     id: 'gold',
     name: 'GOLD RUSH',
     rec: ['SCAVENGER', 'XP SURGE', 'LUCKY CHARM'],
-    desc: 'drop orb melimpah, skor kill +50%, kadang menjatuhkan Free Heal',
+    desc: 'drop orb melimpah (3x lipat), skor kill +50%, kadang menjatuhkan Free Heal',
     icon: 'evGold',
     apply: () => {
       P.scv += 2;
       P.xpb++;
       P.luck++;
     },
-    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_MIN + P.luck) + '-' + (RR_MAX + P.luck) + '/level'],
+    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% x' + 2 * GOLD_ORB_MUL + ' orb · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_MIN + P.luck) + '-' + (RR_MAX + P.luck) + '/level'],
   },
   {
     id: 'cross',
