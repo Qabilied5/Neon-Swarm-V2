@@ -14,7 +14,7 @@ function uiBtns() {
       b.push({ k: 'pause', x, y: 84 * k, r: 20 * k }); // desktop pakai P / Esc untuk pause
       x -= 48 * k;
     }
-    b.push({ k: 'stat', x, y: 84 * k, r: 20 * k }); // STAT: pause + tampilkan statistik & upgrade (ui/stats.js), desktop + HP
+    b.push({ k: TOUCH ? 'enc' : 'stat', x, y: 84 * k, r: 20 * k }); // desktop: STAT (statistik & upgrade, ui/stats.js); HP: ENC (langsung ke tab Enchant)
     x -= 48 * k;
   }
   if (TOUCH && (S == 'menu' || S == 'pause')) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol
@@ -37,6 +37,20 @@ function uiAct(u) {
     } else if (S == 'pause') {
       if (ST.on) statClose();
       else statOpen();
+    }
+  } else if (u == 'enc') {
+    // HP: dari main -> pause + buka panel di tab ENCHANT; panel Enchant terbuka -> lanjut main; panel lain / pause biasa -> ke tab ENCHANT
+    if (S == 'play') {
+      S = 'pause';
+      statOpen();
+      if (!TUT.on) ST.tab = 1; // tutorial: tab Enchant tidak tersedia
+    } else if (S == 'pause') {
+      if (ST.on && (ST.tab == 1 || TUT.on)) statClose();
+      else {
+        if (!ST.on) statOpen();
+        ST.tab = 1;
+        ST.sy = 0;
+      }
     }
   } else if (S == 'play') S = 'pause';
   else if (S == 'pause') {
@@ -67,6 +81,8 @@ function uiDraw() {
       g.stroke();
     } else if (b.k == 'hud') {
       tx('HUD', b.x, b.y + 4 * k, 11 * k, '#22d3ee', 'center', 0);
+    } else if (b.k == 'enc') {
+      tx('ENC', b.x, b.y + 4 * k, 10 * k, S == 'pause' && ST.on && ST.tab == 1 ? '#39ff88' : '#22d3ee', 'center', 0);
     } else if (b.k == 'stat') {
       tx('STAT', b.x, b.y + 4 * k, 10 * k, S == 'pause' && ST.on ? '#39ff88' : '#22d3ee', 'center', 0);
     } else {

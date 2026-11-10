@@ -25,6 +25,7 @@ function updOrbs(dt) {
           shock(P.x, P.y, 300, 60 + P.dmg * 4, '#ffd166');
         }
         S = 'levelup';
+        cardLockFor(CARD_DELAY); // HP: abaikan sentuhan sesaat agar kartu tidak terpilih tanpa sengaja
         RG.push({ x: P.x, y: P.y, r: 0, mr: 280, c: '#ffd166', w: 7, l: 0.7, m: 0.7 });
         snd(660, 0.3, 'triangle', 0.07);
         pf(P.x, P.y, 30, '#ffd166', 300, 0.8);

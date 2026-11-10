@@ -264,6 +264,8 @@ function drawLevelup() {
       'center',
       12,
     );
+    const lk = TOUCH && cardLocked(); // HP: kartu diredupkan sebentar selama sentuhan dikunci
+    if (lk) g.globalAlpha = 0.45;
     cards.forEach((u, i) => {
       const x = c.x0 + i * (c.cw + c.gp),
         hot = hv == i;
@@ -309,6 +311,7 @@ function drawLevelup() {
     g.shadowBlur = 0;
     tx('↻ REROLL x' + P.rr + (TOUCH ? '' : '  [R]'), rb.x + rb.w / 2, rb.y + rb.h / 2 + 5, 14, rc, 'center', 0);
     if (P.rrNew) tx('BONUS +' + P.rrNew + ' REROLL!', UW / 2, rb.y + rb.h + 20, 14, '#39ff88', 'center', 8);
+    g.globalAlpha = 1;
   }
 }
 function drawDead() {

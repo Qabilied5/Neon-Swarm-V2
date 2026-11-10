@@ -193,6 +193,7 @@ addEventListener(
         continue;
       }
       if (S == 'levelup') {
+        if (cardLocked()) continue; // jeda singkat setelah kartu muncul / reroll: sentuhan diabaikan
         if (rerollHit(x, y)) {
           reroll();
           continue;

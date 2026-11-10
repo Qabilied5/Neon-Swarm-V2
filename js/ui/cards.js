@@ -1,3 +1,11 @@
+// Kunci sentuhan sementara di HP: saat kartu baru muncul (atau setelah reroll), sentuhan diabaikan sebentar
+// supaya jari yang sedang menekan tombol/area serang tidak langsung memilih kartu tanpa sengaja.
+const CARD_DELAY = 0.8, // detik, saat kartu pertama muncul
+  CARD_DELAY_RR = 0.35; // detik, setelah reroll
+let CARD_LOCK = 0;
+const cardLocked = () => T < CARD_LOCK,
+  cardLockFor = (s) => (CARD_LOCK = T + s);
+
 // Layout & klik kartu upgrade
 const cl3 = () => {
   const sw = UW - SAFE.l - SAFE.r, // lebar area aman (di luar notch)
@@ -44,6 +52,7 @@ function reroll() {
   P.rr--;
   P.rrNew = 0;
   rollCards();
+  cardLockFor(CARD_DELAY_RR);
   snd(700, 0.1, 'triangle', 0.05);
   snd(1000, 0.1, 'sine', 0.04);
 }
