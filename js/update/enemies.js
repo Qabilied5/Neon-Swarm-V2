@@ -18,6 +18,13 @@ function updEnemies(dt) {
       e.hp -= (e.pd || 0) * dt;
       if (Math.random() < dt * 5) pf(e.x, e.y, 1, '#7cff3a', 40, 0.4);
     }
+    if (e.mk > 0) e.mk -= dt; // HUNTER MARK: timer tanda
+    // BURN (kolam api / Frostfire): damage berkala selama e.bt > 0
+    if (e.bt > 0) {
+      e.bt -= dt;
+      e.hp -= (e.bd || 0) * dt;
+      if (Math.random() < dt * 6) pf(e.x, e.y, 1, '#ff9f1c', 50, 0.35);
+    } else e.bd = 0;
     auraTick(e, dp, dt); // SPIKE AURA / BLIZZARD
     // DASH STRIKE: musuh yang dilewati saat dash
     if (P.dash > 0 && P.dstr && e.dsh !== P.dsId && dp < e.r + P.r + 30) {

@@ -68,6 +68,32 @@ function updBullets(dt) {
             e.pt = TOX_T;
             e.pd = Math.max(e.pd || 0, (TOX_DPS + P.dmg * 0.3) * P.psn);
           }
+          if (P.mark) e.mk = MARK_T; // HUNTER MARK
+          if (ev('frostfire')) {
+            // FROSTFIRE: peluru membakar
+            e.bt = Math.max(e.bt || 0, 1.5);
+            e.bd = Math.max(e.bd || 0, FIRE_DPS + P.dmg * 0.5);
+          }
+          if (P.kin && e.k != 'boss') {
+            // KINETIC ROUNDS: dorong musuh searah peluru
+            const bs = Math.hypot(b.vx, b.vy) || 1;
+            e.x += (b.vx / bs) * KIN_PUSH * P.kin;
+            e.y += (b.vy / bs) * KIN_PUSH * P.kin;
+          }
+          if (ev('graviton')) {
+            // GRAVITON: sedot musuh sekitar ke titik tumbukan
+            for (const o of E) {
+              if (o == e || o.k == 'boss') continue;
+              const gx = b.x - o.x,
+                gy = b.y - o.y,
+                gd = Math.hypot(gx, gy) || 1;
+              if (gd < 170) {
+                o.x += (gx / gd) * Math.min(gd, 26);
+                o.y += (gy / gd) * Math.min(gd, 26);
+              }
+            }
+            if (RG.length < 50) RG.push({ x: b.x, y: b.y, r: 0, mr: 70, c: '#b967ff', w: 2, l: 0.25, m: 0.25 });
+          }
           if (ev('seeker') && !b.mini)
             // SEEKER SWARM: pecah jadi 2 peluru pemburu
             for (let q = -1; q <= 1; q += 2) mkB(b.x, b.y, Math.atan2(b.vy, b.vx) + q * 0.9, b.d * 0.5, { sp: 520, life: 0.9, hm: 3, mini: 1, c: '#7cffcb', r: 3 });

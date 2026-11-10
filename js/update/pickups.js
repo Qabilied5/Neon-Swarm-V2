@@ -17,7 +17,7 @@ function updOrbs(dt) {
         P.need = Math.round(P.need * 1.35 + 2);
         rollCards();
         // REROLL: tiap naik level dapat RR_PER_LEVEL kali (diisi ulang, tidak menumpuk)
-        P.rr = RR_PER_LEVEL;
+        P.rr = RR_PER_LEVEL + P.luck; // LUCKY CHARM / GOLD RUSH: reroll tambahan
         P.rrNew = 0;
         if (ev('ascend')) {
           // ASCENDANT: heal 50% + ledakan cahaya

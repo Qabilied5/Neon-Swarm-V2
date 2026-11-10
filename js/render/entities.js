@@ -203,6 +203,80 @@ function drawAura() {
   }
   g.restore();
 }
+// KOLAM API & RANJAU (combat/evo.js): api = lingkaran oranye berdenyut, ranjau = berlian kecil berkedip (merah saat aktif)
+function drawZones() {
+  if (!P.zn || !P.zn.length) return;
+  g.save();
+  g.shadowBlur = 0;
+  for (const z of P.zn) {
+    if (z.k == 'fire') {
+      const a = Math.min(1, z.l / 0.8),
+        fc = ev('frostfire') ? '#8be9ff' : '#ff6a00';
+      g.globalAlpha = (0.12 + 0.06 * Math.sin(T * 8 + z.x)) * a;
+      g.fillStyle = fc;
+      g.beginPath();
+      g.arc(z.x, z.y, z.r, 0, TAU);
+      g.fill();
+      g.globalAlpha = 0.55 * a;
+      g.strokeStyle = fc;
+      g.lineWidth = 1.5 * ZK;
+      g.stroke();
+    } else {
+      const armed = z.arm <= 0,
+        blink = armed ? 1 : 0.4 + 0.3 * Math.sin(T * 20);
+      g.globalAlpha = blink;
+      g.fillStyle = armed ? '#ff2e63' : '#ff9f1c';
+      g.strokeStyle = '#ff9f1c';
+      g.lineWidth = 1.5 * ZK;
+      poly(z.x, z.y, 7, 4, T);
+      g.fill();
+      g.stroke();
+      if (armed) {
+        g.globalAlpha = 0.25;
+        g.beginPath();
+        g.arc(z.x, z.y, 34, 0, TAU);
+        g.stroke();
+      }
+    }
+  }
+  g.restore();
+}
+// HUNTER MARK: cincin merah berdenyut di musuh bertanda
+function drawMarks() {
+  g.save();
+  g.shadowBlur = 0;
+  g.strokeStyle = '#ff2e63';
+  g.lineWidth = 1.5 * ZK;
+  for (const e of E)
+    if (e.mk > 0) {
+      const r = e.r + 6 + Math.sin(T * 8) * 1.5;
+      g.globalAlpha = Math.min(0.85, e.mk * 0.6);
+      g.beginPath();
+      g.arc(e.x, e.y, r, 0, TAU);
+      g.stroke();
+      for (let q = 0; q < 4; q++) {
+        const a = (q * Math.PI) / 2 + T;
+        g.beginPath();
+        g.moveTo(e.x + Math.cos(a) * (r - 3), e.y + Math.sin(a) * (r - 3));
+        g.lineTo(e.x + Math.cos(a) * (r + 5), e.y + Math.sin(a) * (r + 5));
+        g.stroke();
+      }
+    }
+  g.restore();
+}
+// SNIPER STANCE: cincin kuning tipis di pemain saat bonus damage aktif
+function drawStance() {
+  if (!P.snip || P.evt.still < SNIP_T) return;
+  g.save();
+  g.shadowBlur = 0;
+  g.strokeStyle = '#ffd166';
+  g.globalAlpha = 0.6;
+  g.lineWidth = 1.5 * ZK;
+  g.beginPath();
+  g.arc(P.x, P.y, P.r + 16 + Math.sin(T * 6) * 1.5, 0, TAU);
+  g.stroke();
+  g.restore();
+}
 // DRONE: berlian kecil mengorbit pemain
 function drawDrones() {
   for (let j = 0; j < P.drn; j++) {
@@ -217,6 +291,7 @@ function drawDrones() {
 function drawPlayer() {
   if (S != 'dead') {
     drawAura();
+    drawStance();
     drawDrones();
   }
   if (S != 'dead' && (P.inv <= 0 || Math.floor(T * 20) % 2)) {

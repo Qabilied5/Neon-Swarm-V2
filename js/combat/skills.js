@@ -1,7 +1,7 @@
 // Skill aktif: nova() Q, laser() E, hole() R, teleport() T
 // setCd(k, detik): mulai cooldown skill k & catat nilai maksimumnya (P.cm) supaya UI cooldown (lingkaran / kotak) akurat
 function setCd(k, v) {
-  P.cd[k] = P.cm[k] = v;
+  P.cd[k] = P.cm[k] = v * cdrMul(); // COOLDOWN CORE / TEMPORAL ENGINE
 }
 // cx,cy opsional: pusat ledakan (default = posisi pemain)
 function nova(cx = P.x, cy = P.y) {

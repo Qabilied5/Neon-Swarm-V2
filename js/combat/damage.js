@@ -37,7 +37,13 @@ function kill(e, i) {
 }
 function hit(e, d) {
   const c = Math.random() < P.crit;
-  if (c) d *= 3.5;
+  if (c) d *= 3.5 + DEAD_CRIT * P.dead; // DEADEYE: crit lebih sakit
+  if (e.mk > 0) d *= 1 + MARK_PCT * P.mark; // HUNTER MARK
+  if (ev('frostfire') && e.slw > 0 && e.bt > 0) {
+    // FROSTFIRE: beku + terbakar = SHATTER
+    d *= 1.5;
+    if (FT.length < 60 && Math.random() < 0.25) FT.push({ x: e.x, y: e.y - e.r - 24, t: 0.7, s: 'SHATTER', c: '#8be9ff', z: 13 });
+  }
   e.hp -= d;
   e.fl = 0.08;
   hitFx(e, d, c); // efek baru: Executioner, Storm Caller (combat/evo.js)

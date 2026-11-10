@@ -83,5 +83,19 @@ const FROST_T = 1.2, FROST_TS = 0.4, FROST_SLOW = 0.55,
   THICK_PCT = 0.08, // Thick Skin: pengurang damage per stack
   REV_HP = 0.4; // Second Wind: HP setelah bangkit (x max HP)
 
+// ===== Efek gelombang 2 & Evo baru (logika: combat/evo.js) =====
+const DEAD_CRIT = 0.5, // Deadeye: tambahan pengali crit per stack (dasar x3.5), +5% peluang crit per stack
+  MARK_T = 3, MARK_PCT = 0.15, // Hunter Mark: lama tanda (dtk) & tambahan damage diterima per stack
+  KIN_PUSH = 14, // Kinetic Rounds: dorongan (px) per stack tiap peluru kena
+  THORN_DMG = 20, THORN_R = 120, // Thorns: damage per stack (+ dmg x3) & radius saat pemain terkena serangan
+  ADR_T = 2, ADR_SPD = 0.08, ADR_RATE = 0.06, // Adrenaline: lama buff setelah kill, +gerak & +tembak per stack
+  SCV_PCT = 0.12, // Scavenger: peluang drop orb XP tambahan per stack
+  CDR_PCT = 0.1, // Cooldown Core: pengurang cooldown skill & heal per stack (maks 60%)
+  REAR_DMG = 0.6, // Rear Gun: damage peluru belakang (x damage biasa)
+  MINE_R = 90, MINE_T = 16, // Mine Layer: radius ledakan & umur ranjau
+  INC_CH = 0.15, FIRE_R = 50, FIRE_T = 3, FIRE_DPS = 8, // Incendiary: peluang api per stack, radius, lama, damage/dtk dasar
+  SNIP_T = 0.5, SNIP_PCT = 0.25, // Sniper Stance: diam minimal SNIP_T dtk -> +damage per stack
+  ZN_MAX = 40; // batas jumlah kolam api + ranjau sekaligus
+
 // REROLL kartu level-up: tiap naik level dapat RR_PER_LEVEL kali reroll. Tidak menumpuk (sisa hangus saat kartu dipilih).
 const RR_PER_LEVEL = 1;

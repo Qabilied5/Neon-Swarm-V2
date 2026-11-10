@@ -6,6 +6,7 @@ const baseStats = () => ({
   sk: { q: 0, e: 0, r: 0, tp: 0 }, // tp = Teleport (T)
   ch: 0, boom: 0, vamp: 0, crit: 0.08, ss: 0, sandy: 0, sh: 0,
   froz: 0, psn: 0, rico: 0, hom: 0, aura: 0, regen: 0, dstr: 0, xpb: 0, bers: 0, shr: 0, pls: 0, exe: 0, drn: 0, thick: 0, rvm: 0,
+  dead: 0, mark: 0, kin: 0, thorn: 0, adr: 0, scv: 0, luck: 0, cdr: 0, rear: 0, mine: 0, inc: 0, snip: 0, // efek gelombang 2
 });
 // Hitung ulang semua stat dari P.up (upgrade) + P.evo (Evo Effect). HP, XP, cooldown & posisi tidak berubah.
 function rebuild() {
@@ -39,7 +40,8 @@ function init() {
     a: 0,
     ...baseStats(), // stat dari upgrade & evo (di bawah); dihitung ulang oleh rebuild() setelah Enchant
     evo: {}, // stack Evo Effect { id: n } (data/evo.js)
-    evt: { pls: 3, drn: 0.5, sing: 5, judge: 4 }, // timer efek otomatis
+    evt: { pls: 3, drn: 0.5, sing: 5, judge: 4, adr: 0, still: 0, lx: 0, ly: 0 }, // timer efek otomatis (adr = sisa buff Adrenaline, still = lama diam, lx/ly = posisi frame lalu)
+    zn: [], // kolam api & ranjau { k, x, y, l, ... } (combat/evo.js)
     drp: 0, // sudut orbit drone
     rr: 0, // sisa reroll kartu level-up
     rrNew: 0, // reroll bonus yang baru didapat di level-up ini (hanya untuk tampilan)

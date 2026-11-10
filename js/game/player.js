@@ -32,6 +32,8 @@ function dash() {
   P.dc = P.dashCD;
   P.inv = 0.3;
   P.dsId++; // DASH STRIKE: tiap dash punya id agar musuh hanya kena sekali
+  if (P.mine) layMines(); // MINE LAYER / TRAPMASTER
+  if (ev('temporal')) temporalFx(); // TEMPORAL ENGINE
   if (ev('chrono')) {
     // CHRONOS: waktu melambat di sekitar pemain
     for (const e of E) if (Math.hypot(e.x - P.x, e.y - P.y) < 420) e.slw = Math.max(e.slw || 0, 3);
@@ -60,6 +62,7 @@ function hurt(d, c) {
   snd(110, 0.2, 'sawtooth', 0.07);
   pf(P.x, P.y, 14, '#ff2e63');
   if (P.hp <= 0 && !tryRevive()) die(); // SECOND WIND / PHOENIX HEART
+  else thornFx(); // THORNS / BULWARK
 }
 // SUPER SHIELD: satu serangan tertahan -> sisa berkurang; habis = hancur, aktif lagi setelah shCd() detik (updShield di update/fx.js)
 function shieldHit() {

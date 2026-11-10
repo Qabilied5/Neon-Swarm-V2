@@ -6,8 +6,16 @@ const exeTh = () => Math.min(0.5, EXE_PCT * P.exe + (ev('reaper') ? 0.1 : 0)), /
   auraR = () => AURA_R0 + AURA_RS * P.aura,
   plsCd = () => Math.max(2.5, PLS_CD0 - 0.9 * P.pls),
   shrN = () => SHR_N + 2 * P.shr + (ev('cluster') ? 4 : 0),
-  rateMul = () => (ev('over') && P.hp < P.mh * 0.5 ? 1.3 : 1), // Overclock
-  dmgMul = () => 1 + BERS_PCT * P.bers * (1 - P.hp / P.mh); // Berserk
+  adrOn = () => (P.evt.adr > 0 ? P.adr : 0), // stack Adrenaline yang sedang aktif (0 bila buff habis)
+  rateMul = () => (ev('over') && P.hp < P.mh * 0.5 ? 1.3 : 1) * (1 + ADR_RATE * adrOn()), // Overclock + Adrenaline
+  spdMul = () => 1 + ADR_SPD * adrOn(), // Adrenaline: pengali kecepatan gerak
+  stance = () => (P.snip && P.evt.still >= SNIP_T ? 1 + SNIP_PCT * P.snip : 1), // Sniper Stance
+  dmgMul = () => (1 + BERS_PCT * P.bers * (1 - P.hp / P.mh)) * stance(), // Berserk + Sniper Stance
+  cdrMul = () => 1 - Math.min(0.6, CDR_PCT * P.cdr + (ev('temporal') ? 0.1 : 0)), // Cooldown Core
+  fireDps = () => (FIRE_DPS + P.dmg * 0.6) * (1 + 0.25 * (Math.max(1, P.inc) - 1)), // Incendiary: damage api/dtk
+  mineR = () => MINE_R * (ev('trap') ? 1.4 : 1), // Mine Layer: radius ledakan
+  thornR = () => THORN_R + 12 * P.thorn + (ev('bulwark') ? 110 : 0), // Thorns: radius
+  thornD = () => THORN_DMG * P.thorn + P.dmg * 3 + (ev('bulwark') ? 40 : 0); // Thorns: damage
 
 // peluru pemain serba guna. o: sp kecepatan, r, p tembus, life, rc pantulan, hm homing tambahan, c warna, mini (anak Seeker)
 function mkB(x, y, a, d, o = {}) {
@@ -43,6 +51,12 @@ function hitFx(e, d, c) {
     if (FT.length < 80) FT.push({ x: e.x, y: e.y - e.r - 12, t: 0.8, s: '☠', c: '#ff2e63', z: 18 });
     if (ev('reaper')) P.hp = Math.min(P.mh, P.hp + 3);
   }
+  // HEADHUNTER: crit pada musuh bertanda = headshot (+80% damage), tanda diperpanjang
+  if (c && ev('headhunter') && e.mk > 0 && e.hp > 0) {
+    e.hp -= d * 0.8;
+    e.mk = MARK_T;
+    if (FT.length < 80) FT.push({ x: e.x, y: e.y - e.r - 26, t: 0.8, s: 'HEADSHOT', c: '#ff2e63', z: 14 });
+  }
   // STORM CALLER: crit memanggil petir ke 4 musuh terdekat
   if (c && ev('storm') && !_busy) {
     _busy = 1;
@@ -61,6 +75,27 @@ function hitFx(e, d, c) {
 
 // ---- dipanggil dari kill(e) ----
 function killFx(e) {
+  // ADRENALINE (+ BLITZKRIEG): tiap kill memicu buff gerak & tembak
+  if (P.adr) P.evt.adr = ADR_T + (ev('blitz') ? 1 : 0);
+  if (ev('blitz')) P.dc = Math.max(0, P.dc - 0.4);
+  // SCAVENGER (+ GOLD RUSH): orb XP tambahan
+  if (P.scv && Math.random() < Math.min(0.9, SCV_PCT * P.scv))
+    for (let j = 0; j < 2; j++) O.push({ x: e.x + R(-14, 14), y: e.y + R(-14, 14), v: Math.max(1, e.xp) });
+  if (ev('gold')) {
+    score += Math.round(e.xp * 5); // +50% skor dasar kill
+    if (HL.length < 2 && Math.random() < 0.06) HL.push({ x: cl(e.x, 30, W - 30), y: cl(e.y, 30, H - 30), ph: R(0, TAU) });
+  }
+  // INCENDIARY (+ INFERNO): kolam api; INFERNO juga meledak
+  if (P.inc || ev('inferno')) {
+    const inf = ev('inferno');
+    if (inf || Math.random() < INC_CH * P.inc) addFire(e.x, e.y);
+    if (inf) {
+      RG.push({ x: e.x, y: e.y, r: 0, mr: 95, c: '#ff6a00', w: 4, l: 0.3, m: 0.3 });
+      for (const o of E) if (o != e && Math.hypot(o.x - e.x, o.y - e.y) < 95 + o.r) hit(o, 30 + P.dmg * 2);
+    }
+  }
+  // HEADHUNTER: tanda menular ke musuh sekitar saat musuh bertanda mati
+  if (ev('headhunter') && e.mk > 0) for (const o of E) if (o != e && Math.hypot(o.x - e.x, o.y - e.y) < 200) o.mk = MARK_T;
   if (P.shr) {
     // SHRAPNEL (+ CLUSTER BOMB)
     const n = shrN(),
@@ -78,6 +113,107 @@ function killFx(e) {
     RG.push({ x: e.x, y: e.y, r: 0, mr: 170, c: '#7cff3a', w: 4, l: 0.35, m: 0.35 });
     pf(e.x, e.y, 10, '#7cff3a', 200, 0.5);
   }
+}
+
+// ---- KOLAM API (Incendiary / Inferno / Frostfire) & RANJAU (Mine Layer / Trapmaster) ----
+// Disimpan di P.zn (ikut direset oleh init). Kolam api hanya memberi status terbakar (e.bt/e.bd) - damage-nya dihitung di updEnemies.
+function addFire(x, y) {
+  if (P.zn.length >= ZN_MAX) P.zn.shift();
+  const inf = ev('inferno'),
+    T0 = FIRE_T + (inf ? 1.5 : 0);
+  P.zn.push({ k: 'fire', x, y, r: FIRE_R + (inf ? 30 : 0) + 6 * Math.min(P.inc, 5), l: T0, m: T0, dps: fireDps() });
+}
+function layMines() {
+  for (let j = 0; j < P.mine; j++) {
+    if (P.zn.length >= ZN_MAX) P.zn.shift();
+    P.zn.push({ k: 'mine', x: P.x + R(-22, 22), y: P.y + R(-22, 22), l: MINE_T, m: MINE_T, arm: 0.5 });
+  }
+}
+function mineBoom(z) {
+  const r = mineR(),
+    d = 25 + P.dmg * 4 * (ev('trap') ? 1.3 : 1);
+  RG.push({ x: z.x, y: z.y, r: 0, mr: r, c: '#ff9f1c', w: 5, l: 0.35, m: 0.35 });
+  for (const e of E) if (Math.hypot(e.x - z.x, e.y - z.y) < r + e.r) hit(e, d);
+  if (ev('trap')) {
+    // TRAPMASTER: petir ke 3 musuh terdekat dari ranjau
+    let f = z;
+    for (const o of [...E].sort((a, b) => Math.hypot(a.x - z.x, a.y - z.y) - Math.hypot(b.x - z.x, b.y - z.y)).slice(0, 3)) {
+      if (Math.hypot(o.x - z.x, o.y - z.y) > 300) break;
+      hit(o, d * 0.6);
+      AR.push({ p: [[f.x, f.y], [(f.x + o.x) / 2 + R(-14, 14), (f.y + o.y) / 2 + R(-14, 14)], [o.x, o.y]], l: 0.22 });
+      f = o;
+    }
+  }
+  pf(z.x, z.y, 18, '#ff9f1c', 300, 0.5);
+  shake = Math.max(shake, 5);
+  snd(110, 0.25, 'sawtooth', 0.07);
+}
+function updZones(dt) {
+  for (let i = P.zn.length - 1; i >= 0; i--) {
+    const z = P.zn[i];
+    z.l -= dt;
+    if (z.k == 'fire') {
+      for (const e of E)
+        if (Math.hypot(e.x - z.x, e.y - z.y) < z.r + e.r) {
+          e.bt = 0.5;
+          e.bd = Math.max(e.bd || 0, z.dps);
+          if (ev('frostfire')) e.slw = Math.max(e.slw || 0, 0.4);
+        }
+      if (Math.random() < dt * 9) pf(z.x + R(-z.r, z.r) * 0.7, z.y + R(-z.r, z.r) * 0.7, 1, Math.random() < 0.5 ? '#ff9f1c' : '#ff2e63', 50, 0.4);
+    } else if ((z.arm -= dt) <= 0 && E.some((e) => Math.hypot(e.x - z.x, e.y - z.y) < 34 + e.r)) {
+      mineBoom(z);
+      z.l = 0;
+    }
+    if (z.l <= 0) P.zn.splice(i, 1);
+  }
+}
+
+// ---- THORNS / BULWARK: dipanggil dari hurt() saat pemain benar-benar terkena serangan ----
+function thornFx() {
+  const bw = ev('bulwark');
+  if (!P.thorn && !bw) return;
+  const r = thornR(),
+    d = thornD();
+  if (bw) {
+    shock(P.x, P.y, r, d, '#ff9f1c');
+    P.hp = Math.min(P.mh, P.hp + 4);
+    return;
+  }
+  RG.push({ x: P.x, y: P.y, r: 0, mr: r, c: '#ff9f1c', w: 4, l: 0.35, m: 0.35 });
+  for (const e of E) {
+    const dd = Math.hypot(e.x - P.x, e.y - P.y) || 1;
+    if (dd < r + e.r) {
+      hit(e, d);
+      if (e.k != 'boss') {
+        e.x += ((e.x - P.x) / dd) * 50;
+        e.y += ((e.y - P.y) / dd) * 50;
+      }
+    }
+  }
+  pf(P.x, P.y, 10, '#ff9f1c', 240, 0.4);
+}
+
+// ---- REAR GUN / CROSSFIRE: peluru tambahan di sekitar tembakan utama ----
+function extraFire() {
+  const d = P.dmg * dmgMul(),
+    o = { p: P.pier, rc: P.rico },
+    ox = (a) => [P.x + Math.cos(a) * 14, P.y + Math.sin(a) * 14];
+  for (let j = 0; j < P.rear; j++) {
+    const a = P.a + Math.PI + (j - (P.rear - 1) / 2) * 0.25;
+    mkB(...ox(a), a, d * REAR_DMG, o);
+  }
+  if (ev('cross'))
+    for (const q of [-1, 1]) {
+      const a = P.a + (q * Math.PI) / 2;
+      mkB(...ox(a), a, d * 0.5, o);
+    }
+}
+
+// ---- TEMPORAL ENGINE: dipanggil dari dash() ----
+function temporalFx() {
+  for (const k in P.cd) P.cd[k] = Math.max(0, P.cd[k] - 1.5);
+  for (let j = 0; j < 12; j++) mkB(P.x, P.y, (j * TAU) / 12 + P.ot, P.dmg * 0.9, { sp: 520, life: 0.8, p: 1, c: '#b967ff' });
+  RG.push({ x: P.x, y: P.y, r: 10, mr: 90, c: '#b967ff', w: 3, l: 0.3, m: 0.3 });
 }
 
 // ---- dipanggil dari hurt(): Second Wind / Phoenix Heart. true = berhasil bangkit ----
@@ -101,6 +237,22 @@ function tryRevive() {
 function updEvo(dt) {
   const ev_ = P.evt;
   if (P.regen && P.hp < P.mh) P.hp = Math.min(P.mh, P.hp + REGEN_HPS * P.regen * dt);
+  // SNIPER STANCE: hitung lama diam
+  ev_.still = Math.hypot(P.x - ev_.lx, P.y - ev_.ly) > 0.4 ? 0 : ev_.still + dt;
+  ev_.lx = P.x;
+  ev_.ly = P.y;
+  // ADRENALINE: jejak partikel selama buff; BLITZKRIEG: tubuh melukai musuh dekat
+  if (ev_.adr > 0) {
+    ev_.adr -= dt;
+    if (PT.length < 400 && Math.random() < 0.5) PT.push({ x: P.x, y: P.y, vx: 0, vy: 0, l: 0.3, m: 0.3, c: '#7cffcb', s: 4 });
+    if (ev('blitz'))
+      for (const e of E)
+        if (Math.hypot(e.x - P.x, e.y - P.y) < 52 + e.r) {
+          e.hp -= P.dmg * 5 * dt;
+          e.fl = Math.max(e.fl, 0.03);
+        }
+  }
+  updZones(dt); // kolam api & ranjau
   // PULSE: semburan peluru melingkar
   if (P.pls && (ev_.pls -= dt) <= 0) {
     ev_.pls = plsCd();

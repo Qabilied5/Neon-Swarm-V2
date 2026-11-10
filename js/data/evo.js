@@ -219,6 +219,138 @@ const EVO = [
     },
     det: () => ['Level up: +50% HP & nova ' + Math.round(60 + P.dmg * 4) + ' dmg', 'XP +' + Math.round(XPB_PCT * P.xpb * 100) + '% · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk'],
   },
+  // ===== Evo gelombang 2 =====
+  {
+    id: 'headhunter',
+    name: 'HEADHUNTER',
+    rec: ['DEADEYE', 'HUNTER MARK', 'SNIPER STANCE'],
+    desc: 'CRIT pada musuh bertanda = headshot bonus; tanda menular saat musuh mati',
+    icon: 'evHead',
+    apply: () => {
+      P.dead += 2;
+      P.crit += 0.1;
+      P.mark++;
+      P.snip++;
+    },
+    det: () => ['CRIT ke musuh bertanda: +80% damage (headshot)', 'Tanda menular 200 px saat mati · crit ' + Math.round(P.crit * 100) + '%'],
+  },
+  {
+    id: 'inferno',
+    name: 'INFERNO',
+    rec: ['INCENDIARY', 'EXPLOSIVE ROUNDS', 'SPIKE AURA'],
+    desc: 'tiap musuh mati meledak & meninggalkan kolam api besar yang lama',
+    icon: 'evInferno',
+    apply: () => {
+      P.inc += 2;
+      P.boom++;
+      P.aura++;
+    },
+    det: () => ['Kill: ledakan 95 px + kolam api ' + (FIRE_R + 30 + 6 * Math.min(P.inc, 5)) + ' px', 'Api ' + Math.round(fireDps()) + ' dmg/dtk selama ' + (FIRE_T + 1.5) + ' dtk'],
+  },
+  {
+    id: 'bulwark',
+    name: 'BULWARK',
+    rec: ['THORNS', 'THICK SKIN', 'REGEN'],
+    desc: 'terkena serangan memicu ledakan duri besar & memulihkan HP',
+    icon: 'evBulwark',
+    apply: () => {
+      P.thorn += 2;
+      P.thick++;
+      P.regen++;
+    },
+    det: () => ['Terkena: duri ' + Math.round(thornR()) + ' px · ' + Math.round(thornD()) + ' dmg', '+4 HP tiap kena · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk'],
+  },
+  {
+    id: 'blitz',
+    name: 'BLITZKRIEG',
+    rec: ['ADRENALINE', 'SPEED', 'DASH STRIKE'],
+    desc: 'tiap kill memangkas cooldown dash; saat adrenalin aktif tubuhmu melukai musuh',
+    icon: 'evBlitz',
+    apply: () => {
+      P.adr += 2;
+      P.sp *= 1.15;
+      P.dstr++;
+    },
+    det: () => ['Kill: cooldown dash -0,4 dtk', 'Adrenalin aktif: aura tabrak ' + Math.round(P.dmg * 5) + ' dmg/dtk'],
+  },
+  {
+    id: 'gold',
+    name: 'GOLD RUSH',
+    rec: ['SCAVENGER', 'XP SURGE', 'LUCKY CHARM'],
+    desc: 'drop orb melimpah, skor kill +50%, kadang menjatuhkan Free Heal',
+    icon: 'evGold',
+    apply: () => {
+      P.scv += 2;
+      P.xpb++;
+      P.luck++;
+    },
+    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_PER_LEVEL + P.luck) + '/level'],
+  },
+  {
+    id: 'cross',
+    name: 'CROSSFIRE',
+    rec: ['REAR GUN', 'MULTISHOT', 'RICOCHET'],
+    desc: 'menembak ke 4 arah: depan, belakang, dan kedua sisi',
+    icon: 'evCross',
+    apply: () => {
+      P.rear++;
+      P.multi++;
+      P.rico += 2;
+    },
+    det: () => ['Belakang x' + P.rear + ' (' + Math.round(REAR_DMG * 100) + '%) + 2 sisi (50%)', 'Pantul ' + P.rico + 'x di tepi layar'],
+  },
+  {
+    id: 'trap',
+    name: 'TRAPMASTER',
+    rec: ['MINE LAYER', 'SHRAPNEL', 'CHAIN LIGHTNING'],
+    desc: 'ranjau lebih banyak & lebih luas, ledakannya menyambar 3 musuh dengan petir',
+    icon: 'evTrap',
+    apply: () => {
+      P.mine += 2;
+      P.shr++;
+      P.ch++;
+    },
+    det: () => ['' + P.mine + ' ranjau per dash · radius ' + Math.round(mineR()), 'Ledakan: petir ke 3 musuh (60% dmg)'],
+  },
+  {
+    id: 'graviton',
+    name: 'GRAVITON',
+    rec: ['KINETIC ROUNDS', 'MAGNET', 'FROST ROUNDS'],
+    desc: 'tiap peluru kena menyedot musuh sekitar ke titik tumbukan',
+    icon: 'evGrav',
+    apply: () => {
+      P.kin += 2;
+      P.mag *= 1.4;
+      P.froz++;
+    },
+    det: () => ['Kena: sedot musuh 170 px ke titik tumbukan', 'Dorongan ' + KIN_PUSH * P.kin + ' px · slow ' + (FROST_T + FROST_TS * P.froz).toFixed(1) + ' dtk'],
+  },
+  {
+    id: 'temporal',
+    name: 'TEMPORAL ENGINE',
+    rec: ['COOLDOWN CORE', 'DASH+', 'PULSE'],
+    desc: 'tiap dash melepas pulse peluru & memangkas semua cooldown 1,5 dtk',
+    icon: 'evTemp',
+    apply: () => {
+      P.cdr += 2;
+      P.dashCD *= 0.85;
+      P.pls++;
+    },
+    det: () => ['Dash: 12 peluru melingkar + semua CD -1,5 dtk', 'Cooldown skill -' + Math.round((1 - cdrMul()) * 100) + '% · dash ' + P.dashCD.toFixed(2) + ' dtk'],
+  },
+  {
+    id: 'frostfire',
+    name: 'FROSTFIRE',
+    rec: ['FROST ROUNDS', 'INCENDIARY', 'HUNTER MARK'],
+    desc: 'peluru membakar & membekukan; musuh beku + terbakar menerima damage +50%',
+    icon: 'evFrostfire',
+    apply: () => {
+      P.froz++;
+      P.inc++;
+      P.mark++;
+    },
+    det: () => ['Beku + terbakar: damage diterima x1,5 (SHATTER)', 'Kolam api memperlambat musuh · bakar ' + Math.round(FIRE_DPS + P.dmg * 0.5) + ' dmg/dtk'],
+  },
 ];
 const EVO_BY_ID = {};
 for (const v of EVO) EVO_BY_ID[v.id] = v;

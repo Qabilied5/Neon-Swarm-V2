@@ -192,6 +192,19 @@ const ICON = {
   drone: () => shp(sPoly(32, 32, 9, 4, Math.PI / 4), IC.c, 0.35) + [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([a, b]) => ln(32 + a * 8, 32 + b * 8, 32 + a * 17, 32 + b * 17, IC.c, 2.5) + cir(32 + a * 20, 32 + b * 20, 5, IC.c, 2.5, 0.8)).join('') + ln(32, 44, 32, 60, IC.g, 3),
   thick: () => pln('10,18 32,6 54,18', IC.b, 4) + pln('10,32 32,20 54,32', IC.b, 4, 0.75) + pln('10,46 32,34 54,46', IC.b, 4, 0.5) + `<circle cx="32" cy="54" r="3" fill="${IC.b}" stroke="none"/>`,
   revive: () => `<path d="M32 58 C8 42 6 24 18 17 C25 13 32 18 32 24 C32 18 39 13 46 17 C58 24 56 42 32 58 Z" fill="${IC.r}" fill-opacity=".22" stroke="${IC.r}"/>` + `<ellipse cx="32" cy="7" rx="13" ry="4" stroke="${IC.y}" stroke-width="3" fill="none"/>` + ln(32, 28, 32, 44, IC.g, 3) + ln(24, 36, 40, 36, IC.g, 3),
+  // ---- efek gelombang 2 ----
+  deadeye: () => cir(32, 32, 20, IC.r, 2.5, 0.9) + ln(32, 4, 32, 18, IC.r, 3) + ln(32, 46, 32, 60, IC.r, 3) + ln(4, 32, 18, 32, IC.r, 3) + ln(46, 32, 60, 32, IC.r, 3) + shp(sStar(32, 32, 9, 3.5, 4, 0), IC.y, 0.7),
+  mark: () => foe(32, 32, 12) + pln('8,20 8,8 20,8', IC.r, 3) + pln('44,8 56,8 56,20', IC.r, 3) + pln('8,44 8,56 20,56', IC.r, 3) + pln('44,56 56,56 56,44', IC.r, 3) + shp(sPoly(32, 32, 3, 4), IC.r, 0.9),
+  kinetic: () => arw(4, 32, 32, 32, IC.g, 8, 3.5) + ln(6, 22, 20, 22, IC.g, 2.5, 0.5) + ln(6, 42, 20, 42, IC.g, 2.5, 0.5) + foe(46, 32, 11) + pln('58,22 62,32 58,42', IC.w, 2.5, 0.6),
+  thorns: () => shp(sStar(32, 32, 27, 14, 8, 0.2), IC.o, 0.25) + ply(32, 32, 8, -Math.PI / 2),
+  adrenaline: () => shp('37,4 17,36 30,36 25,60 47,26 34,26', IC.y, 0.4) + ln(6, 20, 14, 20, IC.c, 2.5, 0.6) + ln(4, 34, 12, 34, IC.c, 2.5, 0.4),
+  scavenger: () => foe(22, 22, 11) + ln(14, 14, 30, 30, IC.r, 3.5) + ln(30, 14, 14, 30, IC.r, 3.5) + orb(44, 44, 8) + orb(54, 30, 4) + orb(30, 54, 4),
+  luck: () => cir(24, 24, 9, IC.g, 2.5, 0.9) + cir(40, 24, 9, IC.g, 2.5, 0.9) + cir(24, 40, 9, IC.g, 2.5, 0.9) + cir(40, 40, 9, IC.g, 2.5, 0.9) + ln(40, 40, 52, 58, IC.g, 3.5),
+  cdcore: () => cir(32, 32, 24, IC.p, 3) + ln(32, 32, 32, 14, IC.w, 3) + ln(32, 32, 45, 39, IC.w, 3) + pln('50,4 58,10 52,18', IC.p, 3) + shp(sPoly(32, 32, 3, 4), IC.p, 0.8),
+  reargun: () => ply(40, 32, 10, 0) + ln(26, 32, 4, 32, IC.g, 3.5) + ln(26, 24, 10, 18, IC.g, 2.5, 0.6) + ln(26, 40, 10, 46, IC.g, 2.5, 0.6),
+  mine: () => cir(32, 34, 13, IC.o, 3) + [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ln(32 + 13 * Math.cos((i * Math.PI) / 4), 34 + 13 * Math.sin((i * Math.PI) / 4), 32 + 21 * Math.cos((i * Math.PI) / 4), 34 + 21 * Math.sin((i * Math.PI) / 4), IC.o, 3)).join('') + shp(sPoly(32, 34, 5, 4), IC.r, 0.8) + ln(32, 6, 32, 14, IC.y, 3),
+  incend: () => `<path d="M32 5 C38 18 52 26 50 42 A18 18 0 0 1 14 42 C14 32 22 28 24 17 C27 23 30 22 32 5 Z" fill="${IC.o}" fill-opacity=".28" stroke="${IC.o}"/>` + `<path d="M32 30 C36 38 42 40 41 47 A9 9 0 0 1 23 47 C23 42 28 40 32 30 Z" fill="${IC.y}" fill-opacity=".5" stroke="${IC.y}"/>`,
+  sniper: () => cir(32, 32, 22, IC.y, 2.5) + cir(32, 32, 9, IC.y, 2, 0.6) + ln(32, 2, 32, 14, IC.y, 3) + ln(32, 50, 32, 62, IC.y, 3) + ln(2, 32, 14, 32, IC.y, 3) + ln(50, 32, 62, 32, IC.y, 3) + shp(sPoly(32, 32, 2.5, 4), IC.r, 0.9),
 };
 
 // ---- ikon Evo Effect: cincin emas bertitik + ikon bahan utama diperkecil + bintang aksen berwarna ----
@@ -217,6 +230,16 @@ Object.assign(ICON, {
   evJudge: evIco('laser', IC.y),
   evSeeker: evIco('homing', IC.g),
   evAscend: evIco('xpsurge', IC.y),
+  evHead: evIco('deadeye', IC.r),
+  evInferno: evIco('incend', IC.o),
+  evBulwark: evIco('thorns', IC.o),
+  evBlitz: evIco('adrenaline', IC.c),
+  evGold: evIco('scavenger', IC.y),
+  evCross: evIco('reargun', IC.g),
+  evTrap: evIco('mine', IC.o),
+  evGrav: evIco('kinetic', IC.p),
+  evTemp: evIco('cdcore', IC.p),
+  evFrostfire: evIco('incend', IC.c),
   // meja enchant (tab ENCHANT): buku terbuka + simbol melayang
   enchant: () => `<path d="M6 44 L32 52 L58 44 L58 24 L32 32 L6 24 Z" fill="${IC.p}" fill-opacity=".2" stroke="${IC.p}"/>` + ln(32, 32, 32, 52, IC.p, 2.5) + shp(sStar(32, 12, 8, 3, 4, 0), IC.y, 0.7) + shp(sStar(16, 14, 4, 1.5, 4, 0), IC.c, 0.7) + shp(sStar(48, 16, 4, 1.5, 4, 0), IC.c, 0.7),
 });

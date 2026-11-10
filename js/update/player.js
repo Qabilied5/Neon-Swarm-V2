@@ -63,8 +63,8 @@ function updPlayer(dt) {
     pf(P.x, P.y, 2, '#22d3ee', 30, 0.3);
     if (P.sandy && GH.length < 60) GH.push({ x: P.x, y: P.y, a: P.a, t: 0.45, m: 0.45 }); // bayangan mengikuti dash
   } else {
-    P.x += (dx / l) * P.sp * dt;
-    P.y += (dy / l) * P.sp * dt;
+    P.x += (dx / l) * P.sp * spdMul() * dt; // ADRENALINE: buff gerak
+    P.y += (dy / l) * P.sp * spdMul() * dt;
   }
   P.x = cl(P.x, P.r, W - P.r);
   P.y = cl(P.y, P.r, H - P.r);
@@ -91,6 +91,7 @@ function updPlayer(dt) {
         hm: 0,
       });
     }
+    if (P.rear || ev('cross')) extraFire(); // REAR GUN / CROSSFIRE
     if (ev('rail') && ++P.rgc % 4 == 0) railShot(); // RAILGUN: tembakan ke-4
     if (P.ss && Math.random() < P.ss) superShot(); // SUPER SHOT: peluang per tembakan
     snd(500 + R(0, 80), 0.04, 'square', 0.015);

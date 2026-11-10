@@ -76,6 +76,30 @@ function statDetail(n) {
       return ['' + P.drn + ' drone', Math.round(P.dmg * DRN_DMG) + ' dmg per tembakan'];
     case 'THICK SKIN':
       return ['Damage diterima -' + Math.round(THICK_PCT * Math.min(P.thick, 8) * 100) + '%'];
+    case 'DEADEYE':
+      return ['Crit x' + (3.5 + DEAD_CRIT * P.dead).toFixed(1) + ' damage', 'Peluang crit ' + Math.round(P.crit * 100) + '%'];
+    case 'HUNTER MARK':
+      return ['Musuh bertanda +' + Math.round(MARK_PCT * P.mark * 100) + '% damage', 'Tanda ' + MARK_T + ' dtk'];
+    case 'KINETIC ROUNDS':
+      return ['Dorong ' + KIN_PUSH * P.kin + ' px per peluru kena', 'Boss tidak terdorong'];
+    case 'THORNS':
+      return ['Saat terkena: ' + Math.round(thornD()) + ' dmg', 'Radius ' + Math.round(thornR()) + ' px + dorongan'];
+    case 'ADRENALINE':
+      return ['Tiap kill: +' + Math.round(ADR_SPD * P.adr * 100) + '% gerak, +' + Math.round(ADR_RATE * P.adr * 100) + '% tembak', 'Selama ' + ADR_T + ' dtk'];
+    case 'SCAVENGER':
+      return ['Peluang orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '%', '2 orb per drop'];
+    case 'LUCKY CHARM':
+      return ['Reroll ' + (RR_PER_LEVEL + P.luck) + ' per level up'];
+    case 'COOLDOWN CORE':
+      return ['Cooldown skill & heal -' + Math.round((1 - cdrMul()) * 100) + '%'];
+    case 'REAR GUN':
+      return ['' + P.rear + ' peluru ke belakang', Math.round(REAR_DMG * 100) + '% damage'];
+    case 'MINE LAYER':
+      return ['' + P.mine + ' ranjau per dash', 'Ledakan ' + Math.round(25 + P.dmg * 4) + ' dmg · radius ' + Math.round(mineR()) + ' px'];
+    case 'INCENDIARY':
+      return ['Peluang api ' + Math.round(Math.min(1, INC_CH * P.inc) * 100) + '% per kill', 'Api ' + Math.round(fireDps()) + ' dmg/dtk · ' + (FIRE_R + 6 * Math.min(P.inc, 5)) + ' px'];
+    case 'SNIPER STANCE':
+      return ['Diam ' + SNIP_T + ' dtk: damage +' + Math.round(SNIP_PCT * P.snip * 100) + '%', P.evt.still >= SNIP_T && P.snip ? 'Aktif sekarang' : 'Belum aktif'];
     case 'SECOND WIND':
       return [P.rvm - P.rvu > 0 ? 'Siap: bangkit ' + Math.round(REV_HP * 100) + '% HP' : 'Sudah terpakai'];
   }

@@ -61,4 +61,27 @@ const UP = [
   ['DRONE', 'drone pendamping menembak musuh terdekat', () => P.drn++, 'drone', 0, 4],
   ['THICK SKIN', '-8% damage yang diterima', () => P.thick++, 'thick', 0, 5],
   ['SECOND WIND', 'bangkit 1x saat HP habis (40% HP)', () => P.rvm++, 'revive', 0, 1],
+  // ===== Efek gelombang 2 (juga bahan Evo baru). Logika: combat/evo.js + hook di damage/bullets/enemies/player =====
+  [
+    'DEADEYE',
+    'damage crit +0,5x & +5% peluang crit',
+    () => {
+      P.dead++;
+      P.crit += 0.05;
+    },
+    'deadeye',
+    0,
+    5,
+  ],
+  ['HUNTER MARK', 'peluru menandai musuh: damage diterima +15% selama 3 dtk', () => P.mark++, 'mark', 0, 4],
+  ['KINETIC ROUNDS', 'peluru mendorong musuh ke belakang', () => P.kin++, 'kinetic', 0, 4],
+  ['THORNS', 'saat kamu terkena serangan, musuh sekitar terluka & terdorong', () => P.thorn++, 'thorns', 0, 5],
+  ['ADRENALINE', 'tiap kill: +8% gerak & +6% tembak selama 2 dtk', () => P.adr++, 'adrenaline', 0, 5],
+  ['SCAVENGER', '12% peluang kill menjatuhkan orb XP tambahan', () => P.scv++, 'scavenger', 0, 6],
+  ['LUCKY CHARM', '+1 reroll kartu tiap naik level', () => P.luck++, 'luck', 0, 3],
+  ['COOLDOWN CORE', 'cooldown skill & heal -10%', () => P.cdr++, 'cdcore', 0, 5],
+  ['REAR GUN', 'peluru juga ditembakkan ke belakang (60% damage)', () => P.rear++, 'reargun', 0, 4],
+  ['MINE LAYER', 'dash meninggalkan ranjau yang meledak saat musuh mendekat', () => P.mine++, 'mine', 0, 4],
+  ['INCENDIARY', 'musuh mati meninggalkan kolam api yang membakar', () => P.inc++, 'incend', 0, 5],
+  ['SNIPER STANCE', 'diam di tempat: damage peluru +25%', () => P.snip++, 'sniper', 0, 4],
 ];
