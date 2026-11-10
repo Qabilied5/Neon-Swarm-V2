@@ -187,8 +187,11 @@ function drawStats() {
     rows = Math.ceil(list.length / L.cols),
     listH = L.lb - L.ly,
     total = rows * (L.ch + L.gp) - L.gp;
-  ST.max = Math.max(0, total - listH);
-  ST.sy = cl(ST.sy, 0, ST.max);
+  if (ST.tab != 1 || TUT.on) {
+    // tab ENCHANT menghitung batas scroll-nya sendiri (drawEnchant); jangan dijepit oleh daftar STAT yang pendek
+    ST.max = Math.max(0, total - listH);
+    ST.sy = cl(ST.sy, 0, ST.max);
+  }
 
   g.fillStyle = 'rgba(0,0,0,.82)';
   g.fillRect(0, 0, UW, UH);
