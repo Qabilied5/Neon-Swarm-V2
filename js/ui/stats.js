@@ -1,7 +1,7 @@
 // Layar STAT: tombol STAT (di samping PAUSE) mem-pause game & menampilkan statistik pemain, semua upgrade/skill yang sudah
 // diambil beserta jumlah stack dan efek angkanya saat ini. Daftar bisa digeser (scroll) dengan jari / roda mouse.
 // S tetap 'pause' (ST.on = 1 hanya menandai panel terbuka), jadi semua logika pause lama ikut berlaku.
-const ST = { on: 0, sy: 0, max: 0, id: null, ly: 0, y0: 0, mv: 0, tab: 0 }; // tab 0 = STATISTIK, 1 = ENCHANT (ui/enchant.js)
+const ST = { on: 0, sy: 0, max: 0, id: null, ly: 0, y0: 0, mv: 0, tab: 0, ret: 'play' }; // tab 0 = STATISTIK, 1 = ENCHANT (ui/enchant.js)
 
 // efek upgrade saat ini (maks 2 baris pendek) - dibaca dari nilai P sekarang, jadi selalu sesuai stack
 function statDetail(n) {
@@ -169,12 +169,21 @@ function statTap(x, y) {
   }
   if (ST.tab == 1 && !TUT.on) encTap(x, y);
 }
+// Panel STAT/ENCHANT juga bisa dibuka dari layar pilih kartu (S == 'levelup') untuk melihat build.
+// ST.ret = layar asal; saat panel ditutup game kembali ke sana (kartu level-up tetap sama, tidak diacak ulang).
+function statResume() {
+  const r = ST.ret;
+  ST.ret = 'play';
+  S = r;
+  if (r == 'levelup') cardLockFor(CARD_DELAY_RR); // jeda singkat: ketukan penutup panel tidak ikut memilih kartu
+}
 function statClose() {
   ST.on = 0;
   ST.id = null;
-  if (S == 'pause') S = 'play';
+  if (S == 'pause') statResume();
 }
-function statOpen() {
+function statOpen(ret) {
+  ST.ret = ret || 'play';
   ST.on = 1;
   ST.sy = 0;
   ST.tab = 0;

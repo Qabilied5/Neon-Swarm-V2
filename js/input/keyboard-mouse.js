@@ -26,16 +26,16 @@ addEventListener('keydown', (e) => {
   if (c == 'KeyP' || c == 'Escape') {
     if (S == 'play') S = 'pause';
     else if (S == 'pause') {
-      ST.on = 0;
-      S = 'play';
+      if (ST.on) statClose();
+      else S = 'play';
     }
   }
   if (c == 'Tab') {
     // TAB = menu ENCHANT (tab ENCHANT di panel STAT). Buka -> tab Enchant; sedang di tab STAT -> pindah ke Enchant; sedang di Enchant -> tutup
     e.preventDefault();
-    if (S == 'play') {
+    if (S == 'play' || S == 'levelup') {
+      statOpen(S); // dari pilih kartu: tutup panel -> kembali ke kartu
       S = 'pause';
-      statOpen();
       if (!TUT.on) ST.tab = 1; // tutorial: tab Enchant tidak tersedia
     } else if (S == 'pause') {
       if (!ST.on) {
@@ -50,9 +50,9 @@ addEventListener('keydown', (e) => {
   if (c == 'KeyI') {
     // panel STAT: buka (pause) / tutup (lanjut main)
     e.preventDefault();
-    if (S == 'play') {
+    if (S == 'play' || S == 'levelup') {
+      statOpen(S);
       S = 'pause';
-      statOpen();
     } else if (S == 'pause') {
       if (ST.on) statClose();
       else statOpen();

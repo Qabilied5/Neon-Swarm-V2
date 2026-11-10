@@ -313,6 +313,8 @@ function drawLevelup() {
     tx('↻ REROLL x' + P.rr + (TOUCH ? '' : '  [R]'), rb.x + rb.w / 2, rb.y + rb.h / 2 + 5, 14, rc, 'center', 0);
     if (P.rrNew) tx('BONUS +' + P.rrNew + ' REROLL!', UW / 2, rb.y + rb.h + 20, 14, '#39ff88', 'center', 8);
     g.globalAlpha = 1;
+    tx(TOUCH ? 'tombol ENC (kanan atas) = lihat build & enchant' : 'TAB = lihat build & enchant  ·  I = statistik', UW / 2, rb.y + rb.h + (P.rrNew ? 42 : 24), 12, '#7aa2c0', 'center', 0);
+    uiDraw(); // tombol STAT/ENC di atas lapisan gelap kartu
   }
 }
 function drawDead() {

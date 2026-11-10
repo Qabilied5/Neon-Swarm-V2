@@ -9,15 +9,15 @@ function uiBtns() {
     b.push({ k: 'fs', x, y: 84 * k, r: 20 * k });
     x -= 48 * k;
   }
-  if (S == 'play' || S == 'pause') {
+  if (S == 'play' || S == 'pause' || S == 'levelup') {
     if (TOUCH) {
-      b.push({ k: 'pause', x, y: 84 * k, r: 20 * k }); // desktop pakai P / Esc untuk pause
+      if (S != 'levelup') b.push({ k: 'pause', x, y: 84 * k, r: 20 * k }); // desktop pakai P / Esc untuk pause; saat pilih kartu slotnya dikosongkan (tombol ENC tidak bergeser)
       x -= 48 * k;
     }
     b.push({ k: TOUCH ? 'enc' : 'stat', x, y: 84 * k, r: 20 * k }); // desktop: STAT (statistik & upgrade, ui/stats.js); HP: ENC (langsung ke tab Enchant)
     x -= 48 * k;
   }
-  if (TOUCH && (S == 'menu' || S == 'pause')) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol
+  if (TOUCH && (S == 'menu' || (S == 'pause' && !(ST.on && ST.ret == 'levelup')))) b.push({ k: 'hud', x, y: 84 * k, r: 20 * k }); // atur tata letak kontrol
   return b;
 }
 const uiHit = (x, y) => {
@@ -31,18 +31,18 @@ function uiAct(u) {
     heOpen();
   } else if (u == 'stat') {
     // dari main: pause + buka panel; saat panel terbuka: lanjut main; saat pause biasa: buka panel
-    if (S == 'play') {
+    if (S == 'play' || S == 'levelup') {
+      statOpen(S); // dari pilih kartu: tutup panel -> kembali ke kartu
       S = 'pause';
-      statOpen();
     } else if (S == 'pause') {
       if (ST.on) statClose();
       else statOpen();
     }
   } else if (u == 'enc') {
     // HP: dari main -> pause + buka panel di tab ENCHANT; panel Enchant terbuka -> lanjut main; panel lain / pause biasa -> ke tab ENCHANT
-    if (S == 'play') {
+    if (S == 'play' || S == 'levelup') {
+      statOpen(S); // dari pilih kartu: tutup panel -> kembali ke kartu
       S = 'pause';
-      statOpen();
       if (!TUT.on) ST.tab = 1; // tutorial: tab Enchant tidak tersedia
     } else if (S == 'pause') {
       if (ST.on && (ST.tab == 1 || TUT.on)) statClose();
@@ -54,8 +54,8 @@ function uiAct(u) {
     }
   } else if (S == 'play') S = 'pause';
   else if (S == 'pause') {
-    ST.on = 0;
-    S = 'play';
+    if (ST.on) statClose();
+    else S = 'play';
   }
 }
 function uiDraw() {
