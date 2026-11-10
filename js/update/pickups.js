@@ -16,9 +16,9 @@ function updOrbs(dt) {
         P.lv++;
         P.need = Math.round(P.need * 1.35 + 2);
         rollCards();
-        // BONUS REROLL: tiap 2x naik level (level genap) dapat +RR_BONUS reroll kartu
-        P.rrNew = P.lv % RR_EVERY == 0 ? RR_BONUS : 0;
-        P.rr += P.rrNew;
+        // REROLL: tiap naik level dapat RR_PER_LEVEL kali (diisi ulang, tidak menumpuk)
+        P.rr = RR_PER_LEVEL;
+        P.rrNew = 0;
         if (ev('ascend')) {
           // ASCENDANT: heal 50% + ledakan cahaya
           P.hp = Math.min(P.mh, P.hp + P.mh * 0.5);
