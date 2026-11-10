@@ -97,5 +97,12 @@ const DEAD_CRIT = 0.5, // Deadeye: tambahan pengali crit per stack (dasar x3.5),
   SNIP_T = 0.5, SNIP_PCT = 0.25, // Sniper Stance: diam minimal SNIP_T dtk -> +damage per stack
   ZN_MAX = 40; // batas jumlah kolam api + ranjau sekaligus
 
-// REROLL kartu level-up: tiap naik level dapat RR_PER_LEVEL kali reroll. Tidak menumpuk (sisa hangus saat kartu dipilih).
-const RR_PER_LEVEL = 1;
+// REROLL kartu level-up: tiap naik level diundi acak RR_MIN..RR_MAX kali reroll (peluang sama rata), ditambah Lucky Charm.
+// Tidak menumpuk (sisa hangus saat kartu dipilih).
+const RR_MIN = 1,
+  RR_MAX = 3,
+  rrRoll = () => RR_MIN + ((Math.random() * (RR_MAX - RR_MIN + 1)) | 0);
+
+// REKOMENDASI Evo (tombol di tab ENCHANT): bahan Evo yang belum dimiliki mendapat bobot muncul x(1 + REC_BOOST) di kartu level-up.
+// Tanpa rekomendasi, semua upgrade berbobot sama (acak adil).
+const REC_BOOST = 0.15;

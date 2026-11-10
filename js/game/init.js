@@ -43,6 +43,7 @@ function init() {
     evt: { pls: 3, drn: 0.5, sing: 5, judge: 4, adr: 0, still: 0, lx: 0, ly: 0 }, // timer efek otomatis (adr = sisa buff Adrenaline, still = lama diam, lx/ly = posisi frame lalu)
     zn: [], // kolam api & ranjau { k, x, y, l, ... } (combat/evo.js)
     drp: 0, // sudut orbit drone
+    rec: {}, // Evo yang ditandai REKOMENDASI { id: true } (bobot kartu bahan naik, lihat rollCards)
     rr: 0, // sisa reroll kartu level-up
     rrNew: 0, // reroll bonus yang baru didapat di level-up ini (hanya untuk tampilan)
     rvu: 0, // jumlah Second Wind yang sudah terpakai

@@ -16,9 +16,9 @@ function updOrbs(dt) {
         P.lv++;
         P.need = Math.round(P.need * 1.35 + 2);
         rollCards();
-        // REROLL: tiap naik level dapat RR_PER_LEVEL kali (diisi ulang, tidak menumpuk)
-        P.rr = RR_PER_LEVEL + P.luck; // LUCKY CHARM / GOLD RUSH: reroll tambahan
-        P.rrNew = 0;
+        // REROLL: tiap naik level diundi 1-3 kali (diisi ulang, tidak menumpuk)
+        P.rr = rrRoll() + P.luck; // undian 1-3 reroll + LUCKY CHARM / GOLD RUSH
+        P.rrNew = Math.max(0, P.rr - 1); // tampilan: bonus di atas 1 reroll
         if (ev('ascend')) {
           // ASCENDANT: heal 50% + ledakan cahaya
           P.hp = Math.min(P.mh, P.hp + P.mh * 0.5);
@@ -34,9 +34,29 @@ function updOrbs(dt) {
   }
 }
 
+// Bahan dasar dari Evo yang ditandai REKOMENDASI dan belum dimiliki -> bobot muncul x(1 + REC_BOOST). Lainnya bobot 1 (adil).
+const recWanted = (n) => !(P.up[n] > 0) && EVO.some((v) => P.rec[v.id] && v.rec.includes(n)),
+  cardWeight = (u) => (recWanted(u[0]) ? 1 + REC_BOOST : 1);
+// ambil k item berbeda dari pool secara acak berbobot (tanpa pengembalian)
+function pickWeighted(pool, k) {
+  pool = [...pool];
+  const out = [];
+  while (out.length < k && pool.length) {
+    const ws = pool.map(cardWeight);
+    let r = Math.random() * ws.reduce((a, b) => a + b, 0),
+      i = 0;
+    for (; i < pool.length - 1; i++) {
+      r -= ws[i];
+      if (r < 0) break;
+    }
+    out.push(pool.splice(i, 1)[0]);
+  }
+  return out;
+}
+
 // Acak 3 kartu level-up (dipakai saat naik level & saat REROLL)
 function rollCards() {
-  cards = shuf(UP.filter((u) => !u[5] || (P.up[u[0]] || 0) < u[5])).slice(0, 3); // upgrade ber-batas stack disembunyikan setelah maksimal
+  cards = pickWeighted(UP.filter((u) => !u[5] || (P.up[u[0]] || 0) < u[5]), 3); // upgrade ber-batas stack disembunyikan setelah maksimal
   if (P.lv == 2) {
     // skill pertama = Q/E/R (Teleport tidak); tanpa kartu kembar
     const sk = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[0].includes('TELEPORT')));

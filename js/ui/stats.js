@@ -89,7 +89,7 @@ function statDetail(n) {
     case 'SCAVENGER':
       return ['Peluang orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '%', '2 orb per drop'];
     case 'LUCKY CHARM':
-      return ['Reroll ' + (RR_PER_LEVEL + P.luck) + ' per level up'];
+      return ['Reroll ' + (RR_MIN + P.luck) + '-' + (RR_MAX + P.luck) + ' per level up (diundi)'];
     case 'COOLDOWN CORE':
       return ['Cooldown skill & heal -' + Math.round((1 - cdrMul()) * 100) + '%'];
     case 'REAR GUN':

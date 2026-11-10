@@ -20,7 +20,7 @@ function encLayout() {
   const L = statLayout(),
     lw = Math.min(250, Math.floor(L.w * 0.4)),
     h = L.lb - L.ly;
-  return { L, lx: L.x0, lw, rx: L.x0 + lw + 12, rw: L.w - lw - 12, y0: L.ly, y1: L.lb, rh: 56, rg: 6, s: cl(h * 0.2, 34, 48), btn: { x: L.x0, y: L.lb - 34, w: lw, h: 32 } };
+  return { L, lx: L.x0, lw, rx: L.x0 + lw + 12, rw: L.w - lw - 12, y0: L.ly, y1: L.lb, rh: 56, rg: 6, s: cl(h * 0.2, 34, 48), btn: { x: L.x0, y: L.lb - 34, w: lw, h: 32 }, rb: { x: L.x0, y: L.lb - 64, w: lw, h: 24 } }; // rb = tombol REKOMENDASI
 }
 const inR = (x, y, b, m = 0) => x >= b.x - m && x <= b.x + b.w + m && y >= b.y - m && y <= b.y + b.h + m;
 
@@ -48,9 +48,17 @@ function encCraft(v) {
   snd(990, 0.5, 'triangle', 0.05);
 }
 
+// REKOMENDASI: tandai / batalkan Evo -> bahan dasarnya lebih sering muncul di kartu level-up (rollCards di update/pickups.js)
+function encRec(v) {
+  P.rec[v.id] = !P.rec[v.id];
+  if (!P.rec[v.id]) delete P.rec[v.id];
+  snd(P.rec[v.id] ? 820 : 520, 0.08, 'triangle', 0.04);
+}
+
 function encTap(x, y) {
   const Y = encLayout();
   if (inR(x, y, Y.btn, 6)) return encCraft(encSel());
+  if (inR(x, y, Y.rb, 4)) return encRec(encSel()); // tombol REKOMENDASI
   if (x >= Y.rx && x <= Y.rx + Y.rw && y >= Y.y0 && y <= Y.y1) {
     const yy = y - Y.y0 + ST.sy,
       i = Math.floor(yy / (Y.rh + Y.rg));
@@ -141,10 +149,25 @@ function drawEnchant() {
   y += 4;
   for (const n of v.rec) {
     y += 13;
-    if (y > Y.btn.y - 4) break;
+    if (y > Y.rb.y - 4) break;
     const k = P.up[n] || 0;
     tx(fitText((k ? '✓ ' : '✗ ') + n + (k ? '  x' + k : ''), 11, Y.lw - 16), Y.lx + 8, y, 11, k ? '#39ff88' : '#ff6b8a', 'left', 0);
   }
+
+  // tombol REKOMENDASI (toggle)
+  const rb = Y.rb,
+    rOn = !!P.rec[v.id],
+    rc = rOn ? '#ffd166' : '#7aa2c0';
+  g.shadowColor = rc;
+  g.shadowBlur = rOn ? 8 : 0;
+  g.fillStyle = rOn ? 'rgba(60,44,10,.8)' : 'rgba(10,18,32,.85)';
+  g.strokeStyle = rc;
+  g.lineWidth = rOn ? 2 : 1.5;
+  rrect(rb.x, rb.y, rb.w, rb.h, rb.h / 2);
+  g.fill();
+  g.stroke();
+  g.shadowBlur = 0;
+  tx(fitText(rOn ? '★ DIREKOMENDASIKAN' : '☆ REKOMENDASI', 12, rb.w - 12), rb.x + rb.w / 2, rb.y + rb.h / 2 + 4, 12, rc, 'center', 0);
 
   // tombol ENCHANT
   const b = Y.btn,
@@ -159,7 +182,6 @@ function drawEnchant() {
   g.stroke();
   g.shadowBlur = 0;
   tx(can ? '✦ ENCHANT ✦' : 'BAHAN KURANG', b.x + b.w / 2, b.y + b.h / 2 + 5, 14, bc, 'center', 0);
-  if (T - ENC.msgT < 1.5) tx(ENC.msg, Y.lx + Y.lw / 2, b.y - 6, 11, '#ff6b8a', 'center', 0);
 
   // animasi berhasil: cincin & simbol naik dari slot hasil
   if (fx < 1.6) {
@@ -208,6 +230,7 @@ function drawEnchant() {
       drawIcon(UP_BY_NAME[n][3], Y.rx + 70 + j * 26, ry + 40, 20, '#22d3ee', 0);
     });
     g.globalAlpha = 1;
+    if (P.rec[r.id]) tx('★', Y.rx + 150, ry + 44, 13, '#ffd166', 'left', 4); // ditandai REKOMENDASI
     // status di kanan: SIAP / jumlah bahan, + stack evo yang sudah dimiliki
     const cnt = encCount(r);
     tx(ok ? 'SIAP' : cnt + '/3', Y.rx + Y.rw - 10, ry + 21, 12, ok ? '#39ff88' : '#7aa2c0', 'right', ok ? 6 : 0);

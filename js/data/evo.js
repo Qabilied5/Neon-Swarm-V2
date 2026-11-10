@@ -284,7 +284,7 @@ const EVO = [
       P.xpb++;
       P.luck++;
     },
-    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_PER_LEVEL + P.luck) + '/level'],
+    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_MIN + P.luck) + '-' + (RR_MAX + P.luck) + '/level'],
   },
   {
     id: 'cross',

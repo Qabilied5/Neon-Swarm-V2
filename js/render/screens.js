@@ -273,6 +273,7 @@ function drawLevelup() {
       g.fillRect(x, c.y0, c.cw, c.ch);
       g.strokeRect(x, c.y0, c.cw, c.ch);
       tx(String(i + 1), x + 14, c.y0 + 24, 16, '#7aa2c0', 'left');
+      if (recWanted(u[0])) tx('★', x + 14, c.y0 + 44, 14, '#ffd166', 'left', 6); // bahan Evo yang direkomendasikan
       // upgrade yang sudah pernah diambil & bisa di-stack: ikon panah hijau (naik-turun pelan) + "LV lama > LV baru"
       const n = (P.up && P.up[u[0]]) || 0;
       if (n > 0 && !u[4]) {

@@ -50,7 +50,6 @@ function reroll() {
     return;
   }
   P.rr--;
-  P.rrNew = 0;
   rollCards();
   cardLockFor(CARD_DELAY_RR);
   snd(700, 0.1, 'triangle', 0.05);
