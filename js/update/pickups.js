@@ -9,7 +9,7 @@ function updOrbs(dt) {
     }
     if (d < P.r + 6) {
       O.splice(i, 1);
-      P.xp += o.v;
+      P.xp += o.v * (1 + XPB_PCT * P.xpb); // XP SURGE
       snd(900, 0.04, 'sine', 0.03);
       if (P.xp >= P.need) {
         P.xp -= P.need;
@@ -20,6 +20,11 @@ function updOrbs(dt) {
           // skill pertama = Q/E/R (Teleport tidak); tanpa kartu kembar
           const sk = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[0].includes('TELEPORT')));
           cards = [sk, ...cards.filter((c) => c !== sk).slice(0, 2)];
+        }
+        if (ev('ascend')) {
+          // ASCENDANT: heal 50% + ledakan cahaya
+          P.hp = Math.min(P.mh, P.hp + P.mh * 0.5);
+          shock(P.x, P.y, 300, 60 + P.dmg * 4, '#ffd166');
         }
         S = 'levelup';
         RG.push({ x: P.x, y: P.y, r: 0, mr: 280, c: '#ffd166', w: 7, l: 0.7, m: 0.7 });

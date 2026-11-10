@@ -80,7 +80,7 @@ addEventListener('mousedown', (e) => {
     }
   }
   if (S == 'pause' && ST.on) {
-    if (statBtnHit(MU.x, MU.y)) statClose(); // tombol LANJUT di panel STAT
+    statTap(MU.x, MU.y); // tombol LANJUT, tab STAT/ENCHANT & isi tab ENCHANT
     return;
   }
   if (S == 'pause') {

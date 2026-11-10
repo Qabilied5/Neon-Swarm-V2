@@ -50,13 +50,13 @@ function updDecoy(dt) {
     GH = GH.filter((o) => o.t > 0);
   }
 }
-// SUPER SHIELD: setelah hancur, hitung mundur lalu aktif lagi dengan SH_HITS penuh
+// SUPER SHIELD: setelah hancur, hitung mundur lalu aktif lagi dengan shMax() penuh
 function updShield(dt) {
   if (!P.sh) return;
   if (P.shf > 0) P.shf -= dt;
   if (P.shn <= 0 && P.shc > 0 && (P.shc -= dt) <= 0) {
     P.shc = 0;
-    P.shn = SH_HITS;
+    P.shn = shMax();
     RG.push({ x: P.x, y: P.y, r: P.r + 40, mr: P.r, c: '#4da3ff', w: 4, l: 0.4, m: 0.4 });
     pf(P.x, P.y, 14, '#4da3ff', 200, 0.5);
     FT.push({ x: P.x, y: P.y - P.r - 14, t: 1, s: 'SHIELD AKTIF', c: '#4da3ff', z: 16 });
@@ -77,6 +77,7 @@ function updTimers(dt) {
   AR = AR.filter((a) => a.l > 0);
   BM = BM.filter((a) => a.l > 0);
   FT = FT.filter((f) => f.t > 0);
+  for (const v of VX) if (v.l <= 0 && v.col) shock(v.x, v.y, v.r, 150 + P.dmg * 6, '#b967ff'); // SINGULARITY runtuh
   VX = VX.filter((v) => v.l > 0);
   if (comboT > 0) {
     comboT -= dt;

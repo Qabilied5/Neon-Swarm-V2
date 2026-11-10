@@ -12,6 +12,8 @@ function superShot() {
     p: P.pier,
     life: 1.2,
     h: new Set(),
+    rc: P.rico,
+    hm: 0,
     ss: 1,
   });
   RG.push({ x: P.x + ux * 20, y: P.y + uy * 20, r: 0, mr: 38, c: '#ffd166', w: 4, l: 0.25, m: 0.25 });
@@ -72,7 +74,7 @@ function updPlayer(dt) {
   const canFire = !TOUCH || AIM.on; // sentuh: tembak hanya saat tombol serang ditahan
   if (!canFire && P.fire < 0) P.fire = 0;
   while (canFire && P.fire <= 0) {
-    P.fire += 1 / P.rate;
+    P.fire += 1 / (P.rate * rateMul());
     for (let i = 0; i < P.multi; i++) {
       const a = P.a + (i - (P.multi - 1) / 2) * 0.14;
       B.push({
@@ -81,12 +83,15 @@ function updPlayer(dt) {
         vx: Math.cos(a) * BUL_SPD,
         vy: Math.sin(a) * BUL_SPD,
         r: 4,
-        d: P.dmg,
+        d: P.dmg * dmgMul(),
         p: P.pier,
         life: 1.1,
         h: new Set(),
+        rc: P.rico,
+        hm: 0,
       });
     }
+    if (ev('rail') && ++P.rgc % 4 == 0) railShot(); // RAILGUN: tembakan ke-4
     if (P.ss && Math.random() < P.ss) superShot(); // SUPER SHOT: peluang per tembakan
     snd(500 + R(0, 80), 0.04, 'square', 0.015);
   }

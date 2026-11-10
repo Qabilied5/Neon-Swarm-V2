@@ -17,6 +17,7 @@ function kill(e, i) {
       y: e.y + R(-20, 20) * (n > 1),
       v: e.k == 'boss' ? 3 : e.xp,
     });
+  killFx(e); // Shrapnel, Plague Bearer
   if (e.k == 'splitter') {
     spawn('drone', e.x - 8, e.y);
     spawn('drone', e.x + 8, e.y);
@@ -39,6 +40,7 @@ function hit(e, d) {
   if (c) d *= 3.5;
   e.hp -= d;
   e.fl = 0.08;
+  hitFx(e, d, c); // efek baru: Executioner, Storm Caller (combat/evo.js)
   if (FT.length < 80)
     FT.push({
       x: e.x,
@@ -67,6 +69,7 @@ function chain(e, d) {
   }
 }
 function boom(x, y, d) {
-  RG.push({ x, y, r: 0, mr: 46, c: '#ff9f1c', w: 3, l: 0.25, m: 0.25 });
-  for (const o of E) if (Math.hypot(o.x - x, o.y - y) < 46 + o.r) hit(o, d * 0.4);
+  const br = boomR(); // Cluster Bomb: radius 2x
+  RG.push({ x, y, r: 0, mr: br, c: '#ff9f1c', w: 3, l: 0.25, m: 0.25 });
+  for (const o of E) if (Math.hypot(o.x - x, o.y - y) < br + o.r) hit(o, d * (ev('cluster') ? 0.6 : 0.4));
 }

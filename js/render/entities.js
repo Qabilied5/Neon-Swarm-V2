@@ -52,7 +52,7 @@ function drawBullets() {
       g.fill();
       continue;
     }
-    neon('#39ff88', '#39ff88');
+    neon(b.c || '#39ff88', b.c || '#39ff88');
     g.beginPath();
     g.moveTo(b.x, b.y);
     g.lineTo(b.x - b.vx * 0.03, b.y - b.vy * 0.03);
@@ -149,13 +149,13 @@ function drawEnemies() {
 function drawOrbitals() {
   for (let j = 0; j < P.orb; j++) {
     const a = P.ot + (j * TAU) / P.orb,
-      x = P.x + Math.cos(a) * ORB_R,
-      y = P.y + Math.sin(a) * ORB_R,
+      x = P.x + Math.cos(a) * orbR(),
+      y = P.y + Math.sin(a) * orbR(),
       spin = T * 14 + j;
     neon('#ffd166', '#ffd16655');
     g.globalAlpha = 0.25; // jejak orbit
     g.beginPath();
-    g.arc(P.x, P.y, ORB_R, a - 0.5, a);
+    g.arc(P.x, P.y, orbR(), a - 0.5, a);
     g.stroke();
     g.globalAlpha = 1;
     g.beginPath();
@@ -174,7 +174,51 @@ function drawOrbitals() {
     g.fill();
   }
 }
+// SPIKE AURA / BLIZZARD: lingkaran aura di sekitar pemain
+function drawAura() {
+  if (!P.aura) return;
+  const r = auraR(),
+    bz = ev('bliz'),
+    c = bz ? '#8be9ff' : '#ff2e63';
+  g.save();
+  g.shadowBlur = 0;
+  g.fillStyle = c;
+  g.globalAlpha = 0.05 + 0.03 * Math.sin(T * 4);
+  g.beginPath();
+  g.arc(P.x, P.y, r, 0, TAU);
+  g.fill();
+  g.strokeStyle = c;
+  g.globalAlpha = 0.5;
+  g.lineWidth = 2 * ZK;
+  g.setLineDash([8, 6]);
+  g.lineDashOffset = -T * 30;
+  g.beginPath();
+  g.arc(P.x, P.y, r, 0, TAU);
+  g.stroke();
+  if (bz) {
+    g.globalAlpha = 0.2;
+    g.beginPath();
+    g.arc(P.x, P.y, r + 80, 0, TAU);
+    g.stroke();
+  }
+  g.restore();
+}
+// DRONE: berlian kecil mengorbit pemain
+function drawDrones() {
+  for (let j = 0; j < P.drn; j++) {
+    const [x, y] = dronePos(j);
+    neon('#22d3ee', '#22d3ee55');
+    poly(x, y, 7, 4, T * 3 + j);
+    g.fill();
+    g.stroke();
+  }
+  g.shadowBlur = 0;
+}
 function drawPlayer() {
+  if (S != 'dead') {
+    drawAura();
+    drawDrones();
+  }
   if (S != 'dead' && (P.inv <= 0 || Math.floor(T * 20) % 2)) {
     neon('#22d3ee', '#22d3ee33');
     poly(P.x, P.y, P.r + 2, 3, P.a);
@@ -209,7 +253,7 @@ function drawShield() {
     g.shadowBlur = TOUCH ? 6 : 12;
     g.lineWidth = (fl ? 4 : 3) * ZK;
     g.globalAlpha = 0.7 + 0.2 * Math.sin(T * 5);
-    const seg = TAU / SH_HITS;
+    const seg = TAU / shMax();
     for (let i = 0; i < P.shn; i++) {
       g.beginPath();
       g.arc(P.x, P.y, R0, rot + i * seg, rot + i * seg + seg * 0.78);
@@ -220,7 +264,7 @@ function drawShield() {
     g.globalAlpha = 0.28;
     g.lineWidth = 2 * ZK;
     g.beginPath();
-    g.arc(P.x, P.y, R0, -Math.PI / 2, -Math.PI / 2 + TAU * (1 - P.shc / SH_CD)); // makin penuh = makin dekat aktif
+    g.arc(P.x, P.y, R0, -Math.PI / 2, -Math.PI / 2 + TAU * (1 - P.shc / shCd())); // makin penuh = makin dekat aktif
     g.stroke();
   }
   g.restore();

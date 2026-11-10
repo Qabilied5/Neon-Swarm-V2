@@ -15,9 +15,9 @@ function skillHud() {
       x = UW / 2 - (list.length * 56 - 8) / 2 + i * 56,
       y = UH - 62,
       lv = id == 'dash' || id == 'c' || id == 'sh' ? 1 : P.sk[id],
-      // sisa cooldown & cooldown maksimum: dash = P.dc / P.dashCD, shield = waktu pulih P.shc / SH_CD (0 saat aktif), lainnya P.cd / P.cm
+      // sisa cooldown & cooldown maksimum: dash = P.dc / P.dashCD, shield = waktu pulih P.shc / shCd() (0 saat aktif), lainnya P.cd / P.cm
       cd = id == 'dash' ? P.dc : id == 'sh' ? (P.shn > 0 ? 0 : P.shc) : P.cd[id],
-      mx = id == 'dash' ? P.dashCD : id == 'sh' ? SH_CD : P.cm[id] || 9,
+      mx = id == 'dash' ? P.dashCD : id == 'sh' ? shCd() : P.cm[id] || 9,
       lbl = id == 'dash' ? cd.toFixed(1) + 's' : Math.ceil(cd) + 's';
     g.shadowBlur = 0;
     g.fillStyle = '#0a1220';

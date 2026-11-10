@@ -174,7 +174,52 @@ const ICON = {
   // tombol
   dash: () => ply(44, 32, 10) + ply(30, 32, 10, 0, 0.35) + ply(17, 32, 10, 0, 0.18),
   heal: () => shp('25,10 39,10 39,25 54,25 54,39 39,39 39,54 25,54 25,39 10,39 10,25 25,25', IC.g, 0.3),
+  // ---- efek tambahan ----
+  frost: () => ln(32, 6, 32, 58, IC.c, 3) + ln(9, 19, 55, 45, IC.c, 3) + ln(9, 45, 55, 19, IC.c, 3) + shp(sPoly(32, 32, 8, 6), IC.w, 0.45) + pln('26,10 32,16 38,10', IC.c, 2.5) + pln('26,54 32,48 38,54', IC.c, 2.5),
+  toxic: () =>
+    `<path d="M32 6 C32 6 12 30 12 42 A20 20 0 0 0 52 42 C52 30 32 6 32 6 Z" fill="${IC.g}" fill-opacity=".2" stroke="${IC.g}"/>` +
+    cir(26, 42, 4, IC.g, 2.5, 0.9) + cir(39, 36, 3, IC.g, 2.5, 0.9) + cir(36, 48, 2.5, IC.g, 2, 0.7),
+  ricochet: () => ln(4, 56, 60, 56, IC.c, 3, 0.6) + pln('6,8 30,52 54,14', IC.g, 3) + foe(54, 14, 6) + shp(sPoly(30, 52, 4, 4), IC.y, 0.6),
+  homing: () => `<path d="M8 54 C6 24 40 56 50 22" stroke="${IC.g}" stroke-width="3" fill="none"/>` + arw(48, 28, 51, 19, IC.g, 6, 3) + foe(52, 14, 8) + cir(52, 14, 13, IC.r, 2, 0.5, '3 3'),
+  aura: () => ply(32, 32, 8, -Math.PI / 2) + cir(32, 32, 24, IC.r, 2.5, 0.8, '4 3') + [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ln(32 + 24 * Math.cos((i * Math.PI) / 4), 32 + 24 * Math.sin((i * Math.PI) / 4), 32 + 30 * Math.cos((i * Math.PI) / 4), 32 + 30 * Math.sin((i * Math.PI) / 4), IC.r, 3)).join(''),
+  regen: () => shp('27,12 37,12 37,27 52,27 52,37 37,37 37,52 27,52 27,37 12,37 12,27 27,27', IC.g, 0.3) + cir(32, 32, 28, IC.g, 2, 0.45, '5 5') + pln('50,10 56,10 56,16', IC.g, 3),
+  dstrike: () => ply(12, 32, 8) + ln(22, 32, 36, 32, IC.c, 3, 0.5) + foe(46, 32, 9) + ln(36, 16, 52, 48, IC.w, 3.5) + ln(44, 14, 60, 46, IC.w, 2, 0.5),
+  xpsurge: () => orb(32, 34, 12) + orb(12, 16, 5) + orb(52, 20, 5) + orb(48, 52, 4) + arw(32, 18, 32, 4, IC.g, 6, 3),
+  berserk: () => shp(sStar(32, 32, 26, 13, 7, -Math.PI / 2), IC.r, 0.28) + shp(sStar(32, 32, 13, 6, 7, -Math.PI / 2 + 0.2), IC.o, 0.55) + shp(sPoly(32, 32, 4, 4), IC.w, 0.8),
+  shrapnel: () => shp(sStar(32, 32, 9, 4.5, 6), IC.o, 0.5) + [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ln(32 + 15 * Math.cos((i * Math.PI) / 4 + 0.2), 32 + 15 * Math.sin((i * Math.PI) / 4 + 0.2), 32 + 27 * Math.cos((i * Math.PI) / 4 + 0.2), 32 + 27 * Math.sin((i * Math.PI) / 4 + 0.2), IC.g, 3)).join(''),
+  pulse: () => cir(32, 32, 6, IC.g, 3.5) + cir(32, 32, 15, IC.g, 2.5, 0.65) + cir(32, 32, 24, IC.g, 2.5, 0.35) + ln(32, 4, 32, 10, IC.y, 3) + ln(32, 54, 32, 60, IC.y, 3) + ln(4, 32, 10, 32, IC.y, 3) + ln(54, 32, 60, 32, IC.y, 3),
+  exec: () => foe(32, 32, 14) + cir(32, 32, 26, IC.r, 2, 0.5) + ln(20, 20, 44, 44, IC.r, 4) + ln(44, 20, 20, 44, IC.r, 4),
+  drone: () => shp(sPoly(32, 32, 9, 4, Math.PI / 4), IC.c, 0.35) + [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([a, b]) => ln(32 + a * 8, 32 + b * 8, 32 + a * 17, 32 + b * 17, IC.c, 2.5) + cir(32 + a * 20, 32 + b * 20, 5, IC.c, 2.5, 0.8)).join('') + ln(32, 44, 32, 60, IC.g, 3),
+  thick: () => pln('10,18 32,6 54,18', IC.b, 4) + pln('10,32 32,20 54,32', IC.b, 4, 0.75) + pln('10,46 32,34 54,46', IC.b, 4, 0.5) + `<circle cx="32" cy="54" r="3" fill="${IC.b}" stroke="none"/>`,
+  revive: () => `<path d="M32 58 C8 42 6 24 18 17 C25 13 32 18 32 24 C32 18 39 13 46 17 C58 24 56 42 32 58 Z" fill="${IC.r}" fill-opacity=".22" stroke="${IC.r}"/>` + `<ellipse cx="32" cy="7" rx="13" ry="4" stroke="${IC.y}" stroke-width="3" fill="none"/>` + ln(32, 28, 32, 44, IC.g, 3) + ln(24, 36, 40, 36, IC.g, 3),
 };
+
+// ---- ikon Evo Effect: cincin emas bertitik + ikon bahan utama diperkecil + bintang aksen berwarna ----
+const evIco = (base, c) => () =>
+  cir(32, 32, 29, IC.y, 2, 0.7, '2 4') +
+  `<g transform="translate(9.6 9.6) scale(0.7)">${ICON[base]()}</g>` +
+  shp(sStar(52, 12, 7, 3, 4, 0), c, 0.75) +
+  shp(sStar(12, 52, 5, 2, 4, 0), c, 0.55);
+Object.assign(ICON, {
+  evStorm: evIco('chain', IC.y),
+  evPlague: evIco('toxic', IC.g),
+  evSing: evIco('hole', IC.p),
+  evRail: evIco('pierce', IC.y),
+  evBlade: evIco('orbital', IC.o),
+  evAegis: evIco('shield', IC.b),
+  evReaper: evIco('exec', IC.r),
+  evBliz: evIco('frost', IC.c),
+  evHive: evIco('drone', IC.c),
+  evPhoenix: evIco('revive', IC.o),
+  evCluster: evIco('shrapnel', IC.o),
+  evOver: evIco('rapid', IC.r),
+  evChronos: evIco('sande', IC.p),
+  evJudge: evIco('laser', IC.y),
+  evSeeker: evIco('homing', IC.g),
+  evAscend: evIco('xpsurge', IC.y),
+  // meja enchant (tab ENCHANT): buku terbuka + simbol melayang
+  enchant: () => `<path d="M6 44 L32 52 L58 44 L58 24 L32 32 L6 24 Z" fill="${IC.p}" fill-opacity=".2" stroke="${IC.p}"/>` + ln(32, 32, 32, 52, IC.p, 2.5) + shp(sStar(32, 12, 8, 3, 4, 0), IC.y, 0.7) + shp(sStar(16, 14, 4, 1.5, 4, 0), IC.c, 0.7) + shp(sStar(48, 16, 4, 1.5, 4, 0), IC.c, 0.7),
+});
 
 // ---- pemuat & penggambar ----
 const ICO = {}; // cache gambar per kunci

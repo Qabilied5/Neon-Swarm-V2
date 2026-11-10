@@ -31,6 +31,13 @@ function dash() {
   P.dash = 0.16;
   P.dc = P.dashCD;
   P.inv = 0.3;
+  P.dsId++; // DASH STRIKE: tiap dash punya id agar musuh hanya kena sekali
+  if (ev('chrono')) {
+    // CHRONOS: waktu melambat di sekitar pemain
+    for (const e of E) if (Math.hypot(e.x - P.x, e.y - P.y) < 420) e.slw = Math.max(e.slw || 0, 3);
+    P.inv = 0.7;
+    RG.push({ x: P.x, y: P.y, r: 0, mr: 420, c: '#b967ff', w: 4, l: 0.5, m: 0.5 });
+  }
   snd(200, 0.15, 'sawtooth', 0.05);
   if (TUT.on) tutDash();
 }
@@ -40,6 +47,7 @@ function hurt(d, c) {
     return;
   }
   if (c && wave >= LET) d = Math.max(d, Math.ceil(P.mh / 3));
+  else if (P.thick) d = Math.max(1, Math.ceil(d * (1 - THICK_PCT * Math.min(P.thick, 8)))); // THICK SKIN
   if (P.sh && P.shn > 0) {
     d = Math.max(1, Math.ceil(d * SH_RED)); // SUPER SHIELD: damage dikurangi 50%
     shieldHit();
@@ -51,18 +59,19 @@ function hurt(d, c) {
   flash = 0.25;
   snd(110, 0.2, 'sawtooth', 0.07);
   pf(P.x, P.y, 14, '#ff2e63');
-  if (P.hp <= 0) die();
+  if (P.hp <= 0 && !tryRevive()) die(); // SECOND WIND / PHOENIX HEART
 }
-// SUPER SHIELD: satu serangan tertahan -> sisa berkurang; habis = hancur, aktif lagi setelah SH_CD detik (updShield di update/fx.js)
+// SUPER SHIELD: satu serangan tertahan -> sisa berkurang; habis = hancur, aktif lagi setelah shCd() detik (updShield di update/fx.js)
 function shieldHit() {
   P.shn--;
   P.shf = 0.3;
+  if (ev('aegis')) shock(P.x, P.y, 170, 40 + P.dmg * 3, '#4da3ff'); // AEGIS PROTOCOL: shockwave tiap tahanan
   RG.push({ x: P.x, y: P.y, r: P.r, mr: P.r + 34, c: '#4da3ff', w: 3, l: 0.3, m: 0.3 });
   if (P.shn > 0) {
     snd(520, 0.12, 'triangle', 0.05);
-    if (FT.length < 80) FT.push({ x: P.x, y: P.y - P.r - 14, t: 0.8, s: 'SHIELD ' + P.shn + '/' + SH_HITS, c: '#4da3ff', z: 14 });
+    if (FT.length < 80) FT.push({ x: P.x, y: P.y - P.r - 14, t: 0.8, s: 'SHIELD ' + P.shn + '/' + shMax(), c: '#4da3ff', z: 14 });
   } else {
-    P.shc = SH_CD;
+    P.shc = shCd();
     pf(P.x, P.y, 26, '#4da3ff', 320, 0.7);
     RG.push({ x: P.x, y: P.y, r: P.r, mr: P.r + 80, c: '#4da3ff', w: 5, l: 0.5, m: 0.5 });
     snd(160, 0.3, 'sawtooth', 0.07);

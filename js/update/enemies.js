@@ -8,6 +8,23 @@ function updEnemies(dt) {
       uy = (tg.y - e.y) / d,
       dp = tg == P ? d : Math.hypot(P.x - e.x, P.y - e.y) || 1; // jarak ke pemain asli (tabrakan tetap dengan pemain)
     if (e.fl > 0) e.fl -= dt;
+    // FROST: slow sementara (kecepatan dasar disimpan di e.bsp; super/secret boss kebal)
+    if (e.bsp == null) e.bsp = e.sp;
+    if (e.slw > 0) e.slw -= dt;
+    e.sp = e.bsp * (e.slw > 0 && !e.sup && !e.sec ? (e.k == 'boss' ? 0.8 : FROST_SLOW) : 1);
+    // TOXIC: damage berkala
+    if (e.pt > 0) {
+      e.pt -= dt;
+      e.hp -= (e.pd || 0) * dt;
+      if (Math.random() < dt * 5) pf(e.x, e.y, 1, '#7cff3a', 40, 0.4);
+    }
+    auraTick(e, dp, dt); // SPIKE AURA / BLIZZARD
+    // DASH STRIKE: musuh yang dilewati saat dash
+    if (P.dash > 0 && P.dstr && e.dsh !== P.dsId && dp < e.r + P.r + 30) {
+      e.dsh = P.dsId;
+      hit(e, P.dmg * DSTR_MUL * P.dstr);
+      pf(e.x, e.y, 6, '#22d3ee', 200, 0.3);
+    }
     if (e.k == 'shooter') {
       const m = d > 280 ? 1 : d < 200 ? -1 : 0;
       e.x += ux * e.sp * m * dt;
@@ -179,16 +196,16 @@ function updEnemies(dt) {
         e.y -= ((P.y - e.y) / dp) * 6;
       }
     }
-    // Orbital Shuriken: ORB_DMG per kena; tiap shuriken punya jeda ORB_HITCD pada musuh yang sama
+    // Orbital Shuriken: orbDmg() per kena; tiap shuriken punya jeda ORB_HITCD pada musuh yang sama
     for (let j = 0; j < P.orb; j++) {
       const a = P.ot + (j * TAU) / P.orb,
-        ox = P.x + Math.cos(a) * ORB_R,
-        oy = P.y + Math.sin(a) * ORB_R;
+        ox = P.x + Math.cos(a) * orbR(),
+        oy = P.y + Math.sin(a) * orbR();
       if (Math.hypot(e.x - ox, e.y - oy) < e.r + ORB_HIT) {
         const oh = e.oh || (e.oh = []);
         if ((oh[j] || 0) <= T) {
           oh[j] = T + ORB_HITCD;
-          hit(e, ORB_DMG);
+          hit(e, orbDmg());
           pf(ox, oy, 4, '#ffd166', 160, 0.25);
         }
       }

@@ -38,11 +38,27 @@ const UP = [
     () => {
       if (P.sh) return;
       P.sh = 1;
-      P.shn = SH_HITS;
+      P.shn = shMax();
       P.shc = 0;
     },
     'shield',
     0,
     1,
   ],
+  // ===== Efek tambahan (bahan dasar Evo Effect, lihat data/evo.js). Logika: combat/evo.js + hook di damage/bullets/enemies =====
+  ['FROST ROUNDS', 'peluru memperlambat musuh (makin lama tiap stack)', () => P.froz++, 'frost', 0, 4],
+  ['TOXIC ROUNDS', 'peluru meracuni: damage berkala 3 detik', () => P.psn++, 'toxic'],
+  ['RICOCHET', 'peluru memantul di tepi layar +1 kali', () => P.rico++, 'ricochet', 0, 4],
+  ['HOMING', 'peluru membelok mengejar musuh terdekat', () => P.hom++, 'homing', 0, 4],
+  ['SPIKE AURA', 'aura melukai musuh yang mendekat', () => P.aura++, 'aura'],
+  ['REGEN', 'pulihkan HP perlahan terus-menerus', () => P.regen++, 'regen', 0, 6],
+  ['DASH STRIKE', 'dash melukai musuh yang dilewati', () => P.dstr++, 'dstrike', 0, 4],
+  ['XP SURGE', '+25% XP dari tiap orb', () => P.xpb++, 'xpsurge', 0, 5],
+  ['BERSERK', 'makin sedikit HP, makin besar damage', () => P.bers++, 'berserk', 0, 5],
+  ['SHRAPNEL', 'musuh mati meledak jadi pecahan peluru', () => P.shr++, 'shrapnel'],
+  ['PULSE', 'semburan peluru melingkar otomatis berkala', () => P.pls++, 'pulse', 0, 5],
+  ['EXECUTIONER', 'musuh biasa ber-HP rendah langsung mati', () => P.exe++, 'exec', 0, 3],
+  ['DRONE', 'drone pendamping menembak musuh terdekat', () => P.drn++, 'drone', 0, 4],
+  ['THICK SKIN', '-8% damage yang diterima', () => P.thick++, 'thick', 0, 5],
+  ['SECOND WIND', 'bangkit 1x saat HP habis (40% HP)', () => P.rvm++, 'revive', 0, 1],
 ];

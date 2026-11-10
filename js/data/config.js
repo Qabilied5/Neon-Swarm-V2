@@ -65,3 +65,20 @@ const FH_HP = 20,
 
 // Panjang setengah garis laser layar penuh (px) - cukup untuk menutup layar 4K
 const LASER_LEN = 2600;
+
+// ===== Efek baru & Evo Effect (lihat data/upgrades.js, data/evo.js, combat/evo.js) =====
+// Frost: lama slow = FROST_T + FROST_TS*stack (dtk); musuh melambat ke FROST_SLOW x kecepatan. Toxic: dps = (TOX_DPS + dmg*0.3) * stack selama TOX_T dtk.
+const FROST_T = 1.2, FROST_TS = 0.4, FROST_SLOW = 0.55,
+  TOX_T = 3, TOX_DPS = 5,
+  HOM_R = 320, HOM_TURN = 4, // Homing: jangkauan cari musuh (px) & kecepatan belok (rad/dtk per stack)
+  AURA_R0 = 80, AURA_RS = 22, AURA_DPS = 14, // Spike Aura: radius = R0 + RS*stack, damage/dtk = DPS*stack
+  REGEN_HPS = 0.7, // Regen: HP/dtk per stack
+  DSTR_MUL = 3, // Dash Strike: damage = dmg * DSTR_MUL * stack
+  XPB_PCT = 0.25, // XP Surge: tambahan XP per stack
+  BERS_PCT = 0.35, // Berserk: +damage per stack saat HP mendekati 0
+  SHR_N = 5, SHR_DMG = 0.8, // Shrapnel: pecahan = SHR_N + 2*stack, damage = dmg * SHR_DMG
+  PLS_CD0 = 7, PLS_N = 10, PLS_DMG = 0.9, // Pulse: jeda = PLS_CD0 - 0.9*stack (min 2.5), peluru = PLS_N + 2*stack
+  EXE_PCT = 0.1, // Executioner: musuh biasa mati bila HP < EXE_PCT*stack
+  DRN_CD = 0.85, DRN_DMG = 0.7, // Drone: jeda tembak & damage (x dmg)
+  THICK_PCT = 0.08, // Thick Skin: pengurang damage per stack
+  REV_HP = 0.4; // Second Wind: HP setelah bangkit (x max HP)

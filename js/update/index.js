@@ -9,6 +9,7 @@ function upd(dt) {
   updHazards(dt);
   updOrbs(dt);
   updHeals();
+  updEvo(dt);
   updParticles(dt);
   updVortex(dt);
   updTimers(dt);

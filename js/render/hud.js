@@ -27,7 +27,7 @@ function drawHud() {
       // SUPER SHIELD: ●●● = sisa serangan yang tertahan, angka = detik sampai aktif lagi
       const on = P.shn > 0;
       tx(
-        on ? '◈ ' + '●'.repeat(P.shn) + '○'.repeat(SH_HITS - P.shn) : '◈ ' + Math.ceil(P.shc) + 's',
+        on ? '◈ ' + '●'.repeat(P.shn) + '○'.repeat(shMax() - P.shn) : '◈ ' + Math.ceil(P.shc) + 's',
         L + 78,
         72,
         12,
