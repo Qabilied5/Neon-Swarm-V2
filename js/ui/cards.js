@@ -18,7 +18,32 @@ function pickCard(i) {
   if (!cards[i]) return;
   cards[i][2]();
   P.up[cards[i][0]] = (P.up[cards[i][0]] || 0) + 1; // catat stack upgrade
+  P.rrNew = 0;
   S = 'play';
   snd(880, 0.15, 'triangle', 0.06);
   pf(P.x, P.y, 20, '#39ff88', 250, 0.6);
+}
+
+// Tombol REROLL di bawah kartu level-up (tekan R / klik / sentuh): acak ulang 3 kartu, memakai 1 reroll
+function rerollBtn() {
+  const c = cl3(),
+    w = 200,
+    h = 34;
+  return { x: UW / 2 - w / 2, y: c.y0 + c.ch + 14, w, h };
+}
+const rerollHit = (x, y) => {
+  const b = rerollBtn();
+  return S == 'levelup' && x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 6;
+};
+function reroll() {
+  if (S != 'levelup') return;
+  if (P.rr <= 0) {
+    snd(150, 0.12, 'sawtooth', 0.05);
+    return;
+  }
+  P.rr--;
+  P.rrNew = 0;
+  rollCards();
+  snd(700, 0.1, 'triangle', 0.05);
+  snd(1000, 0.1, 'sine', 0.04);
 }

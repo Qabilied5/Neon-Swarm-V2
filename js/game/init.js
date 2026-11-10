@@ -41,6 +41,8 @@ function init() {
     evo: {}, // stack Evo Effect { id: n } (data/evo.js)
     evt: { pls: 3, drn: 0.5, sing: 5, judge: 4 }, // timer efek otomatis
     drp: 0, // sudut orbit drone
+    rr: 0, // sisa reroll kartu level-up
+    rrNew: 0, // reroll bonus yang baru didapat di level-up ini (hanya untuk tampilan)
     rvu: 0, // jumlah Second Wind yang sudah terpakai
     rgc: 0, // penghitung tembakan Railgun
     dsId: 0, // id dash (Dash Strike)

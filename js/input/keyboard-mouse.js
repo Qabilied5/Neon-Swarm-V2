@@ -42,6 +42,7 @@ addEventListener('keydown', (e) => {
     }
   }
   if (S == 'levelup' && '123'.includes(e.key)) pickCard(+e.key - 1);
+  if (S == 'levelup' && c == 'KeyR') reroll();
   if (S == 'play') {
     if (c == 'Space') dash();
     if (c == 'KeyQ') nova();
@@ -101,6 +102,7 @@ addEventListener('mousedown', (e) => {
   }
   if ((S == 'menu' || S == 'dead') && deadT <= 0) init();
   else if (S == 'levelup') {
+    if (rerollHit(MU.x, MU.y)) return reroll();
     const i = cardAt(MU.x, MU.y);
     if (i >= 0) pickCard(i);
   }

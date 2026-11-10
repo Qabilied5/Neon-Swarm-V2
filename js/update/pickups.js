@@ -15,12 +15,10 @@ function updOrbs(dt) {
         P.xp -= P.need;
         P.lv++;
         P.need = Math.round(P.need * 1.35 + 2);
-        cards = shuf(UP.filter((u) => !u[5] || (P.up[u[0]] || 0) < u[5])).slice(0, 3); // upgrade ber-batas stack disembunyikan setelah maksimal
-        if (P.lv == 2) {
-          // skill pertama = Q/E/R (Teleport tidak); tanpa kartu kembar
-          const sk = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[0].includes('TELEPORT')));
-          cards = [sk, ...cards.filter((c) => c !== sk).slice(0, 2)];
-        }
+        rollCards();
+        // BONUS REROLL: tiap 2x naik level (level genap) dapat +RR_BONUS reroll kartu
+        P.rrNew = P.lv % RR_EVERY == 0 ? RR_BONUS : 0;
+        P.rr += P.rrNew;
         if (ev('ascend')) {
           // ASCENDANT: heal 50% + ledakan cahaya
           P.hp = Math.min(P.mh, P.hp + P.mh * 0.5);
@@ -32,6 +30,16 @@ function updOrbs(dt) {
         pf(P.x, P.y, 30, '#ffd166', 300, 0.8);
       }
     }
+  }
+}
+
+// Acak 3 kartu level-up (dipakai saat naik level & saat REROLL)
+function rollCards() {
+  cards = shuf(UP.filter((u) => !u[5] || (P.up[u[0]] || 0) < u[5])).slice(0, 3); // upgrade ber-batas stack disembunyikan setelah maksimal
+  if (P.lv == 2) {
+    // skill pertama = Q/E/R (Teleport tidak); tanpa kartu kembar
+    const sk = pick(UP.filter((u) => u[0].startsWith('SKILL') && !u[0].includes('TELEPORT')));
+    cards = [sk, ...cards.filter((c) => c !== sk).slice(0, 2)];
   }
 }
 

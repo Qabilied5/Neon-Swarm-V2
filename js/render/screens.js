@@ -293,6 +293,22 @@ function drawLevelup() {
       }
       tx(ln, x + c.cw / 2, y, 13, '#7aa2c0');
     });
+    // tombol REROLL + info bonus
+    const rb = rerollBtn(),
+      has = P.rr > 0,
+      rc = has ? '#ffd166' : '#4a5d72',
+      rh = !TOUCH && rerollHit(MU.x, MU.y);
+    g.shadowColor = rc;
+    g.shadowBlur = has ? (rh ? 16 : 8) : 0;
+    g.fillStyle = rh && has ? 'rgba(255,209,102,.22)' : 'rgba(10,18,32,.85)';
+    g.strokeStyle = rc;
+    g.lineWidth = 2;
+    rrect(rb.x, rb.y, rb.w, rb.h, rb.h / 2);
+    g.fill();
+    g.stroke();
+    g.shadowBlur = 0;
+    tx('↻ REROLL x' + P.rr + (TOUCH ? '' : '  [R]'), rb.x + rb.w / 2, rb.y + rb.h / 2 + 5, 14, rc, 'center', 0);
+    if (P.rrNew) tx('BONUS +' + P.rrNew + ' REROLL!', UW / 2, rb.y + rb.h + 20, 14, '#39ff88', 'center', 8);
   }
 }
 function drawDead() {

@@ -193,6 +193,10 @@ addEventListener(
         continue;
       }
       if (S == 'levelup') {
+        if (rerollHit(x, y)) {
+          reroll();
+          continue;
+        }
         const i = cardAt(x, y);
         if (i >= 0) pickCard(i);
         continue;

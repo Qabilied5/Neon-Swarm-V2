@@ -82,3 +82,7 @@ const FROST_T = 1.2, FROST_TS = 0.4, FROST_SLOW = 0.55,
   DRN_CD = 0.85, DRN_DMG = 0.7, // Drone: jeda tembak & damage (x dmg)
   THICK_PCT = 0.08, // Thick Skin: pengurang damage per stack
   REV_HP = 0.4; // Second Wind: HP setelah bangkit (x max HP)
+
+// Bonus REROLL kartu level-up: tiap RR_EVERY kali naik level (level kelipatan RR_EVERY) dapat +RR_BONUS reroll (menumpuk, tidak hangus)
+const RR_EVERY = 2,
+  RR_BONUS = 2;
