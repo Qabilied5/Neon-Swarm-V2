@@ -49,7 +49,7 @@ function hurt(d, c) {
     return;
   }
   if (c && wave >= LET) d = Math.max(d, Math.ceil(P.mh / 3));
-  else if (P.thick) d = Math.max(1, Math.ceil(d * (1 - THICK_PCT * Math.min(P.thick, 8)))); // THICK SKIN
+  else if (P.thick) d = Math.max(1, Math.ceil(d * (1 - Math.min(THICK_MAX, THICK_PCT * P.thick)))); // THICK SKIN (dibatasi THICK_MAX)
   if (P.sh && P.shn > 0) {
     d = Math.max(1, Math.ceil(d * SH_RED)); // SUPER SHIELD: damage dikurangi 50%
     shieldHit();

@@ -7,8 +7,8 @@
 const ev = (id) => (P && P.evo && P.evo[id]) || 0;
 const shMax = () => SH_HITS + (ev('aegis') ? 3 : 0), // Super Shield: jumlah tahanan
   shCd = () => SH_CD - (ev('aegis') ? 10 : 0), // Super Shield: waktu pulih
-  orbR = () => ORB_R * (ev('blade') ? 1.35 : 1), // Orbital Shuriken: jari-jari orbit
-  orbDmg = () => ORB_DMG * (ev('blade') ? 2 : 1), // Orbital Shuriken: damage per kena
+  orbR = () => ORB_R * (ev('blade') ? 1.5 : 1), // Orbital Shuriken: jari-jari orbit
+  orbDmg = () => ORB_DMG * (ev('blade') ? 3 : 1), // Orbital Shuriken: damage per kena
   boomR = () => (ev('cluster') ? 90 : 46); // Explosive Rounds: radius ledakan
 const EVO = [
   {
@@ -64,10 +64,10 @@ const EVO = [
     id: 'blade',
     name: 'BLADE TEMPEST',
     rec: ['ORBITAL SHURIKEN', 'SPEED', 'MULTISHOT'],
-    desc: '+3 shuriken, damage x2, orbit lebih lebar; +15% gerak, +1 peluru',
+    desc: '+5 shuriken, damage x3, orbit lebih lebar; +15% gerak, +1 peluru',
     icon: 'evBlade',
     apply: () => {
-      P.orb += 3;
+      P.orb += 5;
       P.sp *= 1.15;
       P.multi++;
     },
@@ -120,27 +120,27 @@ const EVO = [
     id: 'hive',
     name: 'HIVE MIND',
     rec: ['DRONE', 'HOMING', 'PULSE'],
-    desc: '+3 drone, peluru drone mengejar target, semburan pulse lebih sering',
+    desc: '+5 drone, damage drone x2, tembak lebih cepat & menembus, pulse lebih sering',
     icon: 'evHive',
     apply: () => {
-      P.drn += 3;
-      P.hom += 2;
-      P.pls++;
+      P.drn += 5;
+      P.hom += 3;
+      P.pls += 2;
     },
-    det: () => ['' + P.drn + ' drone · peluru homing', 'Pulse tiap ' + plsCd().toFixed(1) + ' dtk'],
+    det: () => ['' + P.drn + ' drone · ' + Math.round(P.dmg * DRN_DMG * 2) + ' dmg · homing + tembus', 'Pulse tiap ' + plsCd().toFixed(1) + ' dtk'],
   },
   {
     id: 'phoenix',
     name: 'PHOENIX HEART',
     rec: ['SECOND WIND', 'REGEN', 'VAMPIRISM'],
-    desc: 'bangkit 2x dengan ledakan api, regen kuat, +1 vampirism',
+    desc: 'bangkit 2x dengan ledakan api, regen kuat, +4 vampirism & heal vampirism x1,5',
     icon: 'evPhoenix',
     apply: () => {
       P.rvm += 2;
       P.regen += 3;
-      P.vamp++;
+      P.vamp += 4;
     },
-    det: () => ['Bangkit ' + Math.max(0, P.rvm - P.rvu) + 'x tersisa · HP 60%', 'Ledakan api ' + Math.round(200 + P.dmg * 5) + ' dmg · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk'],
+    det: () => ['Bangkit ' + Math.max(0, P.rvm - P.rvu) + 'x tersisa · HP 60%', 'Ledakan api ' + Math.round(200 + P.dmg * 5) + ' dmg · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk · +' + vampHeal().toFixed(1) + ' HP/kill'],
   },
   {
     id: 'cluster',
@@ -159,14 +159,14 @@ const EVO = [
     id: 'over',
     name: 'OVERCLOCK',
     rec: ['RAPID FIRE', 'BERSERK', 'XP SURGE'],
-    desc: '+60% tembak, berserk kuat, +50% XP; HP < 50% = tembak x1.3',
+    desc: '+100% tembak, berserk sangat kuat, +75% XP; HP < 60% = tembak x1.5',
     icon: 'evOver',
     apply: () => {
-      P.rate *= 1.6;
-      P.bers += 2;
-      P.xpb += 2;
+      P.rate *= 2;
+      P.bers += 3;
+      P.xpb += 3;
     },
-    det: () => ['Tembak ' + (P.rate * rateMul()).toFixed(1) + '/dtk (sekarang)', 'HP < 50%: tembak x1.3'],
+    det: () => ['Tembak ' + (P.rate * rateMul()).toFixed(1) + '/dtk (sekarang)', 'HP < 60%: tembak x1.5'],
   },
   {
     id: 'chrono',
@@ -210,21 +210,21 @@ const EVO = [
     id: 'ascend',
     name: 'ASCENDANT',
     rec: ['XP SURGE', 'MAGNET', 'REGEN'],
-    desc: 'tiap LEVEL UP: pulihkan 50% HP + ledakan cahaya; +75% XP, magnet kuat',
+    desc: 'tiap LEVEL UP: pulihkan 100% HP + ledakan cahaya raksasa yang makin kuat; +4% damage permanen tiap level; +100% XP, magnet kuat',
     icon: 'evAscend',
     apply: () => {
-      P.xpb += 3;
-      P.mag *= 1.6;
-      P.regen += 2;
+      P.xpb += 4;
+      P.mag *= 2;
+      P.regen += 3;
     },
-    det: () => ['Level up: +50% HP & nova ' + Math.round(60 + P.dmg * 4) + ' dmg', 'XP +' + Math.round(XPB_PCT * P.xpb * 100) + '% · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk'],
+    det: () => ['Level up: HP penuh & nova ' + Math.round(ascR()) + ' px · ' + Math.round(ascD()) + ' dmg', 'Damage +' + Math.round((ascMul() - 1) * 100) + '% (naik 4%/level) · ' + 'XP +' + Math.round(XPB_PCT * P.xpb * 100) + '% · regen ' + (REGEN_HPS * P.regen).toFixed(1) + '/dtk'],
   },
   // ===== Evo gelombang 2 =====
   {
     id: 'headhunter',
     name: 'HEADHUNTER',
     rec: ['DEADEYE', 'HUNTER MARK', 'SNIPER STANCE'],
-    desc: 'CRIT pada musuh bertanda = headshot bonus; tanda menular saat musuh mati',
+    desc: 'CRIT pada musuh bertanda = headshot besar (+120%); tanda menular luas & lebih lama saat musuh mati',
     icon: 'evHead',
     apply: () => {
       P.dead += 2;
@@ -232,7 +232,7 @@ const EVO = [
       P.mark++;
       P.snip++;
     },
-    det: () => ['CRIT ke musuh bertanda: +80% damage (headshot)', 'Tanda menular 200 px saat mati · crit ' + Math.round(P.crit * 100) + '%'],
+    det: () => ['CRIT ke musuh bertanda: +120% damage (headshot)', 'Tanda menular 280 px saat mati · crit ' + Math.round(P.crit * 100) + '%'],
   },
   {
     id: 'inferno',
@@ -284,7 +284,7 @@ const EVO = [
       P.xpb++;
       P.luck++;
     },
-    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% x' + 2 * GOLD_ORB_MUL + ' orb · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_MIN + P.luck) + '-' + (RR_MAX + P.luck) + '/level'],
+    det: () => ['Orb tambahan ' + Math.round(Math.min(0.9, SCV_PCT * P.scv) * 100) + '% x' + SCV_ORBS * GOLD_ORB_MUL + ' orb · skor kill +50%', '6% kill menjatuhkan Free Heal · reroll ' + (RR_MIN + P.luck * LUCK_RR) + '-' + (RR_MAX + P.luck * LUCK_RR) + '/level'],
   },
   {
     id: 'cross',
@@ -342,14 +342,14 @@ const EVO = [
     id: 'frostfire',
     name: 'FROSTFIRE',
     rec: ['FROST ROUNDS', 'INCENDIARY', 'HUNTER MARK'],
-    desc: 'peluru membakar & membekukan; musuh beku + terbakar menerima damage +50%',
+    desc: 'peluru membakar & membekukan; musuh beku + terbakar menerima damage x2',
     icon: 'evFrostfire',
     apply: () => {
       P.froz++;
       P.inc++;
       P.mark++;
     },
-    det: () => ['Beku + terbakar: damage diterima x1,5 (SHATTER)', 'Kolam api memperlambat musuh · bakar ' + Math.round(FIRE_DPS + P.dmg * 0.5) + ' dmg/dtk'],
+    det: () => ['Beku + terbakar: damage diterima x2 (SHATTER)', 'Kolam api memperlambat musuh · bakar ' + Math.round(FIRE_DPS + P.dmg * 0.9) + ' dmg/dtk'],
   },
 ];
 const EVO_BY_ID = {};

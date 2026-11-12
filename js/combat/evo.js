@@ -7,13 +7,16 @@ const exeTh = () => Math.min(0.5, EXE_PCT * P.exe + (ev('reaper') ? 0.1 : 0)), /
   plsCd = () => Math.max(2.5, PLS_CD0 - 0.9 * P.pls),
   shrN = () => SHR_N + 2 * P.shr + (ev('cluster') ? 4 : 0),
   adrOn = () => (P.evt.adr > 0 ? P.adr : 0), // stack Adrenaline yang sedang aktif (0 bila buff habis)
-  rateMul = () => (ev('over') && P.hp < P.mh * 0.5 ? 1.3 : 1) * (1 + ADR_RATE * adrOn()), // Overclock + Adrenaline
+  rateMul = () => (ev('over') && P.hp < P.mh * 0.6 ? 1.5 : 1) * (1 + ADR_RATE * adrOn()), // Overclock (HP < 60% = x1,5) + Adrenaline
   spdMul = () => 1 + ADR_SPD * adrOn(), // Adrenaline: pengali kecepatan gerak
   stance = () => (P.snip && P.evt.still >= SNIP_T ? 1 + SNIP_PCT * P.snip : 1), // Sniper Stance
-  dmgMul = () => (1 + BERS_PCT * P.bers * (1 - P.hp / P.mh)) * stance(), // Berserk + Sniper Stance
+  dmgMul = () => (1 + BERS_PCT * P.bers * (1 - P.hp / P.mh)) * stance() * ascMul(), // Berserk + Sniper Stance + Ascendant
+  ascMul = () => (ev('ascend') ? 1 + 0.04 * (P.lv - 1) : 1), // Ascendant: +4% damage tiap level (naik terus)
+  ascR = () => Math.min(700, 400 + 10 * P.lv), // Ascendant: radius ledakan level up
+  ascD = () => 150 + P.dmg * 8 + P.lv * 15, // Ascendant: damage ledakan level up (naik tiap level)
   cdrMul = () => 1 - Math.min(0.6, CDR_PCT * P.cdr + (ev('temporal') ? 0.1 : 0)), // Cooldown Core
   fireDps = () => (FIRE_DPS + P.dmg * 0.6) * (1 + 0.25 * (Math.max(1, P.inc) - 1)), // Incendiary: damage api/dtk
-  mineR = () => MINE_R * (ev('trap') ? 1.4 : 1), // Mine Layer: radius ledakan
+  mineR = () => (MINE_R + MINE_RS * Math.max(0, P.mine - 1)) * (ev('trap') ? 1.4 : 1), // Mine Layer: radius ledakan (naik tiap stack)
   thornR = () => THORN_R + 12 * P.thorn + (ev('bulwark') ? 110 : 0), // Thorns: radius
   thornD = () => THORN_DMG * P.thorn + P.dmg * 3 + (ev('bulwark') ? 40 : 0); // Thorns: damage
 
@@ -51,9 +54,9 @@ function hitFx(e, d, c) {
     if (FT.length < 80) FT.push({ x: e.x, y: e.y - e.r - 12, t: 0.8, s: '☠', c: '#ff2e63', z: 18 });
     if (ev('reaper')) P.hp = Math.min(P.mh, P.hp + 3);
   }
-  // HEADHUNTER: crit pada musuh bertanda = headshot (+80% damage), tanda diperpanjang
+  // HEADHUNTER: crit pada musuh bertanda = headshot (+120% damage), tanda diperpanjang
   if (c && ev('headhunter') && e.mk > 0 && e.hp > 0) {
-    e.hp -= d * 0.8;
+    e.hp -= d * 1.2;
     e.mk = MARK_T;
     if (FT.length < 80) FT.push({ x: e.x, y: e.y - e.r - 26, t: 0.8, s: 'HEADSHOT', c: '#ff2e63', z: 14 });
   }
@@ -80,7 +83,7 @@ function killFx(e) {
   if (ev('blitz')) P.dc = Math.max(0, P.dc - 0.4);
   // SCAVENGER (+ GOLD RUSH): orb XP tambahan
   if (P.scv && Math.random() < Math.min(0.9, SCV_PCT * P.scv)) {
-    const n = 2 * (ev('gold') ? GOLD_ORB_MUL : 1), // GOLD RUSH: orb tambahan melimpah (maks 3x lipat)
+    const n = SCV_ORBS * (ev('gold') ? GOLD_ORB_MUL : 1), // GOLD RUSH: orb tambahan melimpah
       sp = ev('gold') ? 26 : 14;
     for (let j = 0; j < n; j++) O.push({ x: e.x + R(-sp, sp), y: e.y + R(-sp, sp), v: Math.max(1, e.xp) });
   }
@@ -98,7 +101,7 @@ function killFx(e) {
     }
   }
   // HEADHUNTER: tanda menular ke musuh sekitar saat musuh bertanda mati
-  if (ev('headhunter') && e.mk > 0) for (const o of E) if (o != e && Math.hypot(o.x - e.x, o.y - e.y) < 200) o.mk = MARK_T;
+  if (ev('headhunter') && e.mk > 0) for (const o of E) if (o != e && Math.hypot(o.x - e.x, o.y - e.y) < 280) o.mk = MARK_T + 2;
   if (P.shr) {
     // SHRAPNEL (+ CLUSTER BOMB)
     const n = shrN(),
@@ -267,7 +270,7 @@ function updEvo(dt) {
   if (P.drn) {
     P.drp += dt * 0.8;
     if ((ev_.drn -= dt) <= 0) {
-      ev_.drn = DRN_CD / (ev('hive') ? 1.4 : 1);
+      ev_.drn = DRN_CD / (ev('hive') ? 1.7 : 1);
       for (let j = 0; j < P.drn; j++) {
         const [dx, dy] = dronePos(j);
         let tg = null,
@@ -279,7 +282,7 @@ function updEvo(dt) {
             tg = e;
           }
         }
-        if (tg) mkB(dx, dy, Math.atan2(tg.y - dy, tg.x - dx), P.dmg * DRN_DMG, { sp: 600, c: '#22d3ee', hm: ev('hive') ? 3 : 0, life: 1 });
+        if (tg) mkB(dx, dy, Math.atan2(tg.y - dy, tg.x - dx), P.dmg * DRN_DMG * (ev('hive') ? 2 : 1), { sp: 600, c: '#22d3ee', hm: ev('hive') ? 4 : 0, life: 1, p: ev('hive') ? 1 : 0 });
       }
     }
   }

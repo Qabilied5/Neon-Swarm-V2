@@ -71,8 +71,9 @@ function updBullets(dt) {
           if (P.mark) e.mk = MARK_T; // HUNTER MARK
           if (ev('frostfire')) {
             // FROSTFIRE: peluru membakar
-            e.bt = Math.max(e.bt || 0, 1.5);
-            e.bd = Math.max(e.bd || 0, FIRE_DPS + P.dmg * 0.5);
+            e.bt = Math.max(e.bt || 0, 2.5);
+            e.bd = Math.max(e.bd || 0, FIRE_DPS + P.dmg * 0.9);
+            e.slw = Math.max(e.slw || 0, 1.5); // FROSTFIRE: peluru juga membekukan (tidak perlu Frost Rounds)
           }
           if (P.kin && e.k != 'boss') {
             // KINETIC ROUNDS: dorong musuh searah peluru

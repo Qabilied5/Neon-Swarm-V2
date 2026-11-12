@@ -17,12 +17,14 @@ function updOrbs(dt) {
         P.need = Math.round(P.need * 1.35 + 2);
         rollCards();
         // REROLL: tiap naik level diundi 1-3 kali (diisi ulang, tidak menumpuk)
-        P.rr = rrRoll() + P.luck; // undian 1-3 reroll + LUCKY CHARM / GOLD RUSH
+        P.rr = rrRoll() + P.luck * LUCK_RR; // undian 1-3 reroll + LUCKY CHARM (+2/stack) / GOLD RUSH
         P.rrNew = Math.max(0, P.rr - 1); // tampilan: bonus di atas 1 reroll
         if (ev('ascend')) {
-          // ASCENDANT: heal 50% + ledakan cahaya
-          P.hp = Math.min(P.mh, P.hp + P.mh * 0.5);
-          shock(P.x, P.y, 300, 60 + P.dmg * 4, '#ffd166');
+          // ASCENDANT: heal 100% + ledakan cahaya besar yang makin kuat tiap level
+          P.hp = P.mh;
+          shock(P.x, P.y, ascR(), ascD(), '#ffd166');
+          RG.push({ x: P.x, y: P.y, r: 0, mr: ascR() * 1.3, c: '#fff', w: 4, l: 0.6, m: 0.6 });
+          if (FT.length < 80) FT.push({ x: P.x, y: P.y - P.r - 24, t: 1.2, s: 'ASCEND Lv' + P.lv, c: '#ffd166', z: 20 });
         }
         S = 'levelup';
         cardLockFor(CARD_DELAY); // HP: abaikan sentuhan sesaat agar kartu tidak terpilih tanpa sengaja

@@ -9,7 +9,8 @@ const tier = (w) => (w >= 11 ? 3 : w >= 6 ? 2 : 1),
 // (wave 1 = x1, wave 10 = x2.35, wave 20 = x3.85 dengan VAMP_WAVE 0.15)
 const VAMP_BASE = 1,
   VAMP_WAVE = 0.15,
-  vampHeal = () => P.vamp * VAMP_BASE * (1 + (wave - 1) * VAMP_WAVE);
+  VAMP_PHX = 1.5, // Phoenix Heart: pengali heal vampirism
+  vampHeal = () => P.vamp * VAMP_BASE * (1 + (wave - 1) * VAMP_WAVE) * (ev('phoenix') ? VAMP_PHX : 1);
 
 // Versi HP (layar sentuh): peluru musuh jarak jauh dikurangi supaya tidak membingungkan.
 // mob(nilaiHP, nilaiDesktop) -> pilih nilai sesuai perangkat
@@ -71,7 +72,7 @@ const LASER_LEN = 2600;
 const FROST_T = 1.2, FROST_TS = 0.4, FROST_SLOW = 0.55,
   TOX_T = 3, TOX_DPS = 5,
   HOM_R = 320, HOM_TURN = 4, // Homing: jangkauan cari musuh (px) & kecepatan belok (rad/dtk per stack)
-  AURA_R0 = 80, AURA_RS = 22, AURA_DPS = 14, // Spike Aura: radius = R0 + RS*stack, damage/dtk = DPS*stack
+  AURA_R0 = 95, AURA_RS = 32, AURA_DPS = 24, // Spike Aura: radius = R0 + RS*stack, damage/dtk = DPS*stack
   REGEN_HPS = 0.7, // Regen: HP/dtk per stack
   DSTR_MUL = 3, // Dash Strike: damage = dmg * DSTR_MUL * stack
   XPB_PCT = 0.25, // XP Surge: tambahan XP per stack
@@ -80,22 +81,25 @@ const FROST_T = 1.2, FROST_TS = 0.4, FROST_SLOW = 0.55,
   PLS_CD0 = 7, PLS_N = 10, PLS_DMG = 0.9, // Pulse: jeda = PLS_CD0 - 0.9*stack (min 2.5), peluru = PLS_N + 2*stack
   EXE_PCT = 0.1, // Executioner: musuh biasa mati bila HP < EXE_PCT*stack
   DRN_CD = 0.85, DRN_DMG = 0.7, // Drone: jeda tembak & damage (x dmg)
-  THICK_PCT = 0.08, // Thick Skin: pengurang damage per stack
+  THICK_PCT = 0.12, // Thick Skin: pengurang damage per stack
+  THICK_MAX = 0.75, // Thick Skin: batas total pengurangan damage
   REV_HP = 0.4; // Second Wind: HP setelah bangkit (x max HP)
 
 // ===== Efek gelombang 2 & Evo baru (logika: combat/evo.js) =====
 const DEAD_CRIT = 0.5, // Deadeye: tambahan pengali crit per stack (dasar x3.5), +5% peluang crit per stack
-  MARK_T = 3, MARK_PCT = 0.15, // Hunter Mark: lama tanda (dtk) & tambahan damage diterima per stack
+  MARK_T = 4, MARK_PCT = 0.3, // Hunter Mark: lama tanda (dtk) & tambahan damage diterima per stack
   KIN_PUSH = 14, // Kinetic Rounds: dorongan (px) per stack tiap peluru kena
   THORN_DMG = 20, THORN_R = 120, // Thorns: damage per stack (+ dmg x3) & radius saat pemain terkena serangan
   ADR_T = 2, ADR_SPD = 0.08, ADR_RATE = 0.06, // Adrenaline: lama buff setelah kill, +gerak & +tembak per stack
-  SCV_PCT = 0.12, // Scavenger: peluang drop orb XP tambahan per stack
-  GOLD_ORB_MUL = 3, // GOLD RUSH: jumlah orb tambahan per drop jadi x3 (2 -> 6 orb); turunkan ke 2 kalau terlalu banyak
+  SCV_PCT = 0.22, // Scavenger: peluang drop orb XP tambahan per stack
+  SCV_ORBS = 3, // Scavenger: jumlah orb per drop
+  GOLD_ORB_MUL = 2, // GOLD RUSH: jumlah orb tambahan per drop jadi x2 (SCV_ORBS 3 -> 6 orb, sama seperti sebelumnya)
+  LUCK_RR = 2, // Lucky Charm: tambahan reroll per stack tiap naik level
   CDR_PCT = 0.1, // Cooldown Core: pengurang cooldown skill & heal per stack (maks 60%)
   REAR_DMG = 0.6, // Rear Gun: damage peluru belakang (x damage biasa)
-  MINE_R = 90, MINE_T = 16, // Mine Layer: radius ledakan & umur ranjau
-  INC_CH = 0.15, FIRE_R = 50, FIRE_T = 3, FIRE_DPS = 8, // Incendiary: peluang api per stack, radius, lama, damage/dtk dasar
-  SNIP_T = 0.5, SNIP_PCT = 0.25, // Sniper Stance: diam minimal SNIP_T dtk -> +damage per stack
+  MINE_R = 130, MINE_RS = 14, MINE_T = 16, // Mine Layer: radius ledakan dasar, tambahan radius per stack & umur ranjau
+  INC_CH = 0.28, FIRE_R = 68, FIRE_T = 4.5, FIRE_DPS = 14, // Incendiary: peluang api per stack, radius, lama, damage/dtk dasar
+  SNIP_T = 0.4, SNIP_PCT = 0.45, // Sniper Stance: diam minimal SNIP_T dtk -> +damage per stack
   ZN_MAX = 40; // batas jumlah kolam api + ranjau sekaligus
 
 // REROLL kartu level-up: tiap naik level diundi acak RR_MIN..RR_MAX kali reroll (peluang sama rata), ditambah Lucky Charm.
