@@ -40,7 +40,7 @@ function updEnemies(dt) {
       if (e.cd < 0) {
         e.cd = mob(3, 2); // HP: tembak lebih jarang & peluru lebih lambat
         const sv = mob(190, 230);
-        EB.push({ x: e.x, y: e.y, vx: ux * sv, vy: uy * sv, r: 5, d: 10, life: 4 });
+        EB.push({ x: e.x, y: e.y, vx: ux * sv, vy: uy * sv, r: 5, d: edm(e, 10), life: 4 });
       }
     } else if (e.k == 'boss' && e.sec) secretBoss(e, dt);
     else if (e.k == 'boss' && e.sup) sup(e, dt, d, ux, uy);
@@ -65,7 +65,7 @@ function updEnemies(dt) {
             vx: Math.cos(a) * mob(165, 190),
             vy: Math.sin(a) * mob(165, 190),
             r: 6,
-            d: 12,
+            d: edm(e, 12),
             life: 5,
           });
         }
@@ -107,7 +107,7 @@ function updEnemies(dt) {
       if (e.fuse > 0) {
         e.fuse -= dt;
         if (e.fuse <= 0) {
-          blast(e.x, e.y, 100, 40);
+          blast(e.x, e.y, 100, edm(e, 40));
           e.hp = 0;
         }
       } else {
@@ -131,7 +131,7 @@ function updEnemies(dt) {
             vx: Math.cos(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310),
             vy: Math.sin(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310),
             r: 5,
-            d: 14,
+            d: edm(e, 14),
             life: 4,
           });
       }
@@ -144,7 +144,7 @@ function updEnemies(dt) {
         if (e.cd < 0 && d < 260) {
           e.cd = 4.5;
           e.tm = 0.9;
-          HZ.push({ k: 'ring', x: e.x, y: e.y, r: 150, t: 0.9, m: 0.9, d: 36 });
+          HZ.push({ k: 'ring', x: e.x, y: e.y, r: 150, t: 0.9, m: 0.9, d: edm(e, 36) });
         }
       }
     } else if (e.k == 'reaper') {
@@ -153,7 +153,7 @@ function updEnemies(dt) {
         if (e.tp <= 0) {
           e.x = e.tx;
           e.y = e.ty;
-          HZ.push({ k: 'ring', x: e.x, y: e.y, r: 90, t: 0.4, m: 0.4, d: 30 });
+          HZ.push({ k: 'ring', x: e.x, y: e.y, r: 90, t: 0.4, m: 0.4, d: edm(e, 30) });
         }
       } else {
         e.x += ux * e.sp * dt;
@@ -183,7 +183,7 @@ function updEnemies(dt) {
             vx: Math.cos(a) * mob(170, 200),
             vy: Math.sin(a) * mob(170, 200),
             r: 5,
-            d: 13,
+            d: edm(e, 13),
             life: 5,
           });
         }

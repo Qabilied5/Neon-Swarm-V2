@@ -11,12 +11,14 @@ function updWaves(dt) {
     wave++;
     HL = []; // Free Heal yang tidak diambil hilang saat wave berganti
     const nt = tier(wave) != tier(wave - 1);
-    if (nt) evolve();
+    if (nt || wave == ELITE_WAVE) evolve(); // wave 31: musuh lama diganti musuh elit
     banner(
       'WAVE ' + wave,
       wave == LET
         ? 'ZONA MAUT: 3 TABRAKAN = LANGSUNG MATI'
-        : nt
+        : wave == ELITE_WAVE
+          ? 'MUSUH ELIT: sedikit tapi sangat mematikan · XP besar'
+          : nt
           ? 'MUSUH BERUBAH: lebih brutal & punya skill'
           : '',
     );
@@ -36,9 +38,10 @@ function updWaves(dt) {
     spawnHeal();
   }
   spawnT -= dt;
-  if (spawnT < 0 && !solo && E.length < Math.min(9 + wave, 22)) {
-    spawnT = Math.max(0.5, 1.4 - wave * 0.05);
-    const n = 1 + ((wave / 9) | 0);
+  const elite = wave >= ELITE_WAVE; // wave 31+: sedikit tapi sangat sakit
+  if (spawnT < 0 && !solo && E.length < (elite ? eliteCap(wave) : Math.min(9 + wave, 22))) {
+    spawnT = elite ? ELITE_GAP : Math.max(0.5, 1.4 - wave * 0.05);
+    const n = elite ? 1 : 1 + ((wave / 9) | 0);
     for (let i = 0; i < n; i++) {
       const tn = tier(wave),
         p =

@@ -1,18 +1,21 @@
 // spawn(), edge(), evolve() (evolusi tier), blast() (ledakan bomber)
 function spawn(k, x, y, sc = 1) {
-  const d = ET[k],
-    hp = d.hp * sc;
+  const el = wave >= ELITE_WAVE, // wave 31+: musuh elit (lihat data/config.js)
+    pw = el ? elitePw(wave) : 1,
+    d = ET[k],
+    hp = d.hp * sc * (el ? ELITE_HP : 1);
   E.push({
     k,
     x,
     y,
-    r: d.r,
+    r: d.r * (el ? ELITE_R : 1),
     hp,
     mh: hp,
-    sp: d.sp * (1 + wave * 0.02),
+    sp: d.sp * (1 + wave * 0.02) * (el ? 1.1 : 1),
     c: d.c,
-    xp: d.xp,
-    dm: d.dm,
+    xp: el ? Math.round(d.xp * eliteXp(wave)) : d.xp,
+    dm: Math.round(d.dm * pw),
+    pw,
     cd: R(1, 2),
     fl: 0,
   });
