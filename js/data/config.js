@@ -5,6 +5,18 @@ const tier = (w) => (w >= 11 ? 3 : w >= 6 ? 2 : 1),
   SUP = 15,
   SUPT = ['Kau hanya serpihan kode.', 'Semua pola ini untukmu.', 'Menarilah, lalu musnah.'];
 
+// Boss solo wave tinggi (kelipatan 5 mulai wave SUP; stat varian: enemies/boss.js, pola: enemies/superboss.js)
+//  wave 25-30 : ANNIHILATOR diperkuat (lebih sakit, lebih lincah: dodge cepat + seruduk + dash beruntun)
+//  wave 35-40 : BEHEMOTH  - sangat tebal (HP x TANK_HP_MUL, damage diterima x TANK_ARMOR), menyeruduk seperti badak
+//  wave 45+   : WRAITH    - sangat lincah (dodge terus-menerus, blink teleport, dash beruntun)
+const BOSS_BUFF_WAVE = 25,
+  BOSS_TANK_WAVE = 35,
+  BOSS_AGILE_WAVE = 45,
+  TANK_HP_MUL = 3.5, // BEHEMOTH: HP = HP super boss x angka ini
+  TANK_ARMOR = 0.7; // BEHEMOTH: damage yang diterima (0.7 = berkurang 30%)
+const bossKind = (w) => (w >= BOSS_AGILE_WAVE ? 'agile' : w >= BOSS_TANK_WAVE ? 'tank' : 'sup'),
+  bossPower = (w) => (w >= BOSS_BUFF_WAVE ? Math.min(1.3 + (w - BOSS_BUFF_WAVE) * 0.03, 2.2) : 1); // pengali damage serangan boss
+
 // Vampirism: HP per kill = level * VAMP_BASE * (1 + (wave-1) * VAMP_WAVE) -> makin besar tiap wave
 // (wave 1 = x1, wave 10 = x2.35, wave 20 = x3.85 dengan VAMP_WAVE 0.15)
 const VAMP_BASE = 1,

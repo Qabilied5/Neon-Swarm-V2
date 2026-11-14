@@ -10,7 +10,7 @@ function kill(e, i) {
   pf(e.x, e.y, e.k == 'boss' ? 80 : 12, e.c, e.k == 'boss' ? 500 : 220, e.k == 'boss' ? 1.2 : 0.5);
   shake = Math.max(shake, e.k == 'boss' ? 20 : 3);
   snd(e.k == 'boss' ? 60 : 300 + R(0, 200), 0.1, 'triangle', 0.04);
-  const n = e.k == 'boss' ? (e.sup ? 30 : e.sec ? 22 : 14) : 1;
+  const n = e.k == 'boss' ? (e.sup ? e.orbs || 30 : e.sec ? 22 : 14) : 1;
   for (let j = 0; j < n; j++)
     O.push({
       x: e.x + R(-20, 20) * (n > 1),
@@ -25,9 +25,9 @@ function kill(e, i) {
   if (e.k == 'boss') {
     boss = null;
     stop = 0.18;
-    score += e.sup ? 5000 : e.sec ? 3000 : 1000;
+    score += e.sup ? Math.round(5000 * (e.sc || 1)) : e.sec ? 3000 : 1000;
     P.hp = Math.min(P.mh, P.hp + (e.sup ? 70 : 40));
-    banner(e.sup ? 'SUPER BOSS TUMBANG!' : e.sec ? 'SECRET BOSS TUMBANG!' : 'BOSS DOWN!');
+    banner(e.sup ? (e.vr && e.vr != 'sup' ? e.nm + ' TUMBANG!' : 'SUPER BOSS TUMBANG!') : e.sec ? 'SECRET BOSS TUMBANG!' : 'BOSS DOWN!');
     if (e.sec) {
       HZ = HZ.filter((h) => h.k != 'laser'); // hapus laser yang tersisa
       if (e.then) nextBoss = 3; // wave 15/20: lanjut ke boss berikutnya
@@ -44,6 +44,7 @@ function hit(e, d) {
     d *= 2; // x2 (sebelumnya x1,5)
     if (FT.length < 60 && Math.random() < 0.25) FT.push({ x: e.x, y: e.y - e.r - 24, t: 0.7, s: 'SHATTER', c: '#8be9ff', z: 13 });
   }
+  if (e.arm) d *= e.arm; // armor (BEHEMOTH)
   e.hp -= d;
   e.fl = 0.08;
   hitFx(e, d, c); // efek baru: Executioner, Storm Caller (combat/evo.js)
