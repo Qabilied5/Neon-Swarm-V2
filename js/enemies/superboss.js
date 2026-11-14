@@ -48,8 +48,9 @@ function sup(e, dt, d, ux, uy) {
     if (e.dgT > 0) {
       // DODGE: loncat cepat ke samping
       e.dgT -= dt;
-      e.x += e.dgx * 700 * dt;
-      e.y += e.dgy * 700 * dt;
+      const dv = e.vr == 'agile' ? 1050 : 700; // WRAITH: loncatan lebih cepat
+      e.x += e.dgx * dv * dt;
+      e.y += e.dgy * dv * dt;
       pf(e.x, e.y, 2, e.c, 50, 0.3);
     } else {
       const m = e.vr == 'tank' ? (d > 150 ? 1 : 0) : d > 360 ? 1 : d < 240 ? -0.7 : 0, // BEHEMOTH terus mengejar, lainnya menjaga jarak
@@ -123,8 +124,9 @@ function sup(e, dt, d, ux, uy) {
     } else {
       e.ct -= dt;
       e.sk -= dt;
-      e.x += e.dx * C.v * dt;
-      e.y += e.dy * C.v * dt;
+      const cv = C.v * (e.vr == 'agile' ? 1.3 : 1); // WRAITH: seruduk & dash lebih cepat
+      e.x += e.dx * cv * dt;
+      e.y += e.dy * cv * dt;
       pf(e.x, e.y, 2, e.c, 60, 0.35);
       if (e.sk <= 0) {
         e.sk = 0.14;

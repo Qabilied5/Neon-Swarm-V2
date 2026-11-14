@@ -3,7 +3,7 @@ function spawn(k, x, y, sc = 1) {
   const el = wave >= ELITE_WAVE, // wave 31+: musuh elit (lihat data/config.js)
     pw = el ? elitePw(wave) : 1,
     d = ET[k],
-    hp = d.hp * sc * (el ? ELITE_HP : 1);
+    hp = el ? eliteHp(wave) : d.hp * sc; // elit: 15.000 - 35.000 HP (setara boss)
   E.push({
     k,
     x,
@@ -11,7 +11,9 @@ function spawn(k, x, y, sc = 1) {
     r: d.r * (el ? ELITE_R : 1),
     hp,
     mh: hp,
-    sp: d.sp * (1 + wave * 0.02) * (el ? 1.1 : 1),
+    sp: el ? d.sp * ELITE_SPD : d.sp * (1 + wave * 0.02), // elit: super cepat
+    spm: el ? 1.5 : 1, // pengali kecepatan lunge/dash khusus
+    bs: el ? ELITE_BS : 1, // pengali kecepatan peluru bawaan tipe
     c: d.c,
     xp: el ? Math.round(d.xp * eliteXp(wave)) : d.xp,
     dm: Math.round(d.dm * pw),

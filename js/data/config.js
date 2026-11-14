@@ -13,15 +13,21 @@ const BOSS_BUFF_WAVE = 25,
   BOSS_TANK_WAVE = 35,
   BOSS_AGILE_WAVE = 45,
   TANK_HP_MUL = 3.5, // BEHEMOTH: HP = HP super boss x angka ini
-  TANK_ARMOR = 0.7; // BEHEMOTH: damage yang diterima (0.7 = berkurang 30%)
-// ELIT (wave ELITE_WAVE ke atas): musuh biasa sedikit tapi sangat sakit & tebal, XP per musuh jauh lebih besar
+  TANK_ARMOR = 0.7, // BEHEMOTH: damage yang diterima (0.7 = berkurang 30%)
+  WRAITH_HP_MUL = 2.6; // WRAITH: HP = HP super boss x angka ini
+// ELIT (wave ELITE_WAVE ke atas): musuh biasa sedikit tapi setebal boss, super cepat, peluru banyak & sangat cepat, XP besar
 const ELITE_WAVE = 31,
-  ELITE_HP = 2.5, // pengali HP
-  ELITE_GAP = 2.4, // jeda spawn (detik); wave biasa: 1.4 -> 0.5
+  ELITE_HP_MIN = 15000, // HP elit di wave 31
+  ELITE_HP_MAX = 35000, // HP elit di wave ELITE_WAVE + ELITE_HP_WAVES ke atas
+  ELITE_HP_WAVES = 20,
+  ELITE_SPD = 2.3, // pengali kecepatan dasar tipe musuh (gerak, tidak ikut naik per wave)
+  ELITE_BS = 1.9, // pengali kecepatan peluru tembakan bawaan tipe (gunner, ringer, shooter)
+  ELITE_GAP = 3.5, // jeda spawn (detik); wave biasa: 1.4 -> 0.5
   ELITE_R = 1.2, // pengali ukuran
-  eliteCap = (w) => Math.min(5 + (((w - ELITE_WAVE) / 10) | 0), 8), // maks musuh di layar (wave biasa: sampai 22)
+  eliteHp = (w) => Math.round(ELITE_HP_MIN + Math.min(Math.max(w - ELITE_WAVE, 0) / ELITE_HP_WAVES, 1) * (ELITE_HP_MAX - ELITE_HP_MIN)),
+  eliteCap = (w) => Math.min(3 + (((w - ELITE_WAVE) / 10) | 0), 6), // maks musuh di layar (wave biasa: sampai 22)
   elitePw = (w) => Math.min(2 + (w - ELITE_WAVE) * 0.04, 3.5), // pengali damage: tabrakan, peluru, ledakan, gelombang kejut
-  eliteXp = (w) => Math.min(4 + (w - ELITE_WAVE) * 0.2, 8), // pengali XP: 4x di wave 31 naik ke 8x di wave 51
+  eliteXp = (w) => Math.min(4 + (w - ELITE_WAVE) * 0.2, 8), // pengali XP dasar: 4x di wave 31 naik ke 8x di wave 51 (Gold Rush dikalikan lagi di atasnya)
   edm = (e, x) => Math.round(x * (e.pw || 1)); // damage serangan musuh x pengali elit
 const bossKind = (w) => (w >= BOSS_AGILE_WAVE ? 'agile' : w >= BOSS_TANK_WAVE ? 'tank' : 'sup'),
   bossPower = (w) => (w >= BOSS_BUFF_WAVE ? Math.min(1.3 + (w - BOSS_BUFF_WAVE) * 0.03, 2.2) : 1); // pengali damage serangan boss

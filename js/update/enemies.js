@@ -1,4 +1,28 @@
 // AI per tipe musuh + tabrakan dengan pemain + orbital blade
+
+// ELIT (wave 31+): tembakan tambahan untuk SEMUA tipe elit - kipas peluru sangat cepat, tiap tembakan ke-3 berupa cincin peluru
+function eliteFire(e, dt, tg) {
+  e.ef = (e.ef == null ? R(0.4, 1.2) : e.ef) - dt;
+  if (e.ef > 0) return;
+  e.ef = mob(1.8, 1.2);
+  e.en = (e.en || 0) + 1;
+  const a = Math.atan2(tg.y - e.y, tg.x - e.x),
+    n = mob(5, 9),
+    d = edm(e, 9);
+  for (let j = 0; j < n; j++) {
+    const aj = a + (j - (n - 1) / 2) * 0.11,
+      v = mob(480, 640);
+    EB.push({ x: e.x, y: e.y, vx: Math.cos(aj) * v, vy: Math.sin(aj) * v, r: 5, d, life: 3 });
+  }
+  if (e.en % 3 == 0) {
+    const rn = mob(12, 20),
+      o = R(0, TAU);
+    for (let j = 0; j < rn; j++) {
+      const aj = o + (j * TAU) / rn;
+      EB.push({ x: e.x, y: e.y, vx: Math.cos(aj) * 400, vy: Math.sin(aj) * 400, r: 5, d, life: 4 });
+    }
+  }
+}
 function updEnemies(dt) {
   const tg = tgt(); // sasaran musuh: bayangan Sandevistan (jika aktif) atau pemain
   for (let i = E.length - 1; i >= 0; i--) {
@@ -32,6 +56,7 @@ function updEnemies(dt) {
       hit(e, P.dmg * DSTR_MUL * P.dstr);
       pf(e.x, e.y, 6, '#22d3ee', 200, 0.3);
     }
+    if (e.pw > 1 && e.k != 'boss') eliteFire(e, dt, tg); // ELIT
     if (e.k == 'shooter') {
       const m = d > 280 ? 1 : d < 200 ? -1 : 0;
       e.x += ux * e.sp * m * dt;
@@ -39,7 +64,7 @@ function updEnemies(dt) {
       e.cd -= dt;
       if (e.cd < 0) {
         e.cd = mob(3, 2); // HP: tembak lebih jarang & peluru lebih lambat
-        const sv = mob(190, 230);
+        const sv = mob(190, 230) * (e.bs || 1);
         EB.push({ x: e.x, y: e.y, vx: ux * sv, vy: uy * sv, r: 5, d: edm(e, 10), life: 4 });
       }
     } else if (e.k == 'boss' && e.sec) secretBoss(e, dt);
@@ -85,8 +110,8 @@ function updEnemies(dt) {
           e.tm = 0.38;
         }
       } else if (e.st == 2) {
-        e.x += e.lx * 640 * dt;
-        e.y += e.ly * 640 * dt;
+        e.x += e.lx * 640 * (e.spm || 1) * dt;
+        e.y += e.ly * 640 * (e.spm || 1) * dt;
         e.tm -= dt;
         if (e.tm <= 0) {
           e.st = 0;
@@ -123,13 +148,13 @@ function updEnemies(dt) {
       if (e.cd < 0) {
         e.cd = mob(2.8, 2);
         const a = Math.atan2(uy, ux),
-          gn = mob(1, 3); // HP: 1 peluru (desktop 3 menyebar)
+          gn = mob(1, 3) + (e.pw > 1 ? 4 : 0); // elit: +4 peluru; HP: 1 peluru (desktop 3 menyebar)
         for (let j = 0; j < gn; j++)
           EB.push({
             x: e.x,
             y: e.y,
-            vx: Math.cos(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310),
-            vy: Math.sin(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310),
+            vx: Math.cos(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310) * (e.bs || 1),
+            vy: Math.sin(a + (j - (gn - 1) / 2) * 0.22) * mob(250, 310) * (e.bs || 1),
             r: 5,
             d: edm(e, 14),
             life: 4,
@@ -174,14 +199,14 @@ function updEnemies(dt) {
       if (e.cd < 0) {
         e.cd = mob(3.4, 2.6);
         e.ph = (e.ph || 0) + 0.4;
-        const rn = mob(6, 12); // HP: 6 peluru per cincin (desktop 12)
+        const rn = mob(6, 12) * (e.pw > 1 ? 2 : 1); // elit: 2x peluru; HP: 6 peluru per cincin (desktop 12)
         for (let j = 0; j < rn; j++) {
           const a = (j * TAU) / rn + e.ph;
           EB.push({
             x: e.x,
             y: e.y,
-            vx: Math.cos(a) * mob(170, 200),
-            vy: Math.sin(a) * mob(170, 200),
+            vx: Math.cos(a) * mob(170, 200) * (e.bs || 1),
+            vy: Math.sin(a) * mob(170, 200) * (e.bs || 1),
             r: 5,
             d: edm(e, 13),
             life: 5,

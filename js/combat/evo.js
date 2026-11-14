@@ -49,7 +49,7 @@ function shock(cx, cy, r, d, c = '#22d3ee') {
 let _busy = 0;
 function hitFx(e, d, c) {
   // EXECUTIONER / SOUL REAPER: musuh biasa ber-HP rendah langsung mati
-  if (P.exe && e.k != 'boss' && e.hp > 0 && e.hp < e.mh * exeTh()) {
+  if (P.exe && e.k != 'boss' && !(e.pw > 1) && e.hp > 0 && e.hp < e.mh * exeTh()) { // elit (e.pw > 1) kebal eksekusi seperti boss
     e.hp = 0;
     if (FT.length < 80) FT.push({ x: e.x, y: e.y - e.r - 12, t: 0.8, s: '☠', c: '#ff2e63', z: 18 });
     if (ev('reaper')) P.hp = Math.min(P.mh, P.hp + 3);
@@ -82,7 +82,8 @@ function killFx(e) {
   if (P.adr) P.evt.adr = ADR_T + (ev('blitz') ? 1 : 0);
   if (ev('blitz')) P.dc = Math.max(0, P.dc - 0.4);
   // SCAVENGER (+ GOLD RUSH): orb XP tambahan
-  if (P.scv && Math.random() < Math.min(0.9, SCV_PCT * P.scv)) {
+  // elit (wave 31+) + GOLD RUSH: orb tambahan SELALU jatuh -> XP elit (sudah 4-8x) dikali lagi oleh Gold Rush
+  if (P.scv && (Math.random() < Math.min(0.9, SCV_PCT * P.scv) || (ev('gold') && e.pw > 1 && e.k != 'boss'))) {
     const n = SCV_ORBS * (ev('gold') ? GOLD_ORB_MUL : 1), // GOLD RUSH: orb tambahan melimpah
       sp = ev('gold') ? 26 : 14;
     for (let j = 0; j < n; j++) O.push({ x: e.x + R(-sp, sp), y: e.y + R(-sp, sp), v: Math.max(1, e.xp) });
